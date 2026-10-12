@@ -75,9 +75,15 @@ pub fn parse_name_status(text: &str) -> Vec<(String, Option<String>, ChangeStatu
 
 /// The branch a workspace is compared with: the remote copy when there is one.
 pub(crate) async fn base_ref(git: &Git, cwd: &Path, base_branch: &str) -> String {
-    let remote = format!("origin/{base_branch}");
-    if git.branch_resolvable(cwd, &remote).await.unwrap_or(false) {
-        remote
+    // The base of a pull request is what is on GitHub. The local copy of the branch is only moved
+    // when someone pulls, and a merge made on GitHub never moves it, so comparing with it counts
+    // commits that are already merged as new ones.
+    if git
+        .remote_tracking_exists(cwd, "origin", base_branch)
+        .await
+        .unwrap_or(false)
+    {
+        format!("origin/{base_branch}")
     } else {
         base_branch.to_string()
     }
@@ -288,6 +294,40 @@ mod tests {
             .output()
             .unwrap();
         String::from_utf8_lossy(&out.stdout).trim().to_string()
+    }
+
+    #[tokio::test]
+    async fn the_base_is_the_remote_copy_when_there_is_one() {
+        let r = repo().await;
+        let base = branch_name(&r.dir);
+        // Nothing fetched yet: the local branch is the base.
+        assert_eq!(base_ref(&r.git, &r.dir, &base).await, base);
+        // Someone merged on GitHub: the remote copy is ahead of the local one.
+        std::fs::write(r.dir.join("merged.txt"), "x\n").unwrap();
+        sh(&r.dir, &["add", "."]);
+        sh(&r.dir, &["commit", "-q", "-m", "merged on GitHub"]);
+        sh(
+            &r.dir,
+            &["update-ref", &format!("refs/remotes/origin/{base}"), "HEAD"],
+        );
+        sh(&r.dir, &["reset", "-q", "--hard", "HEAD~1"]);
+        sh(&r.dir, &["checkout", "-q", "-b", "feature"]);
+        sh(
+            &r.dir,
+            &["merge", "-q", "--ff-only", &format!("origin/{base}")],
+        );
+        assert_eq!(
+            base_ref(&r.git, &r.dir, &base).await,
+            format!("origin/{base}")
+        );
+        // Against it the branch has nothing new, though it is ahead of the stale local branch.
+        let (ahead_remote, _) = r
+            .git
+            .ahead_behind(&r.dir, &format!("origin/{base}"), "HEAD")
+            .await
+            .unwrap();
+        let (ahead_local, _) = r.git.ahead_behind(&r.dir, &base, "HEAD").await.unwrap();
+        assert_eq!((ahead_remote, ahead_local), (0, 1));
     }
 
     #[tokio::test]
