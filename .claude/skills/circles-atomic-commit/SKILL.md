@@ -3,8 +3,8 @@ name: circles-atomic-commit
 description: >-
   Use for EVERY commit in the Circles repo, including an explicit "commit this". Commits are atomic
   conventional-commit units: one logical change per commit, independently revertible, with a
-  why-not-what body, the ticket key in the subject when there is one, exact-path staging, the
-  personal identity and signature, and no Claude or Anthropic attribution. Use when about to commit,
+  why-not-what body, the ticket key in the subject, exact-path staging, the personal identity and
+  signature, and no Claude or Anthropic attribution. Use when about to commit,
   when asked to "commit", "split into commits" or "make atomic commits", and after the checks go
   green. It never pushes to main and never merges.
 ---
@@ -16,8 +16,10 @@ One logical change per commit, each independently reviewable and revertible.
 
 ## Preconditions, in order
 
-1. **Not on `main`.** `main` is protected: every change reaches it through a pull request. On
-   `main`, create a branch first with `circles-pr-branch`.
+1. **A ticket, and not on `main`.** Every change has a ticket, even a small one, and its key is in
+   the branch name (`<type>/<KEY-n>-<slug>`). `main` is protected: every change reaches it through a
+   pull request. On `main`, or on a branch without a ticket key, stop: file the ticket with
+   `circles-jira-tickets`, then create the branch with `circles-pr-branch`.
 2. **Identity.** Run `git config user.name`, `git config user.email` and
    `git rev-parse --absolute-git-dir`. The repository lives under `~/Personal/`, so author and
    committer must be `decimozs <marlonadiguemartin548@gmail.com>`, the active `gh` account must be
@@ -44,13 +46,13 @@ One logical change per commit, each independently reviewable and revertible.
   its templates), config file group or document.
 - **Each commit independently revertible.** `git revert <sha>` must leave a coherent state. A test
   lives in its unit's commit, or in the commit right after only when it needs the unit to compile.
-- **Subject:** `<type>(<scope>): <imperative summary>`, max 72 characters, no trailing period. When
-  the work has a ticket, end the subject with it: `... (KEY-123)`.
+- **Subject:** `<type>(<scope>): <imperative summary> (KEY-n)`, max 72 characters including the key,
+  no trailing period. The key is the ticket of the branch.
   - Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `ci`, `build`, `style`, `revert`.
   - Scope is the area: `ui`, `bindings`, `config`, `desktop`, `composer`, `chat`, `workspace`, `git`,
     `pr`, `review`, `settings`, `terminal`, `integrations`, `smart`, `ci`, `docs`, `repo`.
-  - Good: `fix(git): compare with the remote base, not the stale local one`.
-  - Bad: `update stuff`, `fix`, `WIP`.
+  - Good: `fix(git): compare with the remote base, not the stale one (PROJ-12)`.
+  - Bad: `update stuff`, `fix`, `WIP`, a good subject with no key.
 - **Body is why, not what.** What was wrong or wanted, and how it fits the sequence. Skip the body
   only when the subject already carries the why. Wrap at about 72 characters.
 - **No Claude or Anthropic attribution, ever.** No `Co-Authored-By:` trailer, no "Generated with"
