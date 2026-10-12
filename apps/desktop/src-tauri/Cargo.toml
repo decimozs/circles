@@ -1,0 +1,55 @@
+[package]
+name = "circles"
+version = "0.1.0"
+description = "Run Claude Code agents in parallel, locally"
+authors = ["decimozs"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "circles_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1.53.2", features = ["rt-multi-thread", "process", "time", "sync", "macros", "net", "io-util"] }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+ulid = "3.0.0"
+thiserror = "2.0.21"
+toml = { version = "1.1.7", features = ["preserve_order"] }
+dirs = "7.0.0"
+libc = "0.2.190"
+tracing = "0.1.44"
+ts-rs = "12.0.1"
+tracing-subscriber = { version = "0.3.23", features = ["fmt", "env-filter"] }
+tracing-appender = "0.2.5"
+tauri-plugin-dialog = "2.8.1"
+rand = "0.10.3"
+ignore = "0.4.33"
+portable-pty = "0.9.0"
+tauri-plugin-opener = "2.7.0"
+async-trait = "0.1.92"
+uuid = { version = "1.27.0", features = ["v4"] }
+base64 = "0.23.1"
+notify = "8"
+notify-debouncer-mini = "0.6"
+toml_edit = "0.25.16"
+tauri-plugin-autostart = "2"
+reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "json", "form"] }
+keyring = { version = "3", features = ["apple-native"] }
+sha2 = "0.11.0"
+llama-cpp-2 = "0.1.159"
+tauri-plugin-notification = "2"
+
+
+[dev-dependencies]
+tempfile = "3.27.0"
