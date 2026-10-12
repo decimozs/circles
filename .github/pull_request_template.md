@@ -29,9 +29,3 @@ cargo test --workspace   # <n passed>
 | # | Criterion (Given / When / Then) | Expected | Result | Evidence |
 |---|---|---|---|---|
 | AC1 | Given ..., when ..., then ... | <expected> | Pending / Pass / Fail | <test name or output line> |
-
-## Stack
-<!-- Written by circles-create-pr. -->
-- Position: <level n of m>
-- Below: <#n title, or "none: on main">
-- Merge: the tip of the stack, once, with a merge commit.
