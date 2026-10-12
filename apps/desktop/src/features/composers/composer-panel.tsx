@@ -590,7 +590,7 @@ function LimitsFields({
   return (
     <section aria-label="Limits" className="flex flex-col gap-4 text-xs">
       <div>
-        <h3 className="text-sm font-medium">Limits for one run</h3>
+        <h3 className="text-sm font-medium">Limits for one request</h3>
         <p className="mt-0.5 text-muted-foreground">No limit on time or steps.</p>
       </div>
       {count(
@@ -598,7 +598,11 @@ function LimitsFields({
         "max_children_at_once",
         "Chats it started that work at the same moment.",
       )}
-      {count("Agents in total", "max_children_total", "Workspaces and chats one run may start.")}
+      {count(
+        "Agents in total",
+        "max_children_total",
+        "Workspaces and chats one request may start.",
+      )}
       <div className="flex flex-col gap-1">
         <span className="font-medium">Spending limit in USD</span>
         <Input
