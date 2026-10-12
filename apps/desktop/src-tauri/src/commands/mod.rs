@@ -1,0 +1,17 @@
+pub mod app;
+pub mod chat;
+pub mod checkpoint;
+pub mod composer;
+pub mod diagnostics;
+pub mod files;
+pub mod genui;
+pub mod integrations;
+pub mod pr;
+pub mod project;
+pub mod session;
+pub mod settings;
+pub mod setup;
+pub mod side;
+pub mod smart;
+pub mod terminal;
+pub mod workspace;
