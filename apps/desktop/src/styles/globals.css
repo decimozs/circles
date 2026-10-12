@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+@import "@circles/ui/styles/theme.css";
+
+/* The classes used inside the shared components. */
+@source "../../../../packages/ui/src";
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  /* The app is a window, not a page: nothing scrolls as a whole, not even with a trackpad bounce.
+     Each part that needs to scroll does it inside itself. */
+  html,
+  body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  body {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+  }
+  #root {
+    overflow: clip;
+  }
+}
+
+/* Comment markers in the editor gutter. */
+.comment-glyph,
+.comment-glyph-resolved {
+  margin-left: 4px;
+  /* biome-ignore lint/complexity/noImportantStyles: Monaco sets the glyph size itself */
+  width: 6px !important;
+  border-radius: 9999px;
+  background: var(--info);
+  /* biome-ignore lint/complexity/noImportantStyles: Monaco sets the glyph size itself */
+  height: 6px !important;
+  margin-top: 7px;
+}
+.comment-glyph-resolved {
+  background: var(--muted-foreground);
+  opacity: 0.5;
+}
+.comment-line {
+  background: color-mix(in oklab, var(--info) 8%, transparent);
+}
+
+/* The slow drift of the colours inside a Composer's orb. Each blob follows its own path. */
+@keyframes orb-a {
+  0% {
+    transform: translate(-18%, -12%) scale(1);
+  }
+  50% {
+    transform: translate(14%, 18%) scale(1.3);
+  }
+  100% {
+    transform: translate(20%, -8%) scale(1.05);
+  }
+}
+@keyframes orb-b {
+  0% {
+    transform: translate(16%, 14%) scale(1.2);
+  }
+  50% {
+    transform: translate(-16%, 6%) scale(0.95);
+  }
+  100% {
+    transform: translate(2%, -20%) scale(1.25);
+  }
+}
+@keyframes orb-c {
+  0% {
+    transform: translate(-6%, 20%) scale(0.95);
+  }
+  50% {
+    transform: translate(20%, -4%) scale(1.25);
+  }
+  100% {
+    transform: translate(-20%, -14%) scale(1.1);
+  }
+}

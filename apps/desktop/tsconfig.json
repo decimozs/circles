@@ -1,0 +1,15 @@
+{
+  "extends": "@circles/config/tsconfig.react.json",
+  "compilerOptions": {
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}
