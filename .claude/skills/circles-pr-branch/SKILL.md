@@ -1,11 +1,10 @@
 ---
 name: circles-pr-branch
 description: >-
-  Create a correctly named git branch for Circles work, always on top of the open PR stack. Use when
-  the user runs /circles-pr-branch, or asks to "create a branch", "start a branch for ..." or
-  "branch for KEY-123". Names follow <type>/<slug> or, when there is a ticket,
-  <type>/<KEY-n>-<slug>. Verifies identity, builds from the stack tip, never tracks main, never
-  pushes.
+  Create a correctly named git branch for a Circles ticket, always on top of the open PR stack. Use
+  when the user runs /circles-pr-branch, or asks to "create a branch", "start a branch for ..." or
+  "branch for KEY-123". A ticket is required: names are <type>/<KEY-n>-<slug>. Verifies identity,
+  builds from the stack tip, never tracks main, never pushes.
 ---
 
 # circles-pr-branch
@@ -13,20 +12,22 @@ description: >-
 ## Name
 
 ```
-<type>/<slug>                 no ticket
-<type>/<KEY-n>-<slug>         with a ticket, KEY-n like PROJ-123
+<type>/<KEY-n>-<slug>        KEY-n is the ticket, like PROJ-123
 ```
+
+**Every change has a ticket, even a small one.** No ticket means no branch: file it first with
+`circles-jira-tickets` (draft, then the user's approval), then come back. The one exception is
+the bootstrap in `CLAUDE.md`, while `docs/JIRA.md` has no project key yet.
 
 - `type`: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `ci`, `build`, `style`, `revert`.
 - `slug`: lowercase words joined by dashes, 2 to 6 words, at most 40 characters, filler words removed
   (a, an, the, to, for, of, and). Letters, digits and dashes only; no leading, trailing or double
   dashes.
-- Regex without a ticket: `^(feat|fix|refactor|perf|docs|test|chore|ci|build|style|revert)/[a-z0-9]+(-[a-z0-9]+){1,5}$`
-- Regex with a ticket: `^(feat|fix|refactor|perf|docs|test|chore|ci|build|style|revert)/[A-Z][A-Z0-9]+-[0-9]+(-[a-z0-9]+){1,5}$`
-- This is the same rule Circles gives Composers: `{type}/{slug}` by default and
-  `{type}/{ticket}-{slug}` when the project's `branch_pattern` setting says so.
+- Regex: `^(feat|fix|refactor|perf|docs|test|chore|ci|build|style|revert)/[A-Z][A-Z0-9]+-[0-9]+(-[a-z0-9]+){1,5}$`
+- This is the rule Circles can give Composers: the project's `branch_pattern` setting
+  `{type}/{ticket}-{slug}`.
 
-Examples: `fix/stale-base-and-composer-limit`, `ci/shard-frontend-tests`,
+Examples: `fix/PROJ-12-stale-base-in-create-pr`, `ci/PROJ-31-shard-frontend-tests`,
 `feat/PROJ-45-add-bot-crud-api`.
 
 ## Type
@@ -36,7 +37,9 @@ Task is `feat`, Spike is `chore`) and let the user override. If unclear, ask.
 
 ## Steps
 
-1. **Intent.** Get the ticket key (optional) and a one-line summary. Do not invent a key.
+1. **Ticket.** Get the ticket key and read it (read-only): summary, type, acceptance criteria. If
+   there is none, stop and file it with `circles-jira-tickets`. Do not invent a key. If the ticket
+   is an Epic, stop: epics have no branch.
 2. **Identity.** `git config user.name`, `git config user.email`, `git rev-parse --absolute-git-dir`:
    `decimozs <marlonadiguemartin548@gmail.com>`, repository under `~/Personal/`, active `gh` account
    `decimozs`. Flag a mismatch and stop.
@@ -57,7 +60,7 @@ Task is `feat`, Spike is `chore`) and let the user override. If unclear, ask.
 8. **Create.** `git switch -c <name> --no-track <base>`. Always `--no-track`: without it the branch
    would track its base and a bare `git push` could target `main`. Use
    `git worktree add ../circles-<slug> -b <name> <base>` only when asked for a worktree.
-9. Print the base, the stack position and, when there is a ticket, its acceptance criteria.
+9. Print the base, the stack position and the ticket's acceptance criteria, so the work targets them.
 
 ## Never
 
