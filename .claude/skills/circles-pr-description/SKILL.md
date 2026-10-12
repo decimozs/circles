@@ -2,14 +2,15 @@
 name: circles-pr-description
 description: >-
   Write the body of a Circles pull request from the repository's PR template: Description (ticket
-  link first), Summary, Changes, Evidence, Acceptance Criteria and Stack. Use when
+  link first), Summary, Changes, Evidence and Acceptance Criteria. Use when
   drafting or checking a PR description, when the user runs /circles-pr-description, or from
   circles-create-pr. Evidence is exact command output, never a claim.
 ---
 
 # circles-pr-description
 
-Fill `.github/pull_request_template.md` exactly. Keep its headings and order. No emoji, and no Claude
+Fill `.github/pull_request_template.md` exactly. Keep its headings and order. There is **no Stack
+section**: the position in a stack is not written in the description, nor in the title. No emoji, and no Claude
 or Anthropic attribution anywhere in the body.
 
 ## Sections
@@ -30,8 +31,6 @@ or Anthropic attribution anywhere in the body.
 5. **Acceptance Criteria.** Copy the ticket's table and set Result to `Pass`, `Fail` or `Pending`
    with evidence per row. A PR with a `Fail` is opened as a draft and says so. Never `Pass` without
    evidence.
-6. **Stack.** Position (level n of m), the PRs below, and the merge note. `circles-create-pr` fills
-   this from the live stack; never guess it.
 
 ## Notes
 
