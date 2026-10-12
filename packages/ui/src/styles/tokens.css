@@ -1,0 +1,189 @@
+/*
+ * Circles design tokens.
+ * This is the only file allowed to contain raw color values.
+ * Components use the semantic tokens through Tailwind utilities.
+ */
+
+:root {
+  --radius: 0.625rem;
+
+  /* Surfaces */
+  --background: #ffffff;
+  --foreground: #171717;
+  --sidebar: #f6f6f5;
+  --sidebar-foreground: #171717;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --muted: #f1f1f0;
+  --muted-foreground: #6b6b6b;
+  --secondary: #f1f1f0;
+  --secondary-foreground: #171717;
+  --accent: #ebebea;
+  --accent-foreground: #171717;
+  --primary: #171717;
+  --primary-foreground: #fafafa;
+
+  /* Lines and focus */
+  --border: #e4e4e2;
+  --input: #dcdcda;
+  --ring: #8a8a88;
+
+  /* Status */
+  --destructive: #d92d20;
+  --success: #15803d;
+  --warning: #b45309;
+  --info: #1d4ed8;
+  /* A branch with commits and no pull request yet, and the step that opens one. */
+  --violet: #6d28d9;
+
+  /* Git graph lines */
+  --graph-1: #2563eb;
+  --graph-2: #c026a3;
+  --graph-3: #16a34a;
+  --graph-4: #7c3aed;
+  --graph-5: #ea580c;
+  /* Atlassian blue, the Jira mark. */
+  --brand-jira: #0052cc;
+
+  /* Colours the Composer orbs are made from. The same in both themes, like a brand colour. */
+  --orb-1: #ff7a45;
+  --orb-2: #ff4d6d;
+  --orb-3: #c026d3;
+  --orb-4: #7c3aed;
+  --orb-5: #4f46e5;
+  --orb-6: #2563eb;
+  --orb-7: #06b6d4;
+  --orb-8: #14b8a6;
+  --orb-9: #22c55e;
+  --orb-10: #a3e635;
+  --orb-11: #facc15;
+  --orb-12: #f472b6;
+
+  /* Diff */
+  --diff-add: #126a31;
+  --diff-add-bg: #e6f4ea;
+  --diff-remove: #b42318;
+  --diff-remove-bg: #fdeceb;
+
+  /* Sidebar */
+  --sidebar-primary: #171717;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #ebebea;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #e4e4e2;
+  --sidebar-ring: #8a8a88;
+
+  /* Charts (kept for shadcn) */
+  --chart-1: #171717;
+  --chart-2: #525252;
+  --chart-3: #737373;
+  --chart-4: #a3a3a3;
+  --chart-5: #d4d4d4;
+
+  /* Terminal */
+  --terminal-background: #ffffff;
+  --terminal-foreground: #1f1f1f;
+  --terminal-cursor: #1f1f1f;
+  --terminal-selection: #cfe3ff;
+  --terminal-black: #1f1f1f;
+  --terminal-red: #c4321f;
+  --terminal-green: #1f7a3a;
+  --terminal-yellow: #9a6700;
+  --terminal-blue: #0b57d0;
+  --terminal-magenta: #a1307d;
+  --terminal-cyan: #0b7285;
+  --terminal-white: #d0d0ce;
+  --terminal-bright-black: #6b6b6b;
+  --terminal-bright-red: #e5493a;
+  --terminal-bright-green: #2da44e;
+  --terminal-bright-yellow: #bf8700;
+  --terminal-bright-blue: #3b82f6;
+  --terminal-bright-magenta: #c2459c;
+  --terminal-bright-cyan: #1498af;
+  --terminal-bright-white: #f4f4f2;
+
+  /* Shadows */
+  --elevation-sm: 0 1px 2px rgb(0 0 0 / 6%);
+  --elevation-md: 0 4px 12px rgb(0 0 0 / 8%), 0 1px 3px rgb(0 0 0 / 6%);
+  --elevation-lg: 0 12px 32px rgb(0 0 0 / 12%), 0 2px 6px rgb(0 0 0 / 8%);
+}
+
+.dark {
+  --background: #141414;
+  --foreground: #ededed;
+  --sidebar: #171717;
+  --sidebar-foreground: #ededed;
+  --card: #1a1a1a;
+  --card-foreground: #ededed;
+  --popover: #1c1c1c;
+  --popover-foreground: #ededed;
+  --muted: #1f1f1f;
+  --muted-foreground: #9a9a9a;
+  --secondary: #222222;
+  --secondary-foreground: #ededed;
+  --accent: #222222;
+  --accent-foreground: #ededed;
+  --primary: #ededed;
+  --primary-foreground: #141414;
+
+  --border: #262626;
+  --input: #2e2e2e;
+  --ring: #6b6b6b;
+
+  --destructive: #f97066;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --info: #7aa7ff;
+  --violet: #c4b5fd;
+
+  --graph-1: #5b9bff;
+  --graph-2: #e060c4;
+  --graph-3: #6fdc5a;
+  --graph-4: #a78bfa;
+  --graph-5: #fb923c;
+
+  --diff-add: #4ade80;
+  --diff-add-bg: #12261a;
+  --diff-remove: #f97066;
+  --diff-remove-bg: #2b1614;
+
+  --sidebar-primary: #ededed;
+  --sidebar-primary-foreground: #141414;
+  --sidebar-accent: #222222;
+  --sidebar-accent-foreground: #ededed;
+  --sidebar-border: #262626;
+  --sidebar-ring: #6b6b6b;
+
+  --chart-1: #ededed;
+  --chart-2: #bdbdbd;
+  --chart-3: #8a8a8a;
+  --chart-4: #5c5c5c;
+  --chart-5: #3a3a3a;
+
+  --terminal-background: #141414;
+  --terminal-foreground: #e6e6e6;
+  --terminal-cursor: #e6e6e6;
+  --terminal-selection: #2b4a7a;
+  --terminal-black: #1a1a1a;
+  --terminal-red: #f06a5a;
+  --terminal-green: #6fcf8a;
+  --terminal-yellow: #e5c07b;
+  --terminal-blue: #6aa2ff;
+  --terminal-magenta: #d88be0;
+  --terminal-cyan: #5fc9d8;
+  --terminal-white: #cfcfcf;
+  --terminal-bright-black: #6b6b6b;
+  --terminal-bright-red: #ff8577;
+  --terminal-bright-green: #8be3a3;
+  --terminal-bright-yellow: #f2d38f;
+  --terminal-bright-blue: #8bb8ff;
+  --terminal-bright-magenta: #e8a5ee;
+  --terminal-bright-cyan: #7fdce9;
+  --terminal-bright-white: #ffffff;
+
+  --elevation-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --elevation-md: 0 4px 12px rgb(0 0 0 / 45%), 0 1px 3px rgb(0 0 0 / 35%);
+  --elevation-lg: 0 12px 32px rgb(0 0 0 / 55%), 0 2px 6px rgb(0 0 0 / 40%);
+}

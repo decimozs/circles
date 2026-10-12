@@ -1,0 +1,35 @@
+{
+  "name": "@circles/ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Design tokens, the Tailwind theme and the shadcn components every Circles app uses.",
+  "exports": {
+    "./components/*": "./src/components/*.tsx",
+    "./utils": "./src/utils.ts",
+    "./styles/*": "./src/styles/*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "fix:imports": "node scripts/localize-imports.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "class-variance-authority": "^0.7.1",
+    "cmdk": "^1.1.1",
+    "cn": "^0.4.0",
+    "lucide-react": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@circles/config": "workspace:*",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:"
+  }
+}
