@@ -10,6 +10,18 @@ description: >-
 
 # circles-jira-tickets
 
+## Ticket first, for every change
+
+Nothing is changed in this repository without a ticket, **even a one-line fix**. This is the skill
+that files it, and `circles-pr-branch`, `circles-atomic-commit` and `circles-create-pr` refuse to go on
+without one. "Just do it" does not skip it.
+
+A small change gets a small ticket, not none: a Task with a one-sentence description, an explicit
+scope, and one or two acceptance criteria. The size is in the ticket, not in whether it exists.
+Typical small tickets: a typo or copy fix, a version bump, a lint or format fix, a test that was flaky.
+Anything found while working that is outside the ticket becomes a **new ticket proposal**, not an
+extra change in this one.
+
 ## Before the first ticket
 
 Circles has no Jira project recorded yet. Ask the user once for the **site** and the **project key**,
@@ -27,8 +39,8 @@ Credentials are never printed, logged, committed, or pasted into a ticket.
 ## Types
 
 - **Epic:** one per area (the summary is the area name only). Has no branch of its own.
-- **Task:** one implementation unit; features are Tasks. About half a day of agent work; larger means
-  split. Has a parent Epic.
+- **Task:** one implementation unit; features, chores and small fixes are Tasks. About half a day of
+  agent work; larger means split. Has a parent Epic.
 - **Bug:** a defect with steps to reproduce.
 - **Spike:** time-boxed research with a written output, never production code.
 
