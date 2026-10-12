@@ -886,6 +886,27 @@ describe("first visit", () => {
     expect(backend.callsTo("session_create")).toHaveLength(1);
   });
 
+  it("says so, with a way in, when a Composer made the workspace and started no agent in it", async () => {
+    defaultBackend();
+    chatBackend([]);
+    backend
+      .on("workspace_get", workspace({ id: "w1", city: "Florence" }))
+      .on("composer_workspace_links", [
+        {
+          workspace_id: "w1",
+          composer_id: "c1",
+          composer_name: "Task splitter",
+          session_id: "r1",
+        },
+      ]);
+    const app = renderApp("/workspace/w1");
+    expect(await screen.findByText("No agent has started here yet")).toBeInTheDocument();
+    // The Composer's workspace is not given a chat of its own behind its back.
+    expect(backend.callsTo("session_create")).toHaveLength(0);
+    await app.user.click(screen.getByRole("button", { name: "Start a chat" }));
+    await waitFor(() => expect(backend.callsTo("session_create")).toHaveLength(1));
+  });
+
   it("does not start a chat in an archived workspace", async () => {
     defaultBackend();
     chatBackend([]);
