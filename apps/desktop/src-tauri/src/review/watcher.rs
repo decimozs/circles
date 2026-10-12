@@ -249,10 +249,25 @@ mod tests {
                 counter.fetch_add(1, Ordering::SeqCst);
             })
             .unwrap();
-        std::thread::sleep(Duration::from_millis(300));
+        let baseline = settle(&hits);
         std::fs::write(root.join(".git/refs/heads/feature"), "abc\n").unwrap();
-        assert!(wait_for(&hits, 1), "a branch update is reported");
+        assert!(wait_for(&hits, baseline + 1), "a branch update is reported");
         watchers.unwatch("w1");
+    }
+
+    /// Waits until nothing more is reported. A folder made just before watching can have its
+    /// creation delivered late by macOS, so what is counted before a check is not always zero.
+    fn settle(count: &AtomicUsize) -> usize {
+        let mut last = count.load(Ordering::SeqCst);
+        for _ in 0..10 {
+            std::thread::sleep(Duration::from_millis(600));
+            let now = count.load(Ordering::SeqCst);
+            if now == last {
+                return now;
+            }
+            last = now;
+        }
+        last
     }
 
     fn wait_for(count: &AtomicUsize, at_least: usize) -> bool {
@@ -280,19 +295,19 @@ mod tests {
             })
             .unwrap();
         assert_eq!(watchers.count(), 1);
-        std::thread::sleep(Duration::from_millis(300));
+        let baseline = settle(&hits);
 
         std::fs::write(root.join("node_modules/junk.js"), "x").unwrap();
         std::thread::sleep(Duration::from_millis(700));
-        assert_eq!(hits.load(Ordering::SeqCst), 0, "noise is ignored");
+        assert_eq!(hits.load(Ordering::SeqCst), baseline, "noise is ignored");
 
         for i in 0..5 {
             std::fs::write(root.join(format!("file{i}.txt")), "x").unwrap();
         }
-        assert!(wait_for(&hits, 1), "an edit is reported");
+        assert!(wait_for(&hits, baseline + 1), "an edit is reported");
         std::thread::sleep(Duration::from_millis(700));
         assert!(
-            hits.load(Ordering::SeqCst) <= 2,
+            hits.load(Ordering::SeqCst) <= baseline + 2,
             "a burst is gathered, not reported five times"
         );
 
