@@ -600,9 +600,17 @@ impl Dispatcher {
             return Ok(());
         }
         let children = self.store.children_of_run(session_id).unwrap_or_default();
-        if children.len() as u32 >= limits.max_children_total {
+        // The total is per request: what was started since the person's latest message. A Composer
+        // is one conversation that goes on, so counting from its first message would end it for good.
+        let turn_start = self.store.turn_started_at(session_id).unwrap_or(0);
+        let this_turn = children
+            .iter()
+            .filter(|c| c.created_at >= turn_start)
+            .count() as u32;
+        if this_turn >= limits.max_children_total {
             return Err(format!(
-                "This run has already started {} workspaces and chats, which is its limit.",
+                "This request has already started {} workspaces and chats, which is its limit. \
+                 Say what is done and what is left, and the person can ask for more.",
                 limits.max_children_total
             ));
         }
@@ -804,6 +812,7 @@ mod tests {
     }
 
     struct Fx {
+        db: Arc<Db>,
         d: Arc<Dispatcher>,
         fake: Arc<Fake>,
         events: Arc<Events>,
@@ -834,12 +843,13 @@ mod tests {
         let events = Arc::new(Events::default());
         let d = Arc::new(Dispatcher::new(
             store,
-            AuditStore::new(db),
+            AuditStore::new(db.clone()),
             fake.clone(),
             events.clone(),
             Redactor::default(),
         ));
         Fx {
+            db,
             d,
             fake,
             events,
@@ -1187,6 +1197,23 @@ mod tests {
             fx.d.call(&fx.session, "create_workspace", json!({"project_id": "p"}))
                 .await;
         assert!(over.is_error && over.text.contains("limit"));
+
+        // The total is per request: a new message from the person starts the count again.
+        let later = now_ms() + 5;
+        fx.db
+            .write(|c| {
+                c.execute(
+                    "INSERT INTO messages (id, session_id, seq, role, kind, content, created_at)
+                     VALUES ('m-next', ?1, 1, 'user', 'text', '{}', ?2)",
+                    params![fx.session, later],
+                )
+            })
+            .unwrap();
+        // The earlier chat is not working, so only the total was in the way.
+        let again =
+            fx.d.call(&fx.session, "create_workspace", json!({"project_id": "p"}))
+                .await;
+        assert!(!again.is_error, "{}", again.text);
 
         // A workspace another run started is not this run's to use.
         fx.d.store

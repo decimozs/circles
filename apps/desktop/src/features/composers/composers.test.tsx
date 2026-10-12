@@ -316,7 +316,7 @@ describe("Composer dialog", () => {
     const app = renderApp("/composers");
     await app.user.click(await screen.findByRole("button", { name: "New Composer" }));
     const dialog = await screen.findByRole("dialog", { name: "New Composer" });
-    for (const gone of ["What it may do", "Limits for one run", "Projects it may use"]) {
+    for (const gone of ["What it may do", "Limits for one request", "Projects it may use"]) {
       expect(within(dialog).queryByText(gone)).not.toBeInTheDocument();
     }
     expect(within(dialog).queryByRole("radio")).not.toBeInTheDocument();

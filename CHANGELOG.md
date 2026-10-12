@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixed
+- Create PR said "GitHub sees no commits" for a branch whose work was already merged: changes, commits ahead and the pull request check compared with the local `main`, which a merge on GitHub never moves, instead of `origin/main`.
+- A Composer stopped for good once it had started 10 workspaces and chats in total over its whole life. The limit is now per request, counted from your latest message.
+- A workspace a Composer made but started no agent in showed a blank pane. It now says so and offers "Start a chat".
+
 ### Changed
 - The repository is a monorepo: the app is in `apps/desktop`, shared code in `packages/ui`, `packages/bindings` and `packages/config`.
 - Release builds target macOS 11 or later, which the bundled model runtime needs.

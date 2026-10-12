@@ -4,10 +4,16 @@ import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
 import type { PermissionRequest } from "@circles/bindings/PermissionRequest";
 import type { Session } from "@circles/bindings/Session";
 import type { Workspace } from "@circles/bindings/Workspace";
+import { Button } from "@circles/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useApprovals, useFirstPrompt, useSetMode } from "@/features/composers/api";
+import {
+  useApprovals,
+  useFirstPrompt,
+  useSetMode,
+  useWorkspaceLinks,
+} from "@/features/composers/api";
 import { ApprovalCard } from "@/features/composers/approval-card";
 import { CardsPanel } from "@/features/genui/cards-panel";
 import { prKeys } from "@/features/pr/api";
@@ -335,6 +341,7 @@ export function ChatPanel({
   const queryClient = useQueryClient();
   const { query, sessions, active } = useActiveSession(workspace.id);
   const create = useCreateChat(workspace.id);
+  const composerMade = useWorkspaceLinks().get(workspace.id);
   const usable = !["creating", "archived", "errored"].includes(workspace.state);
   // A chat that was reverted starts again from what is stored, so its view is made anew.
   const [reverted, setReverted] = useState<Record<string, number>>({});
@@ -389,6 +396,23 @@ export function ChatPanel({
         />
       ) : composer && query.isSuccess ? (
         (empty ?? <div className="flex-1" />)
+      ) : composerMade && query.isSuccess && usable ? (
+        // The Composer made this workspace and has not started an agent in it, because it was
+        // stopped, hit its limit or failed. Without this the pane would be blank, with no way in.
+        <div
+          role="status"
+          className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center"
+        >
+          <p className="text-sm font-medium">No agent has started here yet</p>
+          <p className="max-w-sm text-xs text-muted-foreground">
+            {composerMade.composer_name} made this workspace but has not started an agent in it. It
+            may still be working, or it may have stopped before it got to it. You can start a chat
+            yourself.
+          </p>
+          <Button size="sm" onClick={() => void create()}>
+            Start a chat
+          </Button>
+        </div>
       ) : (
         <div className="flex-1" />
       )}

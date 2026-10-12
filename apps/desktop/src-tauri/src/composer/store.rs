@@ -648,6 +648,20 @@ impl ComposerStore {
         self.children_where("session_id = ?1", session_id)
     }
 
+    /// When the person's latest message in this run was sent, which is when its current turn began.
+    /// A Composer has one conversation that goes on for days, so what a run may start is counted
+    /// from here, not from the first message ever. `0` when there is no message yet.
+    pub fn turn_started_at(&self, session_id: &str) -> AppResult<i64> {
+        self.db.read(|c| {
+            c.query_row(
+                "SELECT COALESCE(MAX(created_at), 0) FROM messages
+                 WHERE session_id = ?1 AND role = 'user' AND kind = 'text'",
+                params![session_id],
+                |r| r.get(0),
+            )
+        })
+    }
+
     pub fn children_of_composer(&self, composer_id: &str) -> AppResult<Vec<ChildRow>> {
         self.children_where("composer_id = ?1", composer_id)
     }

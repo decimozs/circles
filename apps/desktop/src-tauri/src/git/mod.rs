@@ -296,6 +296,18 @@ impl Git {
                 .await?)
     }
 
+    /// True when the last fetch left a copy of `branch` of `remote`, which is what `origin/main`
+    /// names. Local only: nothing is asked of the network.
+    pub async fn remote_tracking_exists(
+        &self,
+        repo: &Path,
+        remote: &str,
+        branch: &str,
+    ) -> GitResult<bool> {
+        self.ref_exists(repo, &format!("refs/remotes/{remote}/{branch}"))
+            .await
+    }
+
     // Network
 
     /// Runs a command that talks to the remote, as the GitHub account that can see the repository

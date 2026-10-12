@@ -2,6 +2,8 @@
 
 Run Claude Code agents in parallel, each in an isolated git worktree. Local-first desktop app built with Tauri 2.
 
+<img width="1337" height="864" alt="image" src="https://github.com/user-attachments/assets/48a38932-baa2-40fd-9a30-997aa046be3e" />
+
 Plan: [docs/phases/README.md](docs/phases/README.md)
 
 ## Install
