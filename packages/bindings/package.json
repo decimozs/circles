@@ -1,0 +1,17 @@
+{
+  "name": "@circles/bindings",
+  "private": true,
+  "version": "0.1.0",
+  "description": "TypeScript types generated from the Rust side by ts-rs. Never edited by hand: run pnpm gen:types.",
+  "type": "module",
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@circles/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
