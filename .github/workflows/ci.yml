@@ -35,6 +35,7 @@ jobs:
               - 'pnpm-workspace.yaml'
               - 'biome.json'
               - 'scripts/check-contrast.mjs'
+              - '.github/**'
             rust:
               - 'apps/desktop/src-tauri/**'
               - 'Cargo.toml'
@@ -42,8 +43,10 @@ jobs:
               - 'rust-toolchain.toml'
               - '.cargo/**'
               - 'packages/bindings/**'
+              - '.github/**'
 
-  frontend:
+  # The checks that are quick, and the build.
+  frontend-checks:
     needs: changes
     if: needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
@@ -58,8 +61,43 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm check
-      - run: pnpm test
       - run: pnpm build
+
+  # The test suite is about 70 seconds of work on a fast machine and over four minutes on a
+  # two-core runner, so it is split across runners instead of waiting on one.
+  frontend-tests:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # The optimizer bundles the large icon library once and keeps it here.
+      - uses: actions/cache@v4
+        with:
+          path: apps/desktop/node_modules/.vite
+          key: vitest-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: pnpm --filter @circles/desktop exec vitest run --shard=${{ matrix.shard }}/3 --pool=threads
+
+  # One name for the whole frontend, so a branch rule asks for "frontend" and keeps working
+  # however the work is split.
+  frontend:
+    needs: [changes, frontend-checks, frontend-tests]
+    if: always() && needs.changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          test "${{ needs.frontend-checks.result }}" = "success"
+          test "${{ needs.frontend-tests.result }}" = "success"
 
   rust:
     needs: changes
