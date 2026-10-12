@@ -1,0 +1,11 @@
+{
+  "name": "@circles/config",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Shared TypeScript presets.",
+  "files": [
+    "tsconfig.base.json",
+    "tsconfig.react.json",
+    "tsconfig.node.json"
+  ]
+}
