@@ -41,13 +41,13 @@ PRs below it.
 3. This branch must be built on the **top** of that chain. If `main` advanced, a PR below merged, or
    this branch is on an old base, **stop and run `circles-stack-rebase`**. Do not open the PR until
    the stack is current. "Always stacked on the latest commits" is not optional.
-4. Record the position: `level n of m`, and the PRs below.
+4. Note the position (`level n of m`, and the PRs below) for the report to the user. It is not
+   written into the PR title or description.
 
 ## Open it
 
 1. Title from `circles-pr-title` (`KEY-n : <summary>`), body from `circles-pr-description` (which
-   starts with the ticket link), with the Stack section filled from the check above. Print both in
-   full.
+   starts with the ticket link). Print both in full. The body has no Stack section.
 2. Push: `git push -u origin <branch>`. Never to `main`. Never `--force` without an explicit lease
    and the owner's approval.
 3. Create: `gh pr create --base main --head <branch> --title "<title>" --body-file <file>` as
