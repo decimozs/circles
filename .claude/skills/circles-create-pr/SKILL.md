@@ -18,14 +18,16 @@ PRs below it.
 
 ## Preconditions
 
-1. **Branch.** Not `main`. The name matches `circles-pr-branch`. Otherwise stop.
+1. **Ticket and branch.** The branch is `<type>/<KEY-n>-<slug>` (see `circles-pr-branch`), not
+   `main`, and the ticket exists and is not an Epic. Read it for its summary and acceptance
+   criteria. No ticket means no PR: file it with `circles-jira-tickets` first.
 2. **Identity.** `git config user.name`, `git config user.email`, `git rev-parse --absolute-git-dir`:
    `decimozs <marlonadiguemartin548@gmail.com>`, under `~/Personal/`. `gh auth status` must show
    `decimozs` active (never `Alfa-Marlon`). Commits SSH-signed with the personal key. Mismatch means
    stop.
 3. **Clean tree.** Nothing uncommitted. Commits go through `circles-atomic-commit`; check
-   `git log origin/main..HEAD` follows it (conventional subjects, no attribution). If not, fix with
-   that skill first.
+   `git log origin/main..HEAD` follows it (conventional subjects each ending `(KEY-n)` with the
+   branch's key, no attribution). If not, fix with that skill first.
 4. **Checks green on this HEAD.** The set from `circles-atomic-commit` step 3, for what changed. Keep
    the decisive output for the Evidence section. Do not open a PR over a failing check.
 
@@ -43,8 +45,9 @@ PRs below it.
 
 ## Open it
 
-1. Title from `circles-pr-title`, body from `circles-pr-description`, with the Stack section
-   filled from the check above. Print both in full.
+1. Title from `circles-pr-title` (`KEY-n : <summary>`), body from `circles-pr-description` (which
+   starts with the ticket link), with the Stack section filled from the check above. Print both in
+   full.
 2. Push: `git push -u origin <branch>`. Never to `main`. Never `--force` without an explicit lease
    and the owner's approval.
 3. Create: `gh pr create --base main --head <branch> --title "<title>" --body-file <file>` as
@@ -54,11 +57,13 @@ PRs below it.
    the body has no template comments left, and no attribution.
 5. Print the URL, the stack position, and one line on how to merge: merge the tip, with a merge
    commit.
-6. CI: report `gh pr checks <n>` once if asked. Do not poll in a loop.
+6. Offer, and do not do, a Jira comment with the PR link and the filled acceptance-criteria table.
+   That is a write and needs its own approval.
+7. CI: report `gh pr checks <n>` once if asked. Do not poll in a loop.
 
 ## Never
 
 - Merge, approve, enable auto-merge, or push to `main`.
 - Target another PR's branch as the base. Every PR in the stack targets `main`.
-- Open a PR for a branch that is behind `origin/main` or not on the stack tip.
+- Open a PR without a ticket, for a branch that is behind `origin/main`, or not on the stack tip.
 - Reuse another PR's body.
