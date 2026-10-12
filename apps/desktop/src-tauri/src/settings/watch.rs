@@ -73,6 +73,21 @@ mod tests {
         false
     }
 
+    /// Waits until nothing more is reported. The file was written just before watching, and macOS
+    /// can deliver that creation late, so what is counted before a check is not zero.
+    fn settle(count: &AtomicUsize) -> usize {
+        let mut last = count.load(Ordering::SeqCst);
+        for _ in 0..10 {
+            std::thread::sleep(Duration::from_millis(600));
+            let now = count.load(Ordering::SeqCst);
+            if now == last {
+                return now;
+            }
+            last = now;
+        }
+        last
+    }
+
     #[test]
     fn an_edit_by_hand_is_reported_and_other_files_are_not() {
         let tmp = tempfile::tempdir().unwrap();
@@ -87,22 +102,26 @@ mod tests {
                 counter.fetch_add(1, Ordering::SeqCst);
             })
             .unwrap();
-        std::thread::sleep(Duration::from_millis(300));
+        let baseline = settle(&hits);
 
         std::fs::write(folder.join("notes.txt"), "not a settings file").unwrap();
         std::thread::sleep(Duration::from_millis(700));
-        assert_eq!(hits.load(Ordering::SeqCst), 0);
+        assert_eq!(
+            hits.load(Ordering::SeqCst),
+            baseline,
+            "another file is not reported"
+        );
 
         std::fs::write(&file, "[general]\nsound = false\n").unwrap();
-        assert!(wait_for(&hits, 1), "the edit is reported");
+        assert!(wait_for(&hits, baseline + 1), "the edit is reported");
         std::thread::sleep(Duration::from_millis(700));
         assert!(
-            hits.load(Ordering::SeqCst) <= 2,
+            hits.load(Ordering::SeqCst) <= baseline + 2,
             "one burst is not reported many times"
         );
 
         watcher.stop();
-        let before = hits.load(Ordering::SeqCst);
+        let before = settle(&hits);
         std::fs::write(&file, "[general]\nsound = true\n").unwrap();
         std::thread::sleep(Duration::from_millis(800));
         assert_eq!(
