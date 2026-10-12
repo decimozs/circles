@@ -1,6 +1,6 @@
 ## Description
-<!-- First line: the ticket link, when there is a ticket. Then 1 to 3 sentences: what was wrong or wanted, and why. -->
-**Ticket:** <https://your-site.atlassian.net/browse/KEY-n, or "None">
+<!-- First line: the ticket link. Every PR has exactly one ticket. Then 1 to 3 sentences: what was wrong or wanted, and why. -->
+**Ticket:** <https://your-site.atlassian.net/browse/KEY-n>
 
 ## Summary
 - <what a reviewer should know in ten seconds>
@@ -24,7 +24,7 @@ cargo test --workspace   # <n passed>
 ```
 
 ## Acceptance Criteria
-<!-- Only with a ticket: copy its table and fill Result and Evidence. Otherwise delete this section. -->
+<!-- Copy the table from the ticket and fill Result and Evidence. Never Pass without evidence. -->
 
 | # | Criterion (Given / When / Then) | Expected | Result | Evidence |
 |---|---|---|---|---|
