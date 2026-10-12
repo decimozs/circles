@@ -123,7 +123,9 @@ mod tests {
             4,
             "two on the branch, one on base, the shared root"
         );
-        let tip = &g.commits[0];
+        // The branch's own tip carries the checked out marker. Which of the two tips comes first
+        // is not defined when their commits fall in the same second, so it is looked up.
+        let tip = g.commits.iter().find(|c| c.subject == "feature 2").unwrap();
         assert!(tip
             .refs
             .iter()
