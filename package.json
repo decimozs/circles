@@ -1,0 +1,30 @@
+{
+  "name": "circles-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@12.8.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @circles/desktop dev",
+    "build": "pnpm --filter @circles/desktop build",
+    "tauri": "pnpm --filter @circles/desktop tauri",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:rust": "cargo test --workspace",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check": "pnpm --filter @circles/desktop check:tokens && pnpm --filter @circles/desktop check:contrast",
+    "check:tokens": "pnpm --filter @circles/desktop check:tokens",
+    "check:contrast": "pnpm --filter @circles/desktop check:contrast",
+    "check:rust": "cargo check --workspace",
+    "gen:types": "pnpm --filter @circles/desktop gen:types",
+    "model:fetch": "bash scripts/fetch-model.sh",
+    "model:check": "bash scripts/check-model.sh"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:"
+  }
+}

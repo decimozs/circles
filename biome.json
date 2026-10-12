@@ -1,0 +1,87 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!target",
+      "!**/src-tauri/gen",
+      "!**/dist",
+      "!packages/bindings/src",
+      "!packages/ui/src/components"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended"
+    },
+    "domains": {
+      "react": "recommended"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": [
+                      "@tauri-apps/**",
+                      "@circles/desktop",
+                      "@circles/desktop/**",
+                      "@circles/web",
+                      "@circles/web/**",
+                      "@circles/mobile",
+                      "@circles/mobile/**"
+                    ],
+                    "message": "A shared package must not depend on an app or on Tauri."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/**", "apps/mobile/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["@circles/desktop", "@circles/desktop/**", "@tauri-apps/**"],
+                    "message": "An app must not import another app, and only the desktop talks to Tauri."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

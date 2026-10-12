@@ -1,0 +1,4 @@
+[env]
+# ts-rs writes generated TypeScript types here (`pnpm gen:types`).
+# Lives at the repo root so it applies from the root and from every member.
+TS_RS_EXPORT_DIR = { value = "packages/bindings/src", relative = true }

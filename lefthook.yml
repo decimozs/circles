@@ -1,0 +1,16 @@
+# Git hooks. Install lefthook (brew install lefthook), then `lefthook install`.
+# Nothing here is heavy: the full checks run in CI and with scripts/test-all.sh.
+pre-commit:
+  parallel: true
+  jobs:
+    - name: biome
+      glob: "*.{ts,tsx,js,mjs,json,css}"
+      run: pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+    - name: rustfmt
+      glob: "*.rs"
+      run: cargo fmt --all --check
+
+pre-push:
+  jobs:
+    - name: typecheck
+      run: pnpm typecheck
