@@ -1,7 +1,7 @@
 /** Settings pages, shared by the settings screens (phase 13) and the command palette. */
 export const SETTINGS_PAGES = [
   { id: "general", title: "General", group: "Personal" },
-  { id: "account", title: "Account", group: "Personal" },
+  { id: "account", title: "Accounts", group: "Personal" },
   { id: "appearance", title: "Appearance", group: "Personal" },
   { id: "models", title: "Default models", group: "Personal" },
   { id: "git", title: "Git", group: "Personal" },

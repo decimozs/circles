@@ -215,13 +215,23 @@ export const SETTINGS: SettingDef[] = [
     keywords: "name email identity",
   },
   {
-    id: "account",
+    id: "github_account",
     page: "account",
-    title: "Account",
-    description: "Sign in arrives with accounts. Circles runs fully on this machine until then.",
+    title: "GitHub",
+    description:
+      "The GitHub account Circles works as, through the GitHub CLI. Switch account changes the one the CLI uses.",
     path: [],
     control: { kind: "custom" },
-    keywords: "login profile",
+    keywords: "login profile github gh sign in account switch",
+  },
+  {
+    id: "claude_account",
+    page: "account",
+    title: "Claude",
+    description: "The Claude account Claude Code is signed in with, and its plan.",
+    path: [],
+    control: { kind: "custom" },
+    keywords: "login profile claude anthropic subscription plan sign in account",
   },
   {
     id: "claude_path",
