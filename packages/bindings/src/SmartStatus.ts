@@ -2,6 +2,6 @@
 
 export type SmartStatus = { 
 /**
- * The model file is in place.
+ * Claude Code was found, so Haiku can be asked.
  */
-embedded_available: boolean, provider: string, };
+available: boolean, };

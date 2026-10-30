@@ -20,9 +20,7 @@
     "check:tokens": "pnpm --filter @circles/desktop check:tokens",
     "check:contrast": "pnpm --filter @circles/desktop check:contrast",
     "check:rust": "cargo check --workspace",
-    "gen:types": "pnpm --filter @circles/desktop gen:types",
-    "model:fetch": "bash scripts/fetch-model.sh",
-    "model:check": "bash scripts/check-model.sh"
+    "gen:types": "pnpm --filter @circles/desktop gen:types"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:"

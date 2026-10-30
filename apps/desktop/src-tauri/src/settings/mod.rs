@@ -137,7 +137,8 @@ pub struct ComposerSettings {
     pub notify_waiting: Option<bool>,
 }
 
-/// Titles and suggestions made by a small model.
+/// Titles and suggestions made by Claude Haiku through Claude Code, which spends the Claude
+/// subscription and sends the text to Anthropic.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TS, PartialEq)]
 #[ts(export)]
 pub struct SmartSettings {
@@ -148,9 +149,6 @@ pub struct SmartSettings {
     /// A model writes an example of what to ask a Composer, from its instructions, as the
     /// placeholder of its first message box. On unless switched off.
     pub first_prompt: Option<bool>,
-    /// `embedded` (the model inside Circles), `claude` (Claude Haiku through Claude Code, which
-    /// spends the subscription and sends the text to Anthropic) or `off`.
-    pub provider: Option<String>,
 }
 
 /// Cards that agents show in the chat to ask for choices and details.

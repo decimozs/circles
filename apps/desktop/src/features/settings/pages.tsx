@@ -249,9 +249,9 @@ function SmartTestRow({ def, highlight }: { def: SettingDef; highlight?: string 
           <Button size="sm" variant="outline" disabled={busy} onClick={run}>
             {busy ? "Running…" : "Try it"}
           </Button>
-          {status.data && !status.data.embedded_available && status.data.provider === "embedded" ? (
+          {status.data && !status.data.available ? (
             <span role="alert" className="text-warning">
-              The built-in model file was not found in this copy of Circles.
+              Claude Code was not found, so nothing can be named or suggested. See Agents.
             </span>
           ) : null}
         </div>
@@ -484,12 +484,6 @@ export function CustomRow({
       return <ClaudeCheckRow def={def} highlight={highlight} />;
     case "env_vars":
       return <EnvRow def={def} view={view} highlight={highlight} />;
-    case "smart_notice":
-      return (
-        <SettingRow title={def.title} description={def.description} highlight={highlight}>
-          {null}
-        </SettingRow>
-      );
     case "smart_test":
       return <SmartTestRow def={def} highlight={highlight} />;
     case "jira_card":

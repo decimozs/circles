@@ -40,7 +40,6 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": ["resources/models/*"],
     "macOS": {
       "minimumSystemVersion": "11.0"
     }

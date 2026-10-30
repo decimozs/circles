@@ -32,7 +32,7 @@ export function defaultBackend() {
     .on("genui_cards", [])
     .on("genui_pending", [])
     .on("smart_suggest", null)
-    .on("smart_status", { embedded_available: true, provider: "embedded" })
+    .on("smart_status", { available: true })
     .on("jira_status", {
       connected: false,
       site: null,

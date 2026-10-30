@@ -17,8 +17,6 @@ else
 fi
 
 # shellcheck disable=SC2086
-# The title model is packed into the app, so it has to be there and be the right file.
-bash scripts/check-model.sh
 pnpm tauri build --bundles dmg $TARGET
 
 DMG=$(find target -name '*.dmg' -print0 | xargs -0 ls -t | head -1)
