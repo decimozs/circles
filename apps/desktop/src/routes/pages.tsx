@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@circles/ui/components/dialog";
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, Navigate, useParams } from "react-router";
 import { ChatPanel } from "@/features/chat/chat-panel";
 import { DiffView } from "@/features/diff/diff-view";
 import { useFilesWatcher } from "@/features/files/api";
@@ -17,7 +17,7 @@ import { ErrorMessage } from "@/features/projects/error-message";
 import { ProjectList } from "@/features/projects/project-list";
 import { useRestoreWorkspace, useWorkspace } from "@/features/workspaces/api";
 import { WorkspaceList } from "@/features/workspaces/workspace-list";
-import { ipc } from "@/lib/ipc";
+import { IpcError, ipc } from "@/lib/ipc";
 import { useReview } from "@/stores/review";
 
 export function WorkspacePage() {
@@ -34,6 +34,10 @@ export function WorkspacePage() {
   useFilesWatcher(id);
   useReadinessOnFileChanges(id);
 
+  // A workspace that was deleted leaves its page for Home, which offers to add a project.
+  if (workspace.error instanceof IpcError && workspace.error.code === "not_found") {
+    return <Navigate to="/" replace />;
+  }
   if (workspace.error) {
     return (
       <div className="mx-auto max-w-2xl px-6 py-8">
