@@ -1,6 +1,6 @@
 # Phase 11: Checks, Todos, PRs
 
-> Changed later: the todos were removed, in the app and in the backend (migration `0014_drop_todos`). Nothing about todos below applies any more. A merge is held back by checks, conflicts and requested changes. See `docs/repositories.md`.
+> Changed later: the todos were removed, in the app and in the backend (migration `0014_drop_todos`). Nothing about todos below applies any more. A merge is held back by checks, conflicts and requested changes. See `docs/pull-requests.md`.
 
 ## Goal
 Merge readiness: Checks tab, merge-blocking todos, PR creation and updates via `gh`, and the "suggested next action" button.

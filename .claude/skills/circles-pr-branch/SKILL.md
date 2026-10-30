@@ -17,7 +17,7 @@ description: >-
 
 **Every change has a ticket, even a small one.** No ticket means no branch: file it first with
 `circles-jira-tickets` (draft, then the user's approval), then come back. The one exception is
-the bootstrap in `CLAUDE.md`, while `docs/JIRA.md` has no project key yet.
+the bootstrap in `CLAUDE.md`, while `.github/JIRA.md` has no project key yet.
 
 - `type`: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `ci`, `build`, `style`, `revert`.
 - `slug`: lowercase words joined by dashes, 2 to 6 words, at most 40 characters, filler words removed

@@ -135,7 +135,7 @@ describe("Composers settings", () => {
 /**
  * Runs axe. Contrast has its own check, and jsdom cannot measure it. The chat tabs put a close
  * button inside each tab, which axe reports. That is from the chat (phase 9), is listed as a gap
- * in `docs/composers/status.md`, and is the only thing left out here.
+ * in `docs/internal/composers/status.md`, and is the only thing left out here.
  */
 async function violations() {
   const result = await axe.run(document.body, {

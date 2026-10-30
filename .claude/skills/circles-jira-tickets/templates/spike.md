@@ -14,7 +14,7 @@
 - Production code. Throwaway prototypes only, not merged.
 
 ## Expected Output
-- A written findings document at `docs/spikes/<slug>.md` with the recommendation, the evidence and follow-up tickets.
+- A written findings document at `docs/internal/spikes/<slug>.md` with the recommendation, the evidence and follow-up tickets.
 
 ## Acceptance Criteria
 

@@ -4,7 +4,7 @@ A local desktop app that runs Claude Code agents in parallel, each in its own gi
 Composers that orchestrate them. Tauri 2 (Rust) and React 19, in a pnpm and Cargo monorepo.
 
 Layout: `apps/desktop` (the app), `packages/ui`, `packages/bindings` (generated, never edited by
-hand), `packages/config`. Docs: `docs/`, notably `docs/JIRA.md` and `docs/phases/`.
+hand), `packages/config`. Docs: `docs/` is the user guide, `docs/internal/` holds the plans and audits, and `.github/JIRA.md` holds the Jira conventions.
 
 ## Hard rules
 
@@ -42,9 +42,9 @@ hand), `packages/config`. Docs: `docs/`, notably `docs/JIRA.md` and `docs/phases
 
 ## Bootstrap
 
-While `docs/JIRA.md` has no site and project key, a ticket cannot exist. Until they are set, the
+While `.github/JIRA.md` has no site and project key, a ticket cannot exist. Until they are set, the
 only change allowed without a ticket is the one that records them, and anything the user explicitly
-tells you is part of setting up this process (the skills, this file, `docs/JIRA.md`, the PR
+tells you is part of setting up this process (the skills, this file, `.github/JIRA.md`, the PR
 template). Once they are set, this section no longer applies.
 
 ## Commands
