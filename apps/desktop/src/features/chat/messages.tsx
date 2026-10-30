@@ -74,7 +74,7 @@ export function SystemNote({ text, tone }: { text: string; tone: "info" | "error
     <p
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "text-center text-xs",
+        "px-1.5 text-left text-xs",
         tone === "error" ? "text-destructive" : "text-muted-foreground",
       )}
     >
