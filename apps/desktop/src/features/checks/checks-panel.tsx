@@ -127,7 +127,7 @@ function ThreadRow({ workspaceId, thread }: { workspaceId: string; thread: Revie
   );
 }
 
-/** Where the branch stands: git, the pull request, checks, deployments, reviews and todos. */
+/** Where the branch stands: git, the pull request, checks, deployments and reviews. */
 export function ChecksPanel({ workspaceId }: { workspaceId: string }) {
   const readiness = useReadiness(workspaceId);
   const refresh = useRefreshPr(workspaceId);

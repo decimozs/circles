@@ -462,9 +462,7 @@ impl Dispatcher {
             && input["override_blockers"].as_bool() == Some(true)
             && !policy.allow_override
         {
-            return deny(
-                "This Composer may not merge past failing checks, conflicts or open todos.".into(),
-            );
+            return deny("This Composer may not merge past failing checks or conflicts.".into());
         }
         let project = self.runtime.project_of(tool, &input).await;
         if let Some(project) = &project {

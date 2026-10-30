@@ -9,7 +9,7 @@ import type { SectionError } from "./SectionError";
 /**
  * Everything the top bar and the Checks tab need to know to say what to do next.
  */
-export type Readiness = { git: GitState, pr: PrStatus | null, checks: CheckSummary, unresolved_threads: number, open_todos: number, blockers: Array<Blocker>, next_action: NextAction, 
+export type Readiness = { git: GitState, pr: PrStatus | null, checks: CheckSummary, unresolved_threads: number, blockers: Array<Blocker>, next_action: NextAction, 
 /**
  * Nothing holds the merge back.
  */

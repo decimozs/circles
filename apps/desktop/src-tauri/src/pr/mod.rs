@@ -1,10 +1,9 @@
-//! Getting a workspace's branch merged: pull request, checks, reviews and todos.
+//! Getting a workspace's branch merged: pull request, checks, and reviews.
 
 pub mod commits;
 pub mod decide;
 pub mod draft;
 pub mod prompts;
-pub mod todos;
 
 use std::path::Path;
 use std::sync::Arc;
@@ -21,7 +20,6 @@ use crate::github::{Gh, GhError};
 use crate::review::changes::base_ref;
 use crate::workspace::Workspace;
 use decide::{Blocker, Facts, NextAction};
-use todos::TodoStore;
 
 /// What git says about the branch.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
@@ -88,7 +86,6 @@ pub struct Readiness {
     pub pr: Option<PrStatus>,
     pub checks: CheckSummary,
     pub unresolved_threads: u32,
-    pub open_todos: u32,
     pub blockers: Vec<Blocker>,
     pub next_action: NextAction,
     /// Nothing holds the merge back.
@@ -101,7 +98,6 @@ pub struct Readiness {
 pub struct PrService {
     pub git: Git,
     pub gh: Gh,
-    pub todos: TodoStore,
     pub db: Arc<Db>,
 }
 
@@ -156,12 +152,10 @@ impl PrService {
     /// answer then rests on git alone.
     pub async fn readiness(&self, ws: &Workspace, cwd: &Path) -> AppResult<Readiness> {
         let git = self.git_state(ws, cwd).await?;
-        let open_todos = self.todos.open_count(&ws.id)?;
         let mut facts = Facts {
             dirty: git.dirty,
             ahead: git.ahead,
             conflicts_with_base: git.conflicts_with_base,
-            open_todos,
             ..Facts::default()
         };
         let mut gh_error = None;
@@ -210,7 +204,6 @@ impl PrService {
             git,
             checks,
             unresolved_threads: facts.unresolved_threads,
-            open_todos,
             next_action,
             ready: decide::ready_to_merge(&facts),
             blockers,
@@ -441,7 +434,6 @@ esac
         let service = PrService {
             git,
             gh: Gh::new(Arc::new(gh_env)),
-            todos: TodoStore::new(db.clone()),
             db,
         };
         Rig {
@@ -652,38 +644,6 @@ esac
         assert!(r.calls().contains("pr merge 5 --squash"));
         let after = r.service.readiness(&r.ws, &r.dir).await.unwrap();
         assert_eq!(after.next_action, NextAction::Archive);
-    }
-
-    #[tokio::test]
-    async fn open_todos_block_the_merge_until_the_user_overrides() {
-        let r = rig().await;
-        r.put("pr.json", OPEN_PR);
-        r.put(
-            "checks.json",
-            r#"[{"name":"build","bucket":"pass","state":"SUCCESS","link":""}]"#,
-        );
-        let todo = r
-            .service
-            .todos
-            .create("w1", "Update the docs", todos::TodoSource::User)
-            .unwrap();
-
-        let err = r
-            .service
-            .merge(&r.ws, &r.dir, MergeMethod::Merge, false)
-            .await
-            .unwrap_err();
-        assert_eq!(err.code(), "invalid");
-        assert!(err.to_string().contains("1 todo is still open"), "{err}");
-        assert!(!r.calls().contains("pr merge"));
-
-        // Completing it clears the way without an override.
-        r.service.todos.set_done(&todo.id, true).unwrap();
-        r.service
-            .merge(&r.ws, &r.dir, MergeMethod::Merge, false)
-            .await
-            .unwrap();
-        assert!(r.calls().contains("pr merge 5 --merge"));
     }
 
     #[tokio::test]

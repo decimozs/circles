@@ -26,7 +26,6 @@ All open questions are answered (see the README). This is what gets built.
 | `start_chat` | write | create chat and send the task | no |
 | `send_message` | write | `SessionManager::send` | no |
 | `interrupt_chat` | write | `SessionManager::interrupt` | yes |
-| `add_todo` | write | `TodoStore::create` | no |
 | `add_local_project` | write | `ProjectService::add_local` | no |
 | `clone_github_project` | write | `ProjectService::add_github` | no |
 | `quick_start_project` | write | `ProjectService::quick_start` | no |

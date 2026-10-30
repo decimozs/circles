@@ -94,13 +94,18 @@ describe("next action in the top bar", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
 
-  it("holds the merge back for open todos until the user chooses to merge anyway", async () => {
+  it("holds the merge back for a blocker until the user chooses to merge anyway", async () => {
     const app = open(
       readiness({
         pr: prStatus(),
         next_action: "merge",
-        open_todos: 2,
-        blockers: [{ kind: "todos", message: "2 todos are still open.", overridable: true }],
+        blockers: [
+          {
+            kind: "changes_requested",
+            message: "A reviewer asked for changes.",
+            overridable: true,
+          },
+        ],
       }),
       () => backend.on("pr_merge", prStatus({ state: "merged" })),
     );
@@ -109,7 +114,7 @@ describe("next action in the top bar", () => {
     ).not.toBeInTheDocument();
     await app.user.click(await within(await nextStep()).findByRole("button", { name: "Merge" }));
     const dialog = await screen.findByRole("dialog");
-    expect(dialog).toHaveTextContent("2 todos are still open.");
+    expect(dialog).toHaveTextContent("A reviewer asked for changes.");
     const merge = within(dialog).getByRole("button", { name: "Merge" });
     expect(merge).toBeDisabled();
     await app.user.click(within(dialog).getByLabelText("Merge anyway"));

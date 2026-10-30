@@ -16,14 +16,12 @@ pub struct Facts {
     pub pr: Option<PrStatus>,
     pub checks: Vec<Check>,
     pub unresolved_threads: u32,
-    pub open_todos: u32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, TS)]
 #[serde(rename_all = "snake_case")]
 #[ts(export)]
 pub enum BlockerKind {
-    Todos,
     ChecksFailing,
     ChecksPending,
     Conflicts,
@@ -129,16 +127,6 @@ pub fn blockers(facts: &Facts) -> Vec<Blocker> {
         out.push(Blocker {
             kind: BlockerKind::ChangesRequested,
             message,
-            overridable: true,
-        });
-    }
-    if facts.open_todos > 0 {
-        out.push(Blocker {
-            kind: BlockerKind::Todos,
-            message: format!(
-                "{} still open.",
-                plural(facts.open_todos, "todo is", "todos are")
-            ),
             overridable: true,
         });
     }
@@ -310,21 +298,6 @@ mod tests {
     }
 
     #[test]
-    fn open_todos_block_the_merge_but_the_merge_is_still_the_next_step() {
-        let mut f = facts(Some(pr(|_| {})));
-        f.open_todos = 3;
-        assert_eq!(next_action(&f), NextAction::Merge);
-        let b = blockers(&f);
-        assert_eq!(b.len(), 1);
-        assert_eq!(b[0].kind, BlockerKind::Todos);
-        assert_eq!(b[0].message, "3 todos are still open.");
-        assert!(b[0].overridable);
-        assert!(!ready_to_merge(&f));
-        f.open_todos = 1;
-        assert_eq!(blockers(&f)[0].message, "1 todo is still open.");
-    }
-
-    #[test]
     fn a_draft_cannot_be_merged_even_with_an_override() {
         let f = facts(Some(pr(|p| p.is_draft = true)));
         assert_eq!(next_action(&f), NextAction::None);
@@ -343,10 +316,7 @@ mod tests {
             next_action(&facts(Some(pr(|p| p.state = PrState::Closed)))),
             NextAction::None
         );
-        let merged = Facts {
-            open_todos: 5,
-            ..facts(Some(pr(|p| p.state = PrState::Merged)))
-        };
+        let merged = facts(Some(pr(|p| p.state = PrState::Merged)));
         assert!(blockers(&merged).is_empty());
     }
 }

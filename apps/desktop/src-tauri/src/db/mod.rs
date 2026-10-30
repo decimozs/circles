@@ -59,6 +59,10 @@ const MIGRATIONS: &[(&str, &str)] = &[
         "0013_ui_cards",
         include_str!("migrations/0013_ui_cards.sql"),
     ),
+    (
+        "0014_drop_todos",
+        include_str!("migrations/0014_drop_todos.sql"),
+    ),
 ];
 
 pub struct Db {
@@ -176,7 +180,6 @@ mod tests {
             "processes",
             "projects",
             "sessions",
-            "todos",
             "workspaces",
         ] {
             assert!(
@@ -227,15 +230,15 @@ mod tests {
                 "INSERT INTO projects VALUES ('p','n','/p','main',NULL,1,1);
                  INSERT INTO workspaces (id,project_id,city,branch,base_branch,path,state,created_at,updated_at)
                    VALUES ('w','p','Oslo','b','main','/w','ready',1,1);
-                 INSERT INTO todos (id,workspace_id,text,created_at) VALUES ('t','w','x',1);
+                 INSERT INTO ports (workspace_id,base_port,allocated_at) VALUES ('w',3000,1);
                  DELETE FROM workspaces WHERE id='w';",
             )
         })
         .unwrap();
-        let todos: i64 = db
-            .read(|c| c.query_row("SELECT COUNT(*) FROM todos", [], |r| r.get(0)))
+        let ports: i64 = db
+            .read(|c| c.query_row("SELECT COUNT(*) FROM ports", [], |r| r.get(0)))
             .unwrap();
-        assert_eq!(todos, 0);
+        assert_eq!(ports, 0);
     }
 
     #[test]
