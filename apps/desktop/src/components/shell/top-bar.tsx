@@ -103,7 +103,7 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
       ) : null}
       {onSettings ? (
         // The settings file is opened from the top bar, at the right, whichever page is shown.
-        <div className="pointer-events-auto ml-auto flex shrink-0 items-center">
+        <div className="pointer-events-auto mt-2 ml-auto flex shrink-0 items-center">
           <OpenFileMenu projectId={settingsRoute.repoId} />
         </div>
       ) : null}
