@@ -474,6 +474,7 @@ mod tests {
             &pending.files,
             &pending.diff,
             &crate::settings::Instructions::default(),
+            &crate::pr::docs::RepoDocs::default(),
         );
         let env = crate::env::resolve().await;
         let answer = crate::pr::draft::run_once(&env, &r.dir, &prompt, "haiku")

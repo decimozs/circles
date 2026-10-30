@@ -246,6 +246,7 @@ mod tests {
             &["Add a greeting".into()],
             "diff --git a/hello.py b/hello.py\n+++ b/hello.py\n+print(\"hello\")\n",
             &crate::settings::Instructions::default(),
+            &crate::pr::docs::RepoDocs::default(),
         );
         let answer = run_once(&env, tmp.path(), &prompt, "haiku").await.unwrap();
         println!("{answer}");

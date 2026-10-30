@@ -2,6 +2,7 @@
 
 pub mod commits;
 pub mod decide;
+pub mod docs;
 pub mod draft;
 pub mod prompts;
 

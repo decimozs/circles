@@ -1,5 +1,6 @@
 //! The messages that start an agent on a task, with the repository's own instructions added.
 
+use super::docs::{section, RepoDocs};
 use crate::github::pr::{Check, ReviewThread};
 use crate::settings::Instructions;
 
@@ -107,6 +108,7 @@ pub fn draft_pr(
     commits: &[String],
     changes: &str,
     instructions: &Instructions,
+    docs: &RepoDocs,
 ) -> String {
     let mut body = format!(
         "Write the title and description for a pull request of this branch into {base}. The \
@@ -129,6 +131,7 @@ pub fn draft_pr(
             body.push_str("(The diff was cut here because it is long.)\n");
         }
     }
+    body.push_str(&section(docs, true));
     body.push_str(&format!(
         "\nDo not use any tool, do not change any files and do not create the pull request. Do not add a line that credits Claude or Claude Code. Reply with one fenced code \
          block labelled {PR_FENCE} that holds a JSON object with \"title\" and \"body\" (markdown)."
@@ -148,6 +151,7 @@ pub fn commit_plan(
     files: &[(String, String)],
     changes: &str,
     instructions: &Instructions,
+    docs: &RepoDocs,
 ) -> String {
     let mut body = String::from(
         "Split these uncommitted changes into atomic commits: each commit is one logical change \
@@ -168,6 +172,7 @@ pub fn commit_plan(
             body.push_str("(The diff was cut here because it is long.)\n");
         }
     }
+    body.push_str(&section(docs, false));
     body.push_str(&format!(
         "\nDo not use any tool and do not run git. Reply with one fenced code block labelled \
          {COMMITS_FENCE} that holds a JSON array of objects with \"message\" and \"files\" (the \
@@ -337,6 +342,7 @@ mod tests {
             &["Add login".into(), "Fix typo".into()],
             "diff --git a/x b/x\n+hello",
             &instructions(),
+            &RepoDocs::default(),
         );
         assert!(text.contains("into main"));
         assert!(text.contains("- Add login\n- Fix typo"));
@@ -351,10 +357,18 @@ mod tests {
             &[],
             &"x".repeat(DIFF_LIMIT + 50),
             &Instructions::default(),
+            &RepoDocs::default(),
         );
         assert!(long.contains("The diff was cut here"));
         assert!(!long.contains(&"x".repeat(DIFF_LIMIT + 1)));
-        assert!(!draft_pr("main", &[], "", &Instructions::default()).contains("Changes:"));
+        assert!(!draft_pr(
+            "main",
+            &[],
+            "",
+            &Instructions::default(),
+            &RepoDocs::default()
+        )
+        .contains("Changes:"));
     }
 
     #[test]
@@ -369,13 +383,33 @@ mod tests {
                 commits: Some("Conventional commits.".into()),
                 ..Instructions::default()
             },
+            &RepoDocs::default(),
         );
         assert!(text.contains("- M src/a.ts\n- A new.ts"));
         assert!(text.contains("```diff"));
         assert!(text.contains("circles-commits"));
         assert!(text.contains("Do not use any tool"));
         assert!(text.contains("Repository instructions:\nConventional commits."));
-        assert!(!commit_plan(&[], "", &Instructions::default()).contains("Changes:"));
+        assert!(
+            !commit_plan(&[], "", &Instructions::default(), &RepoDocs::default())
+                .contains("Changes:")
+        );
+    }
+
+    #[test]
+    fn what_the_repository_wrote_down_goes_into_the_prompts() {
+        let docs = RepoDocs {
+            pr_template: Some("## Summary\n## Test plan".into()),
+            conventions: Some("From CLAUDE.md:\nTitles start with the ticket.".into()),
+        };
+        let pr = draft_pr("main", &[], "", &Instructions::default(), &docs);
+        assert!(pr.contains("```markdown\n## Summary\n## Test plan\n```"));
+        assert!(pr.contains("Titles start with the ticket."));
+        // The template and the rules come before the request for the answer.
+        assert!(pr.find("## Summary").unwrap() < pr.find("circles-pr").unwrap());
+        let commits = commit_plan(&[], "", &Instructions::default(), &docs);
+        assert!(commits.contains("Titles start with the ticket."));
+        assert!(!commits.contains("## Test plan"));
     }
 
     #[test]
