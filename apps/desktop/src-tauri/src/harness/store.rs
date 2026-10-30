@@ -330,6 +330,18 @@ impl SessionStore {
         Ok(())
     }
 
+    /// Forgets Claude's own session id, so the next message starts a new session.
+    pub fn forget_claude_session(&self, id: &str) -> AppResult<()> {
+        self.db.write(|c| {
+            c.execute(
+                "UPDATE sessions SET claude_session_id = NULL, fork_of = NULL, updated_at = ?1
+                 WHERE id = ?2",
+                params![now_ms(), id],
+            )
+        })?;
+        Ok(())
+    }
+
     /// What the chat's agent is told before its next message, after its session was started over.
     /// Read once: it is cleared as it is taken.
     pub fn take_replay_context(&self, id: &str) -> AppResult<Option<String>> {

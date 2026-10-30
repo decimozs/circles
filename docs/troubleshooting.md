@@ -27,6 +27,9 @@ Run `gh auth login` in a terminal. Install the CLI first with `brew install gh` 
 **git is missing**
 Run `xcode-select --install`.
 
+**"Claude Code cannot find this conversation" after changing the Claude account**
+Claude Code keeps each conversation in its config folder (`CLAUDE_CONFIG_DIR`, `~/.claude` by default). A chat that began under one account or folder cannot be resumed under another. Send your message again: Circles continues in a new session and tells it what was said before. Tool output from earlier turns is not carried over, only what was said and which tools were used.
+
 **A workspace shows an error after a crash or restart**
 Open it and press Restore. Circles repairs a missing worktree from the branch.
 
