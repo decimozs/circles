@@ -6,6 +6,7 @@
 
 pub mod awake;
 pub mod dispatch;
+pub mod improve;
 pub mod launch;
 pub mod mcp;
 pub mod prompt;

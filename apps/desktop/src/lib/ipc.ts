@@ -304,6 +304,8 @@ export const ipc = {
   toolCatalog: () => call<ComposerTool[]>("tool_catalog"),
   composerList: () => call<Composer[]>("composer_list"),
   composerGet: (id: string) => call<Composer>("composer_get", { id }),
+  composerImproveInstructions: (text: string, model?: string) =>
+    call<string>("composer_improve_instructions", { text, model: model ?? null }),
   composerCreate: (input: ComposerInput) => call<Composer>("composer_create", { input }),
   composerUpdate: (id: string, input: ComposerInput) =>
     call<Composer>("composer_update", { id, input }),

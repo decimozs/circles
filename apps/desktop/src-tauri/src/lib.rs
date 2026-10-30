@@ -310,6 +310,7 @@ pub fn run() {
             commands::pr::agent_respond_review,
             commands::pr::agent_resolve_conflicts,
             commands::composer::tool_catalog,
+            commands::composer::composer_improve_instructions,
             commands::composer::composer_list,
             commands::composer::composer_get,
             commands::composer::composer_create,

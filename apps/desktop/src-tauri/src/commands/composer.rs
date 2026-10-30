@@ -36,6 +36,41 @@ pub async fn tool_catalog() -> IpcResult<Vec<ComposerTool>> {
         .collect())
 }
 
+/// Has Claude rewrite instructions into clearer Markdown. Nothing is saved: the person decides.
+#[tauri::command]
+pub async fn composer_improve_instructions(
+    state: State<'_, AppState>,
+    text: String,
+    model: Option<String>,
+) -> IpcResult<String> {
+    if text.trim().is_empty() {
+        return Err(AppError::Invalid(
+            "Write some instructions first, then improve them.".into(),
+        ));
+    }
+    if text.chars().count() > crate::composer::improve::MAX_CHARS {
+        return Err(AppError::Invalid(
+            "The instructions are longer than a Composer takes.".into(),
+        ));
+    }
+    let env = state.env.get().await;
+    let model = model
+        .filter(|m| !m.trim().is_empty())
+        .unwrap_or_else(|| "sonnet".into());
+    // Run away from any project, and without the person's own settings and CLAUDE.md, so only
+    // the prompt shapes the answer.
+    let cwd = std::env::temp_dir();
+    let reply = crate::pr::draft::run_once_with(
+        &env,
+        &cwd,
+        &crate::composer::improve::prompt(&text),
+        &model,
+        &["--setting-sources", "project,local"],
+    )
+    .await?;
+    crate::composer::improve::clean(&reply)
+}
+
 #[tauri::command]
 pub async fn composer_list(state: State<'_, AppState>) -> IpcResult<Vec<Composer>> {
     state.composers.store.list()

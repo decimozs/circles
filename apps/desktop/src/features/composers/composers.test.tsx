@@ -340,6 +340,47 @@ describe("Composer dialog", () => {
     });
   });
 
+  it("improves the instructions with Claude, and brings the old text back with Undo", async () => {
+    seed(() =>
+      backend.on("composer_improve_instructions", "# Goal\n\nGet my tickets and fill them in."),
+    );
+    const app = renderApp("/composers");
+    await app.user.click(await screen.findByRole("button", { name: "New Composer" }));
+    const dialog = await screen.findByRole("dialog", { name: "New Composer" });
+    expect(within(dialog).getByRole("button", { name: "Improve" })).toBeDisabled();
+    await app.user.type(within(dialog).getByLabelText("Instructions"), "get my tickets, fill em");
+    await app.user.click(within(dialog).getByRole("button", { name: "Improve" }));
+    await waitFor(() =>
+      expect(within(dialog).getByLabelText("Instructions")).toHaveValue(
+        "# Goal\n\nGet my tickets and fill them in.",
+      ),
+    );
+    expect(backend.callsTo("composer_improve_instructions")).toEqual([
+      { text: "get my tickets, fill em", model: null },
+    ]);
+    await app.user.click(within(dialog).getByRole("button", { name: "Undo" }));
+    expect(within(dialog).getByLabelText("Instructions")).toHaveValue("get my tickets, fill em");
+    expect(within(dialog).queryByRole("button", { name: "Undo" })).not.toBeInTheDocument();
+  });
+
+  it("leaves the instructions as they were when improving fails", async () => {
+    seed(() =>
+      backend.fail("composer_improve_instructions", {
+        code: "internal",
+        message: "The agent could not draft it: Invalid API key",
+      }),
+    );
+    const app = renderApp("/composers");
+    await app.user.click(await screen.findByRole("button", { name: "New Composer" }));
+    const dialog = await screen.findByRole("dialog", { name: "New Composer" });
+    await app.user.type(within(dialog).getByLabelText("Instructions"), "do it");
+    await app.user.click(within(dialog).getByRole("button", { name: "Improve" }));
+    await waitFor(() => expect(backend.callsTo("composer_improve_instructions")).toHaveLength(1));
+    expect(within(dialog).getByLabelText("Instructions")).toHaveValue("do it");
+    expect(within(dialog).queryByRole("button", { name: "Undo" })).not.toBeInTheDocument();
+    expect(await screen.findByText(/Invalid API key/)).toBeInTheDocument();
+  });
+
   it("puts the mode beside the name, 80% and 20%, and starts in manual", async () => {
     seed(() => backend.on("composer_create", composer()));
     const app = renderApp("/composers");

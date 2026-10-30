@@ -1,10 +1,13 @@
 import { Input } from "@circles/ui/components/input";
 import { Switch } from "@circles/ui/components/switch";
 import { cn } from "@circles/ui/utils";
+import { Loader2Icon, SparklesIcon, Undo2Icon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { JiraIcon } from "@/components/jira-icon";
 import { Markdown } from "@/features/chat/markdown";
 import { useJiraStatus } from "@/features/integrations/api";
+import { ipc } from "@/lib/ipc";
 import { MODES } from "./api";
 import { RepoPicker } from "./repo-picker";
 import { SkillTextarea } from "./skill-textarea";
@@ -157,7 +160,7 @@ export function NameModeFields({
   );
 }
 
-/** The instructions, written as Markdown with a preview. */
+/** The instructions, written as Markdown with a preview, and a button that has Claude improve them. */
 export function InstructionsField({
   value,
   onChange,
@@ -166,11 +169,56 @@ export function InstructionsField({
   onChange: (value: string) => void;
 }) {
   const [view, setView] = useState<"write" | "preview">("write");
+  const [improving, setImproving] = useState(false);
+  // What was there before an improvement, so it can be brought back.
+  const [before, setBefore] = useState<string | null>(null);
+
+  const improve = async () => {
+    const original = value;
+    setImproving(true);
+    try {
+      const improved = await ipc.composerImproveInstructions(original);
+      setBefore(original);
+      onChange(improved);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    } finally {
+      setImproving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-1.5 text-sm">
       <div className="flex items-center justify-between gap-2">
         <span className="font-medium">Instructions</span>
         <div className="flex items-center gap-2">
+          {before !== null && !improving ? (
+            <button
+              type="button"
+              onClick={() => {
+                onChange(before);
+                setBefore(null);
+              }}
+              className="flex items-center gap-1 rounded px-1.5 py-0.5 text-xs text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:bg-muted"
+            >
+              <Undo2Icon className="size-3" />
+              Undo
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={improve}
+            disabled={improving || !value.trim()}
+            title="Rewrite the instructions with Claude as clear Markdown. You can undo it."
+            className="flex items-center gap-1 rounded px-1.5 py-0.5 text-xs text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:bg-muted disabled:opacity-50"
+          >
+            {improving ? (
+              <Loader2Icon className="size-3 animate-spin" />
+            ) : (
+              <SparklesIcon className="size-3" />
+            )}
+            {improving ? "Improving" : "Improve"}
+          </button>
           <span className="text-xs text-muted-foreground">Markdown</span>
           <fieldset aria-label="Instructions view" className="flex rounded-md bg-muted p-0.5">
             {(["write", "preview"] as const).map((mode) => (
@@ -194,6 +242,7 @@ export function InstructionsField({
       {view === "write" ? (
         <SkillTextarea
           aria-label="Instructions"
+          readOnly={improving}
           value={value}
           onValueChange={onChange}
           placeholder="What it should do, how it should work, and what it must never do. Markdown works. Type / to use one of your skills."

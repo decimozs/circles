@@ -58,6 +58,17 @@ pub async fn run_once(
     prompt: &str,
     model: &str,
 ) -> AppResult<String> {
+    run_once_with(env, cwd, prompt, model, &[]).await
+}
+
+/// Like `run_once`, with more arguments for Claude Code, such as which settings to read.
+pub async fn run_once_with(
+    env: &ResolvedEnv,
+    cwd: &Path,
+    prompt: &str,
+    model: &str,
+    extra: &[&str],
+) -> AppResult<String> {
     let bin = env.which("claude").ok_or_else(|| {
         AppError::ClaudeMissing(
             "Claude Code (`claude`) was not found. Install it from https://claude.com/claude-code, then run `claude` once to sign in."
@@ -76,6 +87,7 @@ pub async fn run_once(
         "--output-format",
         "text",
     ])
+    .args(extra)
     .current_dir(cwd)
     .stdin(Stdio::piped())
     .stdout(Stdio::piped())
@@ -181,6 +193,25 @@ mod tests {
             log.contains("Write a title\nfor this"),
             "the prompt goes through stdin: {log}"
         );
+    }
+
+    #[tokio::test]
+    async fn extra_arguments_reach_claude_after_the_fixed_ones() {
+        let tmp = tempfile::tempdir().unwrap();
+        let env = fake(tmp.path(), "#!/bin/sh\necho \"$@\" > \"$LOG\"\necho done\n");
+        let out = run_once_with(
+            &env,
+            tmp.path(),
+            "x",
+            "sonnet",
+            &["--setting-sources", "project,local"],
+        )
+        .await
+        .unwrap();
+        assert_eq!(out.trim(), "done");
+        let log = std::fs::read_to_string(tmp.path().join("log")).unwrap();
+        assert!(log.contains("--tools"), "{log}");
+        assert!(log.contains("--setting-sources project,local"), "{log}");
     }
 
     #[tokio::test]
