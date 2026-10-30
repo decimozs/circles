@@ -1,8 +1,8 @@
 import { cn } from "@circles/ui/utils";
 import { BrainIcon, ChevronRightIcon, Loader2Icon } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { WorkStep } from "./timeline";
-import { ToolCallRow } from "./tool-calls";
+import { ChatStoppedContext, ToolCallRow } from "./tool-calls";
 
 /** Names for a stretch of work. One is picked for each block and stays the same for it. */
 export const WORK_LABELS = [
@@ -36,7 +36,9 @@ type Props = {
 export function WorkBlock({ id, steps, root, liveThinking, working }: Props) {
   const [open, setOpen] = useState(false);
   const calls = steps.filter((s) => s.kind === "tool");
-  const running = working || calls.some((s) => s.call.result === undefined) || !!liveThinking;
+  const stopped = useContext(ChatStoppedContext);
+  const running =
+    working || (!stopped && calls.some((s) => s.call.result === undefined)) || !!liveThinking;
   const failed = calls.filter((s) => s.call.isError).length;
   const label = workLabel(id);
 
