@@ -2,7 +2,7 @@
 
 | # | Threat | What stops it | Phase |
 |---|---|---|---|
-| 1 | The model runs away: spawns agents forever, loops on a tool | `max_steps`, `max_children_at_once`, `max_children_total`, `max_minutes`, `--max-budget-usd`, and the stop-all key | C1, C3 |
+| 1 | The model runs away: spawns agents forever, loops on a tool | the optional `--max-budget-usd`, Claude Code's own rate limits, and the stop-all key | C1, C3 |
 | 2 | Cost grows unseen | The run shows cost like any chat. A spend cap per Composer. A daily cap on triggered runs | C2, C6 |
 | 3 | Text from a pull request, issue, file name, commit message or another agent tells the model to do something harmful | Tool results from outside text are wrapped and labelled as untrusted data. The system prompt says so. Most important, the app enforces autonomy itself: a tool set to `ask` asks no matter what the model was told. The model cannot change autonomy settings, because there is no tool for it | C1, C2, C7 |
 | 4 | The model calls a tool it should not have | Tools set to `off` are not listed by the tool server and are refused if called anyway. Only the Composer's own tools exist | C1 |

@@ -47,7 +47,7 @@ Not built: per-project autonomy overrides.
 
 ## Limits (per Composer, all optional with defaults)
 
-`max_steps` (tool calls per run, default 100), `max_children_at_once` (default 3), `max_children_total` (default 10), `max_minutes` (run wall time, default 120), `max_budget_usd` (passed to Claude Code as `--max-budget-usd`, default none). Reaching one makes the tool return a clear refusal. The model is told, and the person sees it in the run.
+`max_budget_usd` (passed to Claude Code as `--max-budget-usd`, default none). That is the only limit of a run: there is none on tool calls, time, or how many workspaces and chats it starts. A person can stop it, and Claude Code's rate limits apply.
 
 ## Attended and unattended
 
