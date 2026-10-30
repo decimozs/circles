@@ -23,7 +23,7 @@ pub(crate) fn settings_of(state: &AppState) -> SmartSettings {
 
 /// Claude Haiku through Claude Code, when Claude Code is installed.
 pub(crate) async fn provider(state: &AppState) -> Option<Arc<dyn TextModel>> {
-    let env = state.env.get().await;
+    let env = crate::commands::app::env_with_settings(state, None).await;
     let program = env.which("claude")?;
     Some(Arc::new(ClaudeHaiku { program, env }))
 }

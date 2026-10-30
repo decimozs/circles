@@ -105,6 +105,17 @@ impl ResolvedEnv {
         self.vars.keys().map(String::as_str).collect()
     }
 
+    /// This environment with `extra` set on top, which wins over what the login shell gave. For the
+    /// variables a person set in the settings, such as `CLAUDE_CONFIG_DIR`.
+    pub fn with_overrides<I: IntoIterator<Item = (String, String)>>(&self, extra: I) -> Self {
+        let mut vars = self.vars.clone();
+        vars.extend(extra);
+        Self {
+            vars,
+            source: self.source.clone(),
+        }
+    }
+
     #[cfg(test)]
     pub fn with_var(mut self, key: &str, value: &str) -> Self {
         self.vars.insert(key.to_string(), value.to_string());

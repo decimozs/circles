@@ -121,7 +121,13 @@ pub async fn claude_account(state: State<'_, AppState>) -> IpcResult<ClaudeAccou
             fix: None,
         });
     };
-    let env = state.env.get().await;
+    // As the chats see it: the setting for `CLAUDE_CONFIG_DIR` and the like is on top.
+    let env = crate::commands::app::env_with_settings(&state, None).await;
+    Ok(read_claude_account(&path, &env).await)
+}
+
+/// Asks Claude Code at `path`, as `env` has it, who it is signed in as.
+async fn read_claude_account(path: &str, env: &crate::env::ResolvedEnv) -> ClaudeAccount {
     let mut command = tokio::process::Command::new(path);
     env.apply(&mut command);
     command
@@ -134,14 +140,14 @@ pub async fn claude_account(state: State<'_, AppState>) -> IpcResult<ClaudeAccou
         Ok(Ok(out)) => parse_claude_account(&String::from_utf8_lossy(&out.stdout)),
         _ => None,
     };
-    Ok(parsed.unwrap_or(ClaudeAccount {
+    parsed.unwrap_or(ClaudeAccount {
         found: true,
         signed_in: false,
         email: None,
         method: None,
         plan: None,
         fix: Some("claude".into()),
-    }))
+    })
 }
 
 #[cfg(test)]
@@ -162,6 +168,37 @@ mod tests {
                 plan: Some("pro".into()),
                 fix: None,
             }
+        );
+    }
+
+    #[tokio::test]
+    async fn the_account_is_read_with_the_variables_from_the_settings_on_top() {
+        use std::os::unix::fs::PermissionsExt;
+        let tmp = tempfile::tempdir().unwrap();
+        let script = tmp.path().join("claude");
+        // The fake answers with whichever config folder it was started with.
+        std::fs::write(
+            &script,
+            "#!/bin/sh\necho \"{\\\"loggedIn\\\":true,\\\"email\\\":\\\"$(basename \"$CLAUDE_CONFIG_DIR\")\\\"}\"\n",
+        )
+        .unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let login = crate::env::ResolvedEnv::for_test(&[
+            ("PATH", "/usr/bin:/bin"),
+            ("CLAUDE_CONFIG_DIR", "/home/me/.claude"),
+        ]);
+        let path = script.to_str().unwrap();
+        assert_eq!(
+            read_claude_account(path, &login).await.email.as_deref(),
+            Some(".claude")
+        );
+        let chosen = login.with_overrides([(
+            "CLAUDE_CONFIG_DIR".to_string(),
+            "/home/me/.claude-work".to_string(),
+        )]);
+        assert_eq!(
+            read_claude_account(path, &chosen).await.email.as_deref(),
+            Some(".claude-work")
         );
     }
 

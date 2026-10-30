@@ -56,7 +56,7 @@ pub async fn session_side_question(
         .and_then(|layers| crate::settings::load_merged(&layers).ok())
         .map(|payload| payload.settings.side)
         .unwrap_or_default();
-    let env = state.env.get().await;
+    let env = crate::commands::app::env_with_settings(&state, Some(&workspace.project_id)).await;
     let program = env
         .which("claude")
         .ok_or_else(|| AppError::ClaudeMissing("Claude Code (`claude`) was not found.".into()))?;

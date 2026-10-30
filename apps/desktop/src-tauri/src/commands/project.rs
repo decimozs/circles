@@ -115,7 +115,7 @@ pub async fn project_learn_conventions(
             "There is nothing to learn from yet: no pull request template, AGENTS.md, CLAUDE.md or CONTRIBUTING.md, and no commits or branches.".into(),
         ));
     }
-    let env = state.env.get().await;
+    let env = crate::commands::app::env_with_settings(&state, Some(&project_id)).await;
     let model = model
         .filter(|m| !m.trim().is_empty())
         .unwrap_or_else(|| "sonnet".into());

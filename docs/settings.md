@@ -32,7 +32,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 |---|---|
 | Agents | The `claude` to use, a check of its version, the default permission mode, extra arguments for every Claude Code start, the model for side questions and whether they may read files, and whether chats may ask with cards. |
 | Smart titles | Naming new chats, suggesting the next message and an example for a new Composer's first message. They use Claude Haiku through Claude Code, which spends a little of your Claude usage. |
-| Environment | Environment variables set for every agent and terminal. Values are hidden and never logged. |
+| Environment | Environment variables set for every agent and terminal, and for the calls Circles makes to Claude Code itself (titles, drafts, Improve, Learn and the Claude card). Values are hidden and never logged. |
 | Composers | Pause and stop, the daily cap of runs started on their own, notifications, the menu bar, open at login, keep awake, and cards. |
 | Integrations | The Jira connection. See [Jira](jira.md). |
 
@@ -67,3 +67,13 @@ commits = "Use conventional commits."
 ```
 
 `[scripts.run]` can instead hold several named run scripts, each with a `command`, an optional `default = true` and an `icon`. Everything in the file is optional, and an empty file changes nothing.
+
+## Using another Claude account
+
+Claude Code keeps its login in a config folder, `~/.claude` by default. If you have signed in to another account in another folder, for example `~/.claude-work`, add a variable in Settings > Environment:
+
+| Name | Value |
+|---|---|
+| `CLAUDE_CONFIG_DIR` | `/Users/<you>/.claude-work` |
+
+New chats, Composer runs, titles, drafts, Improve, Learn and the Claude card in Settings > Accounts then work as that account. A chat that is already running keeps the account it started with. To use it for one repository only, put the variable in that repository's settings file under `[environment_variables]`, as **Only me**: a shared file would commit your folder path. Terminals inside Circles get the variable too, so `claude` there uses it as well.

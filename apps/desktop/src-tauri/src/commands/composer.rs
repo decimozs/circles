@@ -53,7 +53,7 @@ pub async fn composer_improve_instructions(
             "The instructions are longer than a Composer takes.".into(),
         ));
     }
-    let env = state.env.get().await;
+    let env = crate::commands::app::env_with_settings(&state, None).await;
     let model = model
         .filter(|m| !m.trim().is_empty())
         .unwrap_or_else(|| "sonnet".into());
