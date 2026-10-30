@@ -57,12 +57,20 @@ A new page, **Composers**, in the group **Agents & environment**, after Environm
 
 - Default brain: provider and model.
 - Provider API keys: set, test, remove. Values are never shown (from C4).
-- Limits: children at once, children in total, steps per run, wall time, spend per run and per day.
+- Limits: the spending limit of a request. Nothing else is limited: no steps, time, or agents at once or in total.
 - Autonomy defaults for new Composers: what each tier does. They start safe (everything above `read` asks). Each Composer can change its own.
 - Unattended runs: the global pause and the daily cap (from C6).
 - The tool server: whether it is running, and a reset of its token.
 
 Settings that belong to one Composer (instructions, allowed tools and projects, its own limits) live in that Composer's Details tab and its edit dialog, not in Settings.
+
+## Improving the instructions
+
+The Instructions field of the create dialog and of the Details settings has an **Improve** button beside the Markdown, Write and Preview controls.
+
+- It has Claude rewrite what is typed as clear Markdown: the goal first, then the steps, then what must never happen. It keeps every fact, name, ticket key, repository and limit, adds none, keeps `/skill` and `@` mentions as written, and answers in the language of the text.
+- It runs once, with no tools, away from any project and without the person's own settings and `CLAUDE.md`, so only the prompt shapes the answer. It uses the person's Claude subscription and sends the text to Anthropic, only when the button is pressed. The model is Sonnet.
+- While it works the box is disabled and pulses slowly (no animation for people who reduce motion), and the button says "Improving". The result replaces the text. **Undo** brings the old text back. A failure shows a message and leaves the text as it was. Nothing is saved until the dialog is saved.
 
 ## Routes
 
