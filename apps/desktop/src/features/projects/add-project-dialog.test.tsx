@@ -19,7 +19,7 @@ const added = (name: string) => project({ id: `p-${name}`, name, path: `/code/${
 describe("Add project dialog", () => {
   it("opens on the tab it was asked for", async () => {
     defaultBackend();
-    backend.on("github_list_repos", []);
+    backend.on("github_list_repos", { account: "me", repos: [], failed_orgs: [] });
     await openDialog("github");
     expect(await screen.findByRole("tab", { name: "GitHub", selected: true })).toBeInTheDocument();
   });
@@ -65,26 +65,30 @@ describe("Add project dialog", () => {
   it("clones a repository chosen from GitHub", async () => {
     defaultBackend();
     backend
-      .on("github_list_repos", [
-        {
-          name_with_owner: "me/roster",
-          name: "roster",
-          description: "AI co-op",
-          is_private: true,
-          url: "u",
-          owner: "me",
-          avatar_url: "a",
-        },
-        {
-          name_with_owner: "me/portfolio",
-          name: "portfolio",
-          description: null,
-          is_private: false,
-          url: "u",
-          owner: "me",
-          avatar_url: "a",
-        },
-      ])
+      .on("github_list_repos", {
+        account: "me",
+        failed_orgs: [],
+        repos: [
+          {
+            name_with_owner: "me/roster",
+            name: "roster",
+            description: "AI co-op",
+            is_private: true,
+            url: "u",
+            owner: "me",
+            avatar_url: "a",
+          },
+          {
+            name_with_owner: "me/portfolio",
+            name: "portfolio",
+            description: null,
+            is_private: false,
+            url: "u",
+            owner: "me",
+            avatar_url: "a",
+          },
+        ],
+      })
       .on("project_add_github", added("portfolio"));
     const { user, dialog } = await openDialog("github");
     await user.type(await within(dialog).findByLabelText("Filter your repositories"), "port");
@@ -95,9 +99,49 @@ describe("Add project dialog", () => {
     );
   });
 
+  it("lists the organizations too, says who is signed in and searches all of them", async () => {
+    defaultBackend();
+    const repo = (owner: string, name: string, description: string | null = null) => ({
+      name_with_owner: `${owner}/${name}`,
+      name,
+      description,
+      is_private: true,
+      url: "u",
+      owner,
+      avatar_url: "a",
+    });
+    backend.on("github_list_repos", {
+      account: "me",
+      failed_orgs: ["locked"],
+      repos: [repo("me", "mine"), repo("acme", "billing", "Invoices and payments")],
+    });
+    const { user, dialog } = await openDialog("github");
+    expect(await within(dialog).findByText("acme/billing")).toBeInTheDocument();
+    expect(within(dialog).getByText("me/mine")).toBeInTheDocument();
+    expect(within(dialog).getByText(/Signed in as/)).toHaveTextContent("Signed in as me.");
+    expect(within(dialog).getByText("acme")).toBeInTheDocument();
+    expect(within(dialog).getByText(/Could not list locked/)).toBeInTheDocument();
+    // The search looks at the description as well, across every owner.
+    await user.type(within(dialog).getByLabelText("Filter your repositories"), "payments");
+    expect(within(dialog).queryByText("me/mine")).not.toBeInTheDocument();
+    expect(within(dialog).getByText("acme/billing")).toBeInTheDocument();
+    await user.clear(within(dialog).getByLabelText("Filter your repositories"));
+    await user.type(within(dialog).getByLabelText("Filter your repositories"), "nothing");
+    expect(within(dialog).getByText(/Type owner\/name above/)).toBeInTheDocument();
+  });
+
+  it("names the account when it has no repositories", async () => {
+    defaultBackend();
+    backend.on("github_list_repos", { account: "Alfa", repos: [], failed_orgs: [] });
+    const { dialog } = await openDialog("github");
+    expect(await within(dialog).findByText("No repositories found for Alfa.")).toBeInTheDocument();
+  });
+
   it("clones a repository typed as owner/name or a URL", async () => {
     defaultBackend();
-    backend.on("github_list_repos", []).on("project_add_github", added("hello"));
+    backend
+      .on("github_list_repos", { account: "me", repos: [], failed_orgs: [] })
+      .on("project_add_github", added("hello"));
     const { user, dialog } = await openDialog("github");
     await user.type(within(dialog).getByLabelText("Repository"), "https://github.com/octo/hello");
     await user.click(within(dialog).getByRole("button", { name: "Clone" }));

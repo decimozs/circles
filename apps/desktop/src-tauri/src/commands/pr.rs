@@ -8,8 +8,8 @@ use crate::github::pr::{
 };
 use crate::ipc::IpcResult;
 use crate::pr::commits::{self, CommitInfo};
+use crate::pr::docs;
 use crate::pr::draft::{self, PrDraft};
-use crate::pr::todos::{Todo, TodoSource};
 use crate::pr::{prompts, Readiness};
 use crate::review::changes::base_ref;
 use crate::state::AppState;
@@ -178,7 +178,14 @@ pub async fn pr_draft(
         .workspace_service()
         .await
         .settings_for(&workspace_id)?;
-    let prompt = prompts::draft_pr(&ws.base_branch, &commits, &changes, &settings.instructions);
+    let docs = docs::read(&cwd);
+    let prompt = prompts::draft_pr(
+        &ws.base_branch,
+        &commits,
+        &changes,
+        &settings.instructions,
+        &docs,
+    );
     let env = state.env.get().await;
     let model = model
         .filter(|m| !m.trim().is_empty())
@@ -358,41 +365,6 @@ pub async fn agent_resolve_conflicts(
     .await
 }
 
-#[tauri::command]
-pub async fn todo_list(state: State<'_, AppState>, workspace_id: String) -> IpcResult<Vec<Todo>> {
-    state.todos.list(&workspace_id)
-}
-
-#[tauri::command]
-pub async fn todo_create(
-    state: State<'_, AppState>,
-    workspace_id: String,
-    text: String,
-    from_agent: Option<bool>,
-) -> IpcResult<Todo> {
-    let source = if from_agent == Some(true) {
-        TodoSource::Agent
-    } else {
-        TodoSource::User
-    };
-    state.todos.create(&workspace_id, &text, source)
-}
-
-#[tauri::command]
-pub async fn todo_update(state: State<'_, AppState>, id: String, text: String) -> IpcResult<Todo> {
-    state.todos.set_text(&id, &text)
-}
-
-#[tauri::command]
-pub async fn todo_set_done(state: State<'_, AppState>, id: String, done: bool) -> IpcResult<Todo> {
-    state.todos.set_done(&id, done)
-}
-
-#[tauri::command]
-pub async fn todo_delete(state: State<'_, AppState>, id: String) -> IpcResult<()> {
-    state.todos.delete(&id)
-}
-
 /// Has Claude group the uncommitted changes into atomic commits, then makes them. Claude only
 /// proposes the grouping, git is run here.
 #[tauri::command]
@@ -411,7 +383,8 @@ pub async fn commit_with_claude(
     if pending.files.is_empty() {
         return Err(AppError::Invalid("There is nothing to commit.".into()));
     }
-    let prompt = prompts::commit_plan(&pending.files, &pending.diff, &settings.instructions);
+    let docs = docs::read(&cwd);
+    let prompt = prompts::commit_plan(&pending.files, &pending.diff, &settings.instructions, &docs);
     let env = state.env.get().await;
     let model = model
         .filter(|m| !m.trim().is_empty())

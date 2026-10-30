@@ -14,6 +14,7 @@ import {
 } from "react";
 import { AssistantText, PermissionCard, SystemNote, TurnSummary, UserBubble } from "./messages";
 import type { TimelineItem } from "./timeline";
+import { ChatStoppedContext } from "./tool-calls";
 import type { Live } from "./use-session";
 import { WorkBlock } from "./work-block";
 
@@ -248,31 +249,33 @@ export function MessageList({
         className="h-full overflow-y-auto"
         data-testid="messages"
       >
-        <div className="mx-auto flex max-w-3xl flex-col gap-3 px-6 py-5">
-          {header}
-          {virtual ? (
-            <div style={{ height: virtualizer.getTotalSize() }} className="relative">
-              {virtualizer.getVirtualItems().map((v) => (
-                <div
-                  key={v.key}
-                  ref={virtualizer.measureElement}
-                  data-index={v.index}
-                  data-row-key={rows[v.index]?.key}
-                  className="absolute inset-x-0 pb-3"
-                  style={{ transform: `translateY(${v.start}px)` }}
-                >
-                  {rows[v.index]?.node}
-                </div>
-              ))}
-            </div>
-          ) : (
-            rows.map((row) => (
-              <div key={row.key} data-row-key={row.key} data-index={rows.indexOf(row)}>
-                {row.node}
+        <ChatStoppedContext.Provider value={!working}>
+          <div className="mx-auto flex max-w-3xl flex-col gap-3 px-6 py-5">
+            {header}
+            {virtual ? (
+              <div style={{ height: virtualizer.getTotalSize() }} className="relative">
+                {virtualizer.getVirtualItems().map((v) => (
+                  <div
+                    key={v.key}
+                    ref={virtualizer.measureElement}
+                    data-index={v.index}
+                    data-row-key={rows[v.index]?.key}
+                    className="absolute inset-x-0 pb-3"
+                    style={{ transform: `translateY(${v.start}px)` }}
+                  >
+                    {rows[v.index]?.node}
+                  </div>
+                ))}
               </div>
-            ))
-          )}
-        </div>
+            ) : (
+              rows.map((row) => (
+                <div key={row.key} data-row-key={row.key} data-index={rows.indexOf(row)}>
+                  {row.node}
+                </div>
+              ))
+            )}
+          </div>
+        </ChatStoppedContext.Provider>
       </div>
 
       {ticks.length >= MAP_FROM ? (

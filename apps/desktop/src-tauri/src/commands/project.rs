@@ -1,7 +1,10 @@
 use tauri::State;
 
-use crate::github::GhRepo;
+use crate::error::AppError;
+use crate::github::GhRepos;
 use crate::ipc::IpcResult;
+use crate::pr::docs::{self, Learned};
+use crate::pr::draft;
 use crate::project::Project;
 use crate::state::AppState;
 
@@ -82,8 +85,59 @@ pub async fn project_set_base_branch(
         .await
 }
 
-/// Repositories of the signed in GitHub user, for the "Open GitHub project" picker.
+/// Has Claude read the repository's template, convention files, recent commits and branch names,
+/// and propose how to keep its conventions in the settings. Nothing is saved: the person decides.
 #[tauri::command]
-pub async fn github_list_repos(state: State<'_, AppState>) -> IpcResult<Vec<GhRepo>> {
+pub async fn project_learn_conventions(
+    state: State<'_, AppState>,
+    project_id: String,
+    model: Option<String>,
+) -> IpcResult<Learned> {
+    let project = state.project_service().await.get(&project_id)?;
+    let root = std::path::PathBuf::from(&project.path);
+    let git = state.pr_service().await.git;
+    let repo_docs = docs::read(&root);
+    let commits: Vec<String> = git
+        .log(&root, "HEAD", 40)
+        .await
+        .unwrap_or_default()
+        .into_iter()
+        .map(|c| c.subject)
+        .collect();
+    let branches = git.recent_branches(&root, 30).await.unwrap_or_default();
+    let evidence = docs::Evidence {
+        docs: &repo_docs,
+        commits: &commits,
+        branches: &branches,
+    };
+    if evidence.is_empty() {
+        return Err(AppError::Invalid(
+            "There is nothing to learn from yet: no pull request template, AGENTS.md, CLAUDE.md or CONTRIBUTING.md, and no commits or branches.".into(),
+        ));
+    }
+    let env = state.env.get().await;
+    let model = model
+        .filter(|m| !m.trim().is_empty())
+        .unwrap_or_else(|| "sonnet".into());
+    // Run away from the repository and without the person's own settings: everything it needs is
+    // in the prompt, and only the prompt should shape the answer.
+    let answer = draft::run_once_with(
+        &env,
+        &std::env::temp_dir(),
+        &docs::learn_prompt(&evidence),
+        &model,
+        &["--setting-sources", "project,local"],
+    )
+    .await?;
+    docs::parse_learned(&answer).ok_or_else(|| {
+        AppError::Invalid(
+            "The agent did not answer in the expected form. Try again, or write the settings by hand.".into(),
+        )
+    })
+}
+
+/// Repositories of the signed in GitHub account and its organizations, for the project picker.
+#[tauri::command]
+pub async fn github_list_repos(state: State<'_, AppState>) -> IpcResult<GhRepos> {
     state.project_service().await.github_repos().await
 }

@@ -187,7 +187,6 @@ export function readiness(overrides: Partial<Readiness> = {}): Readiness {
     pr: null,
     checks: { total: 0, passed: 0, failed: 0, pending: 0 },
     unresolved_threads: 0,
-    open_todos: 0,
     blockers: [],
     next_action: "create_pr",
     ready: false,
@@ -287,10 +286,6 @@ export function composer(overrides: Partial<Composer> = {}): Composer {
     integrations: [],
     projects: null,
     limits: {
-      max_steps: 100,
-      max_children_at_once: 3,
-      max_children_total: 10,
-      max_minutes: 120,
       max_budget_usd: null,
     },
     allow_override: false,

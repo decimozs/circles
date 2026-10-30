@@ -154,9 +154,6 @@ mod tests {
         async fn run(&self, _c: &Composer, _s: &str, tool: &str, input: Value) -> AppResult<Value> {
             Ok(json!({ "tool": tool, "input": input }))
         }
-        async fn chat_active(&self, _c: &str) -> bool {
-            false
-        }
     }
     struct Quiet;
     impl ComposerEvents for Quiet {

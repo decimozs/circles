@@ -29,10 +29,11 @@ import type { FileHit } from "@circles/bindings/FileHit";
 import type { FilePair } from "@circles/bindings/FilePair";
 import type { FleetItem } from "@circles/bindings/FleetItem";
 import type { FsEntry } from "@circles/bindings/FsEntry";
-import type { GhRepo } from "@circles/bindings/GhRepo";
+import type { GhRepos } from "@circles/bindings/GhRepos";
 import type { GitGraph } from "@circles/bindings/GitGraph";
 import type { GitIdentity } from "@circles/bindings/GitIdentity";
 import type { JiraStatus } from "@circles/bindings/JiraStatus";
+import type { Learned } from "@circles/bindings/Learned";
 import type { Message } from "@circles/bindings/Message";
 import type { NewComment } from "@circles/bindings/NewComment";
 import type { PendingPrompt } from "@circles/bindings/PendingPrompt";
@@ -63,7 +64,6 @@ import type { SmartTest } from "@circles/bindings/SmartTest";
 import type { StoredCard } from "@circles/bindings/StoredCard";
 import type { StreamItem } from "@circles/bindings/StreamItem";
 import type { Terminal } from "@circles/bindings/Terminal";
-import type { Todo } from "@circles/bindings/Todo";
 import type { Trigger } from "@circles/bindings/Trigger";
 import type { TriggerInput } from "@circles/bindings/TriggerInput";
 import type { UndoableRevert } from "@circles/bindings/UndoableRevert";
@@ -133,7 +133,9 @@ export const ipc = {
     call<null>("project_remove", { id, workspaces: workspaces ?? null }),
   projectSetBaseBranch: (id: string, branch: string) =>
     call<Project>("project_set_base_branch", { id, branch }),
-  githubListRepos: () => call<GhRepo[]>("github_list_repos"),
+  projectLearnConventions: (projectId: string, model?: string) =>
+    call<Learned>("project_learn_conventions", { projectId, model: model ?? null }),
+  githubListRepos: () => call<GhRepos>("github_list_repos"),
 
   workspaceList: (projectId?: string) =>
     call<Workspace[]>("workspace_list", { projectId: projectId ?? null, includeArchived: true }),
@@ -305,6 +307,8 @@ export const ipc = {
   toolCatalog: () => call<ComposerTool[]>("tool_catalog"),
   composerList: () => call<Composer[]>("composer_list"),
   composerGet: (id: string) => call<Composer>("composer_get", { id }),
+  composerImproveInstructions: (text: string, model?: string) =>
+    call<string>("composer_improve_instructions", { text, model: model ?? null }),
   composerCreate: (input: ComposerInput) => call<Composer>("composer_create", { input }),
   composerUpdate: (id: string, input: ComposerInput) =>
     call<Composer>("composer_update", { id, input }),
@@ -410,12 +414,6 @@ export const ipc = {
     call<null>("agent_respond_review", { workspaceId, sessionId }),
   agentResolveConflicts: (workspaceId: string, sessionId: string) =>
     call<null>("agent_resolve_conflicts", { workspaceId, sessionId }),
-  todoList: (workspaceId: string) => call<Todo[]>("todo_list", { workspaceId }),
-  todoCreate: (workspaceId: string, text: string, fromAgent = false) =>
-    call<Todo>("todo_create", { workspaceId, text, fromAgent }),
-  todoUpdate: (id: string, text: string) => call<Todo>("todo_update", { id, text }),
-  todoSetDone: (id: string, done: boolean) => call<Todo>("todo_set_done", { id, done }),
-  todoDelete: (id: string) => call<null>("todo_delete", { id }),
 
   sectionList: () => call<Section[]>("section_list"),
   sectionCreate: (name: string) => call<Section>("section_create", { name }),

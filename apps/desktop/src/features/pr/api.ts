@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";
 import { ipc } from "@/lib/ipc";
@@ -8,7 +8,6 @@ export const prKeys = {
   checks: (ws: string) => ["pr", ws, "checks"] as const,
   threads: (ws: string) => ["pr", ws, "threads"] as const,
   deployments: (ws: string) => ["pr", ws, "deployments"] as const,
-  todos: (ws: string) => ["todos", ws] as const,
   all: (ws: string) => ["pr", ws] as const,
 };
 
@@ -17,7 +16,7 @@ export const POLL_OPEN_MS = 60_000;
 export const POLL_IDLE_MS = 120_000;
 
 /**
- * Where the branch stands: git, the pull request, checks, reviews and todos, and what to do next.
+ * Where the branch stands: git, the pull request, checks and reviews, and what to do next.
  * Refreshed on an interval and when the window gets focus again.
  */
 export function useReadiness(workspaceId: string | undefined, enabled = true) {
@@ -92,34 +91,3 @@ export function useDeployments(workspaceId: string, enabled: boolean) {
     refetchOnWindowFocus: true,
   });
 }
-
-export function useTodos(workspaceId: string | undefined) {
-  return useQuery({
-    queryKey: prKeys.todos(workspaceId ?? ""),
-    queryFn: () => ipc.todoList(workspaceId as string),
-    enabled: !!workspaceId,
-  });
-}
-
-/** Todos count toward the merge, so the readiness is refreshed with them. */
-function useTodoMutation<TVars, TData>(workspaceId: string, fn: (vars: TVars) => Promise<TData>) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: fn,
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: prKeys.todos(workspaceId) });
-      queryClient.invalidateQueries({ queryKey: prKeys.readiness(workspaceId) });
-    },
-  });
-}
-
-export const useAddTodo = (workspaceId: string) =>
-  useTodoMutation(workspaceId, (v: { text: string; fromAgent?: boolean }) =>
-    ipc.todoCreate(workspaceId, v.text, v.fromAgent),
-  );
-export const useEditTodo = (workspaceId: string) =>
-  useTodoMutation(workspaceId, (v: { id: string; text: string }) => ipc.todoUpdate(v.id, v.text));
-export const useCompleteTodo = (workspaceId: string) =>
-  useTodoMutation(workspaceId, (v: { id: string; done: boolean }) => ipc.todoSetDone(v.id, v.done));
-export const useRemoveTodo = (workspaceId: string) =>
-  useTodoMutation(workspaceId, (id: string) => ipc.todoDelete(id));

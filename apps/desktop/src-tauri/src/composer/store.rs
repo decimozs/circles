@@ -118,13 +118,6 @@ impl ComposerInput {
             }
         }
         let l = &self.limits;
-        if l.max_steps == 0
-            || l.max_children_at_once == 0
-            || l.max_children_total == 0
-            || l.max_minutes == 0
-        {
-            return Err(invalid("Limits must be at least 1."));
-        }
         if l.max_budget_usd.is_some_and(|b| b.is_nan() || b <= 0.0) {
             return Err(invalid("The spending limit must be more than 0."));
         }
@@ -648,20 +641,6 @@ impl ComposerStore {
         self.children_where("session_id = ?1", session_id)
     }
 
-    /// When the person's latest message in this run was sent, which is when its current turn began.
-    /// A Composer has one conversation that goes on for days, so what a run may start is counted
-    /// from here, not from the first message ever. `0` when there is no message yet.
-    pub fn turn_started_at(&self, session_id: &str) -> AppResult<i64> {
-        self.db.read(|c| {
-            c.query_row(
-                "SELECT COALESCE(MAX(created_at), 0) FROM messages
-                 WHERE session_id = ?1 AND role = 'user' AND kind = 'text'",
-                params![session_id],
-                |r| r.get(0),
-            )
-        })
-    }
-
     pub fn children_of_composer(&self, composer_id: &str) -> AppResult<Vec<ChildRow>> {
         self.children_where("composer_id = ?1", composer_id)
     }
@@ -1066,13 +1045,13 @@ mod tests {
         let mut change = input("B");
         change.autonomy.insert("merge_pr".into(), Autonomy::Allow);
         change.projects = Some(vec!["p1".into()]);
-        change.limits.max_steps = 7;
+        change.limits.max_budget_usd = Some(7.0);
         let u = s.update(&c.id, &change).unwrap();
         assert_eq!(u.workspace_id, c.workspace_id);
         assert_eq!(u.name, "B");
         assert_eq!(u.autonomy["merge_pr"], Autonomy::Allow);
         assert_eq!(u.projects, Some(vec!["p1".to_string()]));
-        assert_eq!(u.limits.max_steps, 7);
+        assert_eq!(u.limits.max_budget_usd, Some(7.0));
         let title: String =
             s.db.read(|conn| {
                 conn.query_row(
@@ -1101,12 +1080,12 @@ mod tests {
             .to_string()
             .contains("not a tool"));
         let mut zero = input("x");
-        zero.limits.max_steps = 0;
+        zero.limits.max_budget_usd = Some(0.0);
         assert!(s
             .create(&zero)
             .unwrap_err()
             .to_string()
-            .contains("at least 1"));
+            .contains("more than 0"));
         let mut notes = input("x");
         notes.notes = "n".repeat(NOTES_LIMIT + 1);
         assert!(s.create(&notes).unwrap_err().to_string().contains("notes"));

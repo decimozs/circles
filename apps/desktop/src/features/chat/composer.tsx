@@ -147,15 +147,10 @@ export function Composer({
   });
   const commands = useSlashCommands(workspaceId);
 
-  const todosHint =
-    trigger?.kind === "mention" && "todos".startsWith(trigger.query.toLowerCase())
-      ? [{ value: "@todos", label: "@todos", hint: "Add the open todos to the message" }]
-      : [];
   const suggestions: { value: string; label: string; hint?: string }[] = !open
     ? []
     : trigger?.kind === "mention"
       ? [
-          ...todosHint,
           ...(hits.data ?? []).map((h) => ({
             value: `@${h.path}${h.is_dir ? "/" : ""}`,
             label: h.path + (h.is_dir ? "/" : ""),

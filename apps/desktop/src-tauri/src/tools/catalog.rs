@@ -91,7 +91,7 @@ pub fn all() -> Vec<ToolDef> {
         },
         ToolDef {
             name: "get_pr_status",
-            description: "Where a workspace's branch stands: commits ahead and behind, pull request, checks, open todos, and what blocks merging.",
+            description: "Where a workspace's branch stands: commits ahead and behind, pull request, checks, and what blocks merging.",
             tier: Tier::Read,
             schema: schema(json!({ "workspace_id": id("The workspace.") }), &["workspace_id"]),
             repeat_safe: true,
@@ -178,17 +178,6 @@ pub fn all() -> Vec<ToolDef> {
             untrusted: false,
         },
         ToolDef {
-            name: "add_todo",
-            description: "Add a todo to a workspace. Open todos block merging until done.",
-            tier: Tier::Write,
-            schema: schema(
-                json!({ "workspace_id": id("The workspace."), "text": text("The todo.") }),
-                &["workspace_id", "text"],
-            ),
-            repeat_safe: false,
-            untrusted: false,
-        },
-        ToolDef {
             name: "add_local_project",
             description: "Add a repository that is already on this Mac as a project. It needs at least one commit.",
             tier: Tier::Write,
@@ -230,7 +219,7 @@ pub fn all() -> Vec<ToolDef> {
         },
         ToolDef {
             name: "merge_pr",
-            description: "Merge the workspace's pull request with the project's merge method. Failing checks, conflicts and open todos block it.",
+            description: "Merge the workspace's pull request with the project's merge method. Failing checks and conflicts block it.",
             tier: Tier::External,
             schema: schema(
                 json!({
@@ -322,7 +311,7 @@ mod tests {
         assert_eq!(tier("create_pr"), Tier::External);
         assert_eq!(tier("merge_pr"), Tier::External);
         assert_eq!(tier("delete_workspace"), Tier::Destructive);
-        assert_eq!(all().len(), 22);
+        assert_eq!(all().len(), 21);
     }
 
     #[test]

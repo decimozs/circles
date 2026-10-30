@@ -79,33 +79,14 @@ impl Mode {
     }
 }
 
-/// How much a run may use. Reaching a limit makes the next call refuse.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, TS)]
+/// How much a run may use. A run has no limit on tool calls, time or what it starts: a person can
+/// stop it, and Claude Code's own rate limits apply.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize, TS)]
 #[ts(export)]
 #[serde(default)]
 pub struct Limits {
-    /// Tool calls in one run.
-    pub max_steps: u32,
-    /// Chats started by a run that are working at the same moment.
-    pub max_children_at_once: u32,
-    /// Workspaces and chats one run may start.
-    pub max_children_total: u32,
-    /// Minutes since the run began.
-    pub max_minutes: u32,
     /// Passed to Claude Code as its own spending limit.
     pub max_budget_usd: Option<f64>,
-}
-
-impl Default for Limits {
-    fn default() -> Self {
-        Self {
-            max_steps: 100,
-            max_children_at_once: 3,
-            max_children_total: 10,
-            max_minutes: 120,
-            max_budget_usd: None,
-        }
-    }
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -227,10 +208,13 @@ mod tests {
     }
 
     #[test]
-    fn limits_fall_back_to_defaults_for_what_is_missing() {
-        let limits: Limits = serde_json::from_str(r#"{"max_steps": 5}"#).unwrap();
-        assert_eq!(limits.max_steps, 5);
-        assert_eq!(limits.max_children_at_once, 3);
-        assert_eq!(limits.max_budget_usd, None);
+    fn limits_that_no_longer_exist_are_ignored_in_old_data() {
+        let limits: Limits = serde_json::from_str(
+            r#"{"max_steps": 5, "max_children_at_once": 1, "max_budget_usd": 2.5}"#,
+        )
+        .unwrap();
+        assert_eq!(limits.max_budget_usd, Some(2.5));
+        let none: Limits = serde_json::from_str("{}").unwrap();
+        assert_eq!(none.max_budget_usd, None);
     }
 }

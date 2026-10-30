@@ -258,10 +258,19 @@ describe("Workspace page", () => {
     expect(screen.queryByRole("menuitem", { name: "Delete" })).not.toBeInTheDocument();
   });
 
-  it("reports a missing workspace", async () => {
+  it("leaves a workspace that no longer exists for Home, which offers to add a project", async () => {
     defaultBackend();
+    backend.on("project_list", []).on("workspace_list", []);
     backend.fail("workspace_get", { code: "not_found", message: "not found: workspace nope" });
     renderApp("/workspace/nope");
-    expect(await screen.findByRole("alert")).toHaveTextContent("not found: workspace nope");
+    expect(await screen.findByText("Add your first project")).toBeInTheDocument();
+    expect(screen.queryByText(/not found: workspace/)).not.toBeInTheDocument();
+  });
+
+  it("reports a workspace that cannot be read for another reason", async () => {
+    defaultBackend();
+    backend.fail("workspace_get", { code: "internal", message: "disk is gone" });
+    renderApp("/workspace/nope");
+    expect(await screen.findByRole("alert")).toHaveTextContent("disk is gone");
   });
 });

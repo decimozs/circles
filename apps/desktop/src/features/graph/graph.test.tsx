@@ -50,6 +50,18 @@ function open(data = graph()) {
 }
 
 describe("git graph", () => {
+  it("opens the graph large over the chat with Expand", async () => {
+    const app = open();
+    const region = await screen.findByRole("region", { name: "Git graph" });
+    await within(region).findByText("Add login form");
+    await app.user.click(within(region).getByRole("button", { name: "Expand graph" }));
+    const dialog = await screen.findByRole("dialog", { name: "Git graph" });
+    expect(await within(dialog).findByText("Add login form")).toBeInTheDocument();
+    expect(within(dialog).getByText("feature → main")).toBeInTheDocument();
+    await app.user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
   it("draws the branch and its base with refs, counts and ages", async () => {
     open();
     const region = await screen.findByRole("region", { name: "Git graph" });
@@ -57,7 +69,7 @@ describe("git graph", () => {
     for (const text of ["Fix build", "Start login", "Initial commit", "feature", "main"]) {
       expect(within(region).getByText(text)).toBeInTheDocument();
     }
-    expect(within(region).getByText(/feature → main/)).toBeInTheDocument();
+    expect(within(region).queryByText(/feature → main/)).not.toBeInTheDocument();
     expect(within(region).getByTestId("graph-counts")).toHaveTextContent("↑2");
     expect(within(region).getByTestId("graph-counts")).toHaveTextContent("↓1");
     expect(within(region).getAllByText("3min").length).toBeGreaterThan(0);

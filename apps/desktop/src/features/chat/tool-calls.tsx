@@ -12,7 +12,7 @@ import {
   TerminalIcon,
   WrenchIcon,
 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 import type { ToolCall } from "./timeline";
 
 const str = (value: unknown): string => (typeof value === "string" ? value : "");
@@ -190,12 +190,16 @@ function rendererFor(name: string): Renderer {
   return REGISTRY[name] ?? GENERIC;
 }
 
+/** Set when the chat is not working, so a call that never got a result is not shown as running. */
+export const ChatStoppedContext = createContext(false);
+
 export function ToolCallRow({ call, root }: { call: ToolCall; root?: string }) {
   const [open, setOpen] = useState(false);
   const renderer = rendererFor(call.name);
   const Icon = renderer.icon;
   const Body = renderer.Body;
-  const running = call.result === undefined;
+  const stopped = useContext(ChatStoppedContext);
+  const running = call.result === undefined && !stopped;
   const label = call.name.startsWith("mcp__")
     ? call.name.split("__").slice(1).join(" · ")
     : call.name;

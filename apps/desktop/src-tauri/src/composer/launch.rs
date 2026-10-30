@@ -285,9 +285,6 @@ mod tests {
                     _ => json!({"ok": true}),
                 })
             }
-            async fn chat_active(&self, _c: &str) -> bool {
-                false
-            }
         }
         struct Quiet;
         impl ComposerEvents for Quiet {

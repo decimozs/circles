@@ -7,7 +7,6 @@ import { useChanges } from "@/features/files/api";
 import { FileTree } from "@/features/files/file-tree";
 import { GraphPanel } from "@/features/graph/graph-panel";
 import { NextActionBar } from "@/features/pr/next-action";
-import { ReviewPanel } from "@/features/review/review-panel";
 import { useWorkspace } from "@/features/workspaces/api";
 import { useChat } from "@/stores/chat";
 import { type RightTab, useReview } from "@/stores/review";
@@ -16,10 +15,9 @@ const TABS: { id: RightTab; label: string }[] = [
   { id: "files", label: "All files" },
   { id: "changes", label: "Changes" },
   { id: "checks", label: "Checks" },
-  { id: "review", label: "Review" },
 ];
 
-/** Files, changes, checks and review of the workspace. */
+/** Files, changes and checks of the workspace. */
 export function RightPanel() {
   const composerMatch = useMatch("/composer/:id/*");
   const composer = useComposer(composerMatch?.params.id).data;
@@ -80,9 +78,6 @@ function WorkspaceRightPanel() {
               <FileTree workspaceId={workspace.id} workspacePath={workspace.path} />
             ) : null}
             {tab === "changes" ? <ChangesPanel workspaceId={workspace.id} /> : null}
-            {tab === "review" ? (
-              <ReviewPanel workspaceId={workspace.id} baseBranch={workspace.base_branch} />
-            ) : null}
             {tab === "checks" ? <ChecksPanel workspaceId={workspace.id} /> : null}
           </div>
           <GraphPanel workspaceId={workspace.id} />

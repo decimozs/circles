@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Scope } from "@/features/files/api";
 
-export type RightTab = "files" | "changes" | "checks" | "review";
+export type RightTab = "files" | "changes" | "checks";
 
 /** What the center column shows instead of the chat. */
 export type CenterView =
@@ -62,6 +62,13 @@ export const useReview = create<ReviewState>()(
     }),
     {
       name: "circles-review",
+      // A tab that was saved and has gone, the Review tab, opens All files instead.
+      merge: (saved, current) => {
+        const stored = saved as Partial<ReviewState> | undefined;
+        const tabs: RightTab[] = ["files", "changes", "checks"];
+        const rightTab = tabs.find((t) => t === stored?.rightTab) ?? "files";
+        return { ...current, ...stored, rightTab };
+      },
       partialize: (s) => ({
         rightTab: s.rightTab,
         scope: s.scope,

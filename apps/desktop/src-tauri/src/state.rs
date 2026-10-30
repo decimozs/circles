@@ -16,7 +16,6 @@ use crate::integrations::secrets::KeychainSecrets;
 use crate::integrations::Integrations;
 use crate::logging::Redactor;
 use crate::paths::AppPaths;
-use crate::pr::todos::TodoStore;
 use crate::pr::PrService;
 use crate::project::ProjectService;
 use crate::review::comments::CommentStore;
@@ -58,7 +57,6 @@ pub struct AppState {
     pub integrations: Arc<Integrations>,
     /// Comments on lines of workspace files.
     pub comments: CommentStore,
-    pub todos: TodoStore,
     /// Tell the UI when files of an open workspace change.
     pub watchers: Watchers,
     /// Tells the UI when a settings file changes.
@@ -105,7 +103,6 @@ impl AppState {
             genui_events.clone(),
         );
         let comments = CommentStore::new(db.clone());
-        let todos = TodoStore::new(db.clone());
         Self {
             paths,
             env,
@@ -122,7 +119,6 @@ impl AppState {
             smart: crate::smart::service::SmartService::default(),
             integrations: Integrations::new(Box::new(KeychainSecrets::new()), integrations_file),
             comments,
-            todos,
             watchers: Watchers::default(),
             settings_watcher: SettingsWatcher::default(),
             quit_confirmed: AtomicBool::new(false),
@@ -213,7 +209,6 @@ impl AppState {
         PrService {
             git: Git::new(env.clone()),
             gh: Gh::new(env),
-            todos: self.todos.clone(),
             db: self.db.clone(),
         }
     }

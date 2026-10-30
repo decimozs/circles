@@ -18,10 +18,6 @@ export const TEMPLATES: Template[] = [
       instructions:
         "When I give you a goal for a project, look at the project first. Split the goal into small tasks that do not touch the same files. Create one workspace for each task and start an agent in it with a complete brief. Wait for them, read what they changed, and report what each one did and what is left. Do not open pull requests unless I ask.",
       limits: {
-        max_steps: 100,
-        max_children_at_once: 3,
-        max_children_total: 8,
-        max_minutes: 120,
         max_budget_usd: null,
       },
     },
@@ -35,10 +31,6 @@ export const TEMPLATES: Template[] = [
       instructions:
         "When I describe a refactor, find the separate areas it touches and give each area to its own agent in its own workspace. Tell every agent exactly what to change and what not to touch. When they finish, check each workspace's changes, and report anything that looks wrong before I look. Do not merge anything.",
       limits: {
-        max_steps: 150,
-        max_children_at_once: 4,
-        max_children_total: 12,
-        max_minutes: 180,
         max_budget_usd: null,
       },
     },
@@ -53,10 +45,6 @@ export const TEMPLATES: Template[] = [
         "List the open pull requests of the project I name. For each one, create a workspace on its branch and ask an agent to review it: correctness, tests, and anything risky. Collect the findings and give me one short summary per pull request. Never merge, comment or push.",
       autonomy: { merge_pr: "off", create_pr: "off" },
       limits: {
-        max_steps: 150,
-        max_children_at_once: 3,
-        max_children_total: 15,
-        max_minutes: 120,
         max_budget_usd: null,
       },
     },
@@ -70,10 +58,6 @@ export const TEMPLATES: Template[] = [
       instructions:
         "Look at the workspaces of the project I name. For each one whose checks are failing (use get_pr_status), tell its agent to read the failing logs and fix them. Wait for them and check the result. Report which branches are green now and which still fail. Do not merge.",
       limits: {
-        max_steps: 150,
-        max_children_at_once: 3,
-        max_children_total: 10,
-        max_minutes: 120,
         max_budget_usd: null,
       },
     },

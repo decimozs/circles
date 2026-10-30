@@ -240,6 +240,54 @@ describe("repository settings", () => {
     );
   });
 
+  it("learns the repository and saves only the proposals that are kept", async () => {
+    backend.on("project_learn_conventions", {
+      branch_pattern: "{type}/{ticket}-{slug}",
+      pr: "Start the title with the ticket.",
+      commits: "Conventional commits.",
+    });
+    const app = open(route);
+    backend.on("project_learn_conventions", {
+      branch_pattern: "{type}/{ticket}-{slug}",
+      pr: "Start the title with the ticket.",
+      commits: "Conventional commits.",
+    });
+    await app.user.click(await screen.findByRole("button", { name: "Learn" }));
+    const dialog = await screen.findByRole("dialog", { name: "What Claude learned" });
+    expect(within(dialog).getByText("{type}/{ticket}-{slug}")).toBeInTheDocument();
+    await app.user.click(within(dialog).getByLabelText("Save Commit instructions"));
+    await app.user.click(within(dialog).getByRole("button", { name: "Save 2" }));
+    await waitFor(() => expect(backend.callsTo("settings_set")).toHaveLength(2));
+    expect(backend.callsTo("settings_set")).toEqual([
+      expect.objectContaining({
+        scope: "local",
+        path: ["git", "branch_pattern"],
+        value: "{type}/{ticket}-{slug}",
+      }),
+      expect.objectContaining({
+        scope: "local",
+        path: ["instructions", "pr"],
+        value: "Start the title with the ticket.",
+      }),
+    ]);
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("says when the repository shows nothing to keep, and why learning failed", async () => {
+    backend.on("project_learn_conventions", { branch_pattern: null, pr: null, commits: null });
+    const app = open(route);
+    backend.on("project_learn_conventions", { branch_pattern: null, pr: null, commits: null });
+    await app.user.click(await screen.findByRole("button", { name: "Learn" }));
+    expect(await screen.findByText(/does not show a clear convention/)).toBeInTheDocument();
+    expect(screen.queryByRole("dialog", { name: "What Claude learned" })).not.toBeInTheDocument();
+    backend.fail("project_learn_conventions", {
+      code: "invalid",
+      message: "There is nothing to learn from yet.",
+    });
+    await app.user.click(screen.getByRole("button", { name: "Learn" }));
+    expect(await screen.findByText(/nothing to learn from yet/)).toBeInTheDocument();
+  });
+
   it("changes the base branch", async () => {
     backend.on("project_set_base_branch", project());
     const app = open(route);

@@ -592,6 +592,40 @@ impl Git {
         self.run(cwd, &args).await
     }
 
+    /// Names of the most recently changed branches, local and on `origin`, without `origin/` and
+    /// without the default branch names, newest first.
+    pub async fn recent_branches(&self, cwd: &Path, limit: usize) -> GitResult<Vec<String>> {
+        let out = self
+            .run(
+                cwd,
+                &[
+                    "for-each-ref",
+                    "--sort=-committerdate",
+                    "--format=%(refname:short)",
+                    "refs/heads",
+                    "refs/remotes/origin",
+                ],
+            )
+            .await?;
+        let mut names: Vec<String> = Vec::new();
+        for line in out.lines() {
+            let name = line.trim().trim_start_matches("origin/");
+            if name.is_empty()
+                || name == "origin"
+                || name == "HEAD"
+                || ["main", "master", "develop"].contains(&name)
+                || names.iter().any(|n| n == name)
+            {
+                continue;
+            }
+            names.push(name.to_string());
+            if names.len() == limit {
+                break;
+            }
+        }
+        Ok(names)
+    }
+
     pub async fn log(&self, cwd: &Path, rev: &str, limit: u32) -> GitResult<Vec<Commit>> {
         let format = format!("--format={}", parse::LOG_FORMAT);
         let limit = format!("-n{limit}");
@@ -922,6 +956,31 @@ mod tests {
         let dir = repo_with_origin(&f, "main").await;
         f.git.fetch(&dir, "origin", Some("main")).await.unwrap();
         assert!(f.git.remote_url(&dir, "origin").await.unwrap().is_some());
+    }
+
+    #[tokio::test]
+    async fn recent_branches_skip_the_defaults_and_list_a_name_once() {
+        let f = fixture();
+        let dir = repo_with_origin(&f, "main").await;
+        for name in ["feat/KEY-1-login", "fix/KEY-2-typo"] {
+            f.git.branch_create(&dir, name, "main").await.unwrap();
+        }
+        // The same name on origin is the same branch.
+        let push = |branch: &str| {
+            assert!(std::process::Command::new("git")
+                .args(["push", "-q", "origin", branch])
+                .current_dir(&dir)
+                .status()
+                .unwrap()
+                .success());
+        };
+        push("feat/KEY-1-login");
+        f.git.fetch(&dir, "origin", None).await.unwrap();
+        let names = f.git.recent_branches(&dir, 10).await.unwrap();
+        let mut sorted = names.clone();
+        sorted.sort();
+        assert_eq!(sorted, ["feat/KEY-1-login", "fix/KEY-2-typo"]);
+        assert_eq!(f.git.recent_branches(&dir, 1).await.unwrap().len(), 1);
     }
 
     #[tokio::test]

@@ -8,8 +8,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useChat } from "@/stores/chat";
 import { useReview } from "@/stores/review";
 import { backend, emitBackendEvent } from "@/test/backend";
-import { session, workspace } from "@/test/fixtures";
-import { chatBackend, defaultBackend, renderApp } from "@/test/render";
+import { workspace } from "@/test/fixtures";
+import { defaultBackend, renderApp } from "@/test/render";
 
 const entry = (name: string, dir = false, path = name, ignored = false): FsEntry => ({
   name,
@@ -78,7 +78,7 @@ describe("right pane tabs", () => {
     open();
     const list = await screen.findByRole("tablist", { name: "Review" });
     expect(list).toHaveClass("overflow-x-auto");
-    for (const tabName of ["All files", /Changes/, "Checks", "Review"]) {
+    for (const tabName of ["All files", /Changes/, "Checks"]) {
       const tab = within(list).getByRole("tab", { name: tabName });
       expect(tab).toHaveClass("whitespace-nowrap", "shrink-0");
     }
@@ -549,87 +549,6 @@ describe("line comments", () => {
         comment: { path: "README.md", line_start: 3 },
       }),
     );
-  });
-});
-
-describe("review tab", () => {
-  const setup =
-    (comments: Comment[] = []) =>
-    () => {
-      chatBackend([session({ id: "s1" })]);
-      backend.on("comment_list", comments);
-      backend.on("comment_create", comment());
-      backend.on("comment_set_status", comment());
-      backend.on("comment_delete", null);
-      backend.on("comment_send", null);
-      backend.on("session_create", session({ id: "rev", title: "Review" }));
-      backend.on("session_send", null);
-    };
-
-  it("lists open and resolved comments across files and sends them all", async () => {
-    const app = open(
-      setup([
-        comment(),
-        comment({ id: "c2", path: "b.ts", line_start: 9, line_end: 12, body: "Other" }),
-        comment({ id: "c3", status: "resolved", body: "Done already" }),
-      ]),
-    );
-    await tab(app, "Review");
-    const open_ = await screen.findByRole("region", { name: "Open comments" });
-    expect(within(open_).getByText(/src\/a\.ts, line 3/)).toBeInTheDocument();
-    expect(within(open_).getByText(/b\.ts, lines 9–12/)).toBeInTheDocument();
-    expect(screen.getByRole("region", { name: "Resolved comments" })).toHaveTextContent(
-      "Done already",
-    );
-    await app.user.click(within(open_).getByRole("button", { name: "Send all to chat" }));
-    await waitFor(() =>
-      expect(backend.callsTo("comment_send")[0]).toMatchObject({ ids: ["c1", "c2"] }),
-    );
-  });
-
-  it("starts a review chat with the review prompt", async () => {
-    const app = open(setup());
-    await tab(app, "Review");
-    await app.user.click(await screen.findByRole("button", { name: "Run review" }));
-    await waitFor(() => expect(backend.callsTo("session_send")).toHaveLength(1));
-    expect(backend.callsTo("session_create")[0]).toMatchObject({ options: { title: "Review" } });
-    const sent = backend.callsTo("session_send")[0];
-    expect(sent.id).toBe("rev");
-    expect(String(sent.text)).toContain("compared with main");
-    expect(String(sent.text)).toContain("circles-findings");
-    expect(useChat.getState().activeTab.w1).toBe("rev");
-  });
-
-  it("turns the findings of a finished review into comments, without duplicates", async () => {
-    const reply = {
-      id: "m1",
-      session_id: "rev",
-      seq: 1,
-      role: "assistant",
-      kind: "text",
-      created_at: 1,
-      content: {
-        text: 'Two problems.\n```circles-findings\n[{"path":"src/a.ts","line":3,"body":"Rename this"},{"path":"src/b.ts","line":7,"end_line":9,"body":"Handle the error"}]\n```',
-      },
-    };
-    const app = open(() => {
-      setup([comment()])();
-      chatBackend([session({ id: "s1" }), session({ id: "rev", title: "Review" })]);
-      backend.on("session_messages", [reply]);
-    });
-    await tab(app, "Review");
-    await app.user.click(await screen.findByRole("button", { name: "Import findings" }));
-    await waitFor(() => expect(backend.callsTo("comment_create")).toHaveLength(1));
-    expect(backend.callsTo("comment_create")[0]).toEqual({
-      workspaceId: "w1",
-      comment: {
-        path: "src/b.ts",
-        line_start: 7,
-        line_end: 9,
-        body: "Handle the error",
-        source: "agent",
-      },
-    });
   });
 });
 

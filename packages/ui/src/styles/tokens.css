@@ -37,6 +37,8 @@
   --info: #1d4ed8;
   /* A branch with commits and no pull request yet, and the step that opens one. */
   --violet: #6d28d9;
+  /* The Claude mark next to the model name. The brand colour, the same in both themes. */
+  --claude: #ff7043;
 
   /* Git graph lines */
   --graph-1: #2563eb;
@@ -137,6 +139,7 @@
   --warning: #fbbf24;
   --info: #7aa7ff;
   --violet: #c4b5fd;
+  --claude: #ff7043;
 
   --graph-1: #5b9bff;
   --graph-2: #e060c4;

@@ -16,8 +16,6 @@ import {
 } from "@/features/composers/api";
 import { ApprovalCard } from "@/features/composers/approval-card";
 import { CardsPanel } from "@/features/genui/cards-panel";
-import { prKeys } from "@/features/pr/api";
-import { parseAgentTodos, todosContext } from "@/features/pr/draft";
 import { useWorkspaceEvents } from "@/features/workspaces/api";
 import { ipc } from "@/lib/ipc";
 import { useChat } from "@/stores/chat";
@@ -126,12 +124,7 @@ function ChatPane({
   const deliver = useCallback(
     async (text: string, attachments: Attachment[]) => {
       try {
-        // `@todos` hands the open todos to the agent with the message.
-        let outgoing = text;
-        if (/(^|\s)@todos\b/.test(text)) {
-          outgoing += todosContext(await ipc.todoList(workspace.id));
-        }
-        await ipc.sessionSend(session.id, outgoing, attachments);
+        await ipc.sessionSend(session.id, text, attachments);
         if (!live.title && text) {
           // First its first words at once, then a model's title in their place when it is ready.
           await ipc.sessionAutoTitle(session.id, titleFrom(text), text);
@@ -142,7 +135,7 @@ function ChatPane({
         view.setError(describeError(e));
       }
     },
-    [session.id, workspace.id, live.title, refreshLists, view.setError],
+    [session.id, live.title, refreshLists, view.setError],
   );
 
   const send = (text: string, attachments: Attachment[], how: "send" | "queue") => {
@@ -166,7 +159,6 @@ function ChatPane({
     });
   }, [live.status, queue.length]);
 
-  // Todos the agent suggests at the end of a turn are added to the workspace's todos.
   const lastStatus = useRef(live.status);
   const handled = useRef<string | null>(null);
   // What a model thinks might be said next, from the last exchange. Only when it is switched on.
@@ -191,16 +183,6 @@ function ChatPane({
         .then(setSuggestion)
         .catch(() => {});
     }
-    const suggested = parseAgentTodos(String((reply.content as { text?: string }).text ?? ""));
-    if (suggested.length === 0) return;
-    (async () => {
-      const known = new Set((await ipc.todoList(workspace.id)).map((t) => t.text));
-      for (const text of suggested.filter((t) => !known.has(t))) {
-        await ipc.todoCreate(workspace.id, text, true).catch(() => {});
-      }
-      queryClient.invalidateQueries({ queryKey: prKeys.todos(workspace.id) });
-      queryClient.invalidateQueries({ queryKey: prKeys.readiness(workspace.id) });
-    })();
   }, [live.status]);
 
   // Looking at the chat clears its unread marker.

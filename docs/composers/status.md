@@ -62,4 +62,4 @@ Composers can use Jira, and so can every chat. See `docs/integrations/status.md`
 
 ## Limits
 
-A run has no limit on time or on the number of tool calls (changed 2026-10-12). The stored `max_steps` and `max_minutes` are kept for old data and shared files, and are not enforced. What is still limited: workspaces and chats started per run, agents working at once, and an optional spending limit.
+A run has no limit on time, on the number of tool calls, or on the workspaces and chats it starts (changed 2026-10-30). The old `max_steps`, `max_minutes`, `max_children_at_once` and `max_children_total` are gone, and old data and shared files that still name them load fine. What is still limited: an optional spending limit.

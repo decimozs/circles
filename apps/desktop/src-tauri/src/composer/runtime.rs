@@ -14,7 +14,6 @@ use crate::git::Git;
 use crate::github::pr::MergeMethod;
 use crate::harness::from_settings;
 use crate::harness::store::{NewSession, SessionStatus};
-use crate::pr::todos::TodoSource;
 use crate::review::changes::{self, ChangeScope};
 use crate::state::AppState;
 use crate::workspace::model::CreateSource;
@@ -116,14 +115,6 @@ impl ToolRuntime for AppRuntime {
             .workspace_service()
             .await
             .branch_pattern_for_project(project_id)
-    }
-
-    async fn chat_active(&self, chat_id: &str) -> bool {
-        self.state()
-            .sessions
-            .get(chat_id)
-            .map(|s| matches!(s.status, SessionStatus::Working | SessionStatus::Blocked))
-            .unwrap_or(false)
     }
 
     async fn run(
@@ -407,14 +398,6 @@ impl ToolRuntime for AppRuntime {
                 self.chat_workspace(chat).await?;
                 state.sessions.interrupt(chat)?;
                 Ok(json!({ "interrupted": true }))
-            }
-            "add_todo" => {
-                let ws = self.workspace(str_arg(&input, "workspace_id")?).await?;
-                let todo =
-                    state
-                        .todos
-                        .create(&ws.id, str_arg(&input, "text")?, TodoSource::Agent)?;
-                Ok(json!({ "todo_id": todo.id }))
             }
             "add_local_project" => {
                 let p = state
