@@ -6,6 +6,7 @@ import { IconButton } from "@/components/shell/icon-button";
 import { ChatHistory, ChatTabs } from "@/features/chat/chat-tabs";
 import { useComposer, useWorkspaceLinks } from "@/features/composers/api";
 import { useProjects } from "@/features/projects/api";
+import { OpenFileMenu, useSettingsRoute } from "@/features/settings/settings-page";
 import { useWorkspace } from "@/features/workspaces/api";
 import { StatusIndicator } from "@/features/workspaces/status";
 import { WorkspaceActions } from "@/features/workspaces/workspace-actions";
@@ -24,6 +25,8 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
   const toggleDock = useUi((s) => s.toggleDock);
   const dockOpen = useUi((s) => s.dockOpen);
   const workspace = useWorkspace(match?.params.id).data;
+  const onSettings = useMatch("/settings/*") !== null;
+  const settingsRoute = useSettingsRoute();
   const project = useProjects().data?.find((p) => p.id === workspace?.project_id);
 
   return (
@@ -97,6 +100,12 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
             </IconButton>
           </div>
         </>
+      ) : null}
+      {onSettings ? (
+        // The settings file is opened from the top bar, at the right, whichever page is shown.
+        <div className="pointer-events-auto ml-auto flex shrink-0 items-center">
+          <OpenFileMenu projectId={settingsRoute.repoId} />
+        </div>
       ) : null}
       {workspace ? (
         <WorkspaceDetailsDialog
