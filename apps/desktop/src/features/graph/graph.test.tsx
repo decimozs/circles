@@ -69,7 +69,7 @@ describe("git graph", () => {
     for (const text of ["Fix build", "Start login", "Initial commit", "feature", "main"]) {
       expect(within(region).getByText(text)).toBeInTheDocument();
     }
-    expect(within(region).getByText(/feature → main/)).toBeInTheDocument();
+    expect(within(region).queryByText(/feature → main/)).not.toBeInTheDocument();
     expect(within(region).getByTestId("graph-counts")).toHaveTextContent("↑2");
     expect(within(region).getByTestId("graph-counts")).toHaveTextContent("↓1");
     expect(within(region).getAllByText("3min").length).toBeGreaterThan(0);

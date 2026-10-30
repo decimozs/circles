@@ -248,11 +248,6 @@ export function GraphPanel({ workspaceId }: { workspaceId: string }) {
           Graph
         </button>
         <span className="flex-1" />
-        {graph ? (
-          <span className="min-w-0 truncate text-right text-xs text-muted-foreground">
-            {graph.branch ?? "detached"} → {graph.base}
-          </span>
-        ) : null}
         {graph && (graph.ahead > 0 || graph.behind > 0) ? (
           <span className="shrink-0 text-2xs text-muted-foreground" data-testid="graph-counts">
             {graph.ahead > 0 ? `↑${graph.ahead}` : ""} {graph.behind > 0 ? `↓${graph.behind}` : ""}
