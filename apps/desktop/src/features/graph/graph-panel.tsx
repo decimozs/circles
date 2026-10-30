@@ -247,15 +247,6 @@ export function GraphPanel({ workspaceId }: { workspaceId: string }) {
           )}
           Graph
         </button>
-        <button
-          type="button"
-          aria-label="Expand graph"
-          title="Expand graph"
-          onClick={() => setExpanded(true)}
-          className="flex size-5 items-center justify-center rounded text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:bg-muted"
-        >
-          <Maximize2Icon className="size-3" />
-        </button>
         <span className="flex-1" />
         {graph ? (
           <span className="min-w-0 truncate text-right text-xs text-muted-foreground">
@@ -267,6 +258,15 @@ export function GraphPanel({ workspaceId }: { workspaceId: string }) {
             {graph.ahead > 0 ? `↑${graph.ahead}` : ""} {graph.behind > 0 ? `↓${graph.behind}` : ""}
           </span>
         ) : null}
+        <button
+          type="button"
+          aria-label="Expand graph"
+          title="Expand graph"
+          onClick={() => setExpanded(true)}
+          className="flex size-5 items-center justify-center rounded text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:bg-muted"
+        >
+          <Maximize2Icon className="size-3" />
+        </button>
       </div>
       {open ? (
         <div className="min-h-0 flex-1 overflow-y-auto">
