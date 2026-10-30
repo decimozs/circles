@@ -21,7 +21,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Page | What it holds |
 |---|---|
 | General | The send key (Enter or Cmd+Enter), what a message sent while the agent works does (steer or queue), notifications and the completion sound, full disk access, and whether long pasted text becomes an attachment. |
-| Account | Nothing yet: Circles runs fully on this Mac. |
+| Accounts | A card for the GitHub account the GitHub CLI uses, with a **Switch account** menu when several are signed in, and a card for the Claude account Claude Code is signed in with, with its plan. Each says what to run when it is not signed in. Circles never holds either login. |
 | Appearance | Theme (light, dark or system), font size and density. |
 | Default models | The model and effort a new chat starts with, and whether new chats start in plan mode. |
 | Git | The branch prefix, the branch naming rule, the merge strategy, and the commit author git will use. |
