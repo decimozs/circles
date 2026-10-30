@@ -17,7 +17,7 @@ or Anthropic attribution anywhere in the body.
 
 1. **Description.**
    - The first line is `**Ticket:** https://<site>.atlassian.net/browse/<KEY-n>`. It is mandatory:
-     every PR has a ticket. If the link cannot be built (no key, or no site in `docs/JIRA.md`), stop.
+     every PR has a ticket. If the link cannot be built (no key, or no site in `.github/JIRA.md`), stop.
    - Then 1 to 3 sentences on what was wrong or wanted and why. Name the symptom the person saw,
      then the cause. Not a list of files.
 2. **Summary.** 2 to 4 bullets a reviewer can read in ten seconds.

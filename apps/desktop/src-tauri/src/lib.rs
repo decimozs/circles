@@ -138,21 +138,6 @@ pub fn run() {
                         app.handle().clone(),
                     )));
                 state.genui.expire_after_restart();
-                // The small model that names chats ships with the app.
-                {
-                    use tauri::Manager;
-                    state.smart.locate(
-                        app.path().resource_dir().ok().as_deref(),
-                        &state.paths.data_dir,
-                    );
-                    // Load it a moment after the app is up, so the first chat does not wait.
-                    if let Some(model) = state.smart.embedded() {
-                        tauri::async_runtime::spawn(async move {
-                            tokio::time::sleep(std::time::Duration::from_secs(4)).await;
-                            model.warm_up().await;
-                        });
-                    }
-                }
                 if let Err(e) = state.composers.start(
                     app.handle(),
                     state.redactor.clone(),
@@ -311,6 +296,9 @@ pub fn run() {
             commands::pr::agent_respond_review,
             commands::pr::agent_resolve_conflicts,
             commands::composer::tool_catalog,
+            commands::account::claude_account,
+            commands::account::github_accounts,
+            commands::account::github_switch_account,
             commands::composer::composer_improve_instructions,
             commands::composer::composer_list,
             commands::composer::composer_get,

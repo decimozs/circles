@@ -441,6 +441,16 @@ pub async fn account_token_for(env: &ResolvedEnv, cwd: &Path) -> Option<String> 
 
 /// The accounts `gh` is signed in to, the active one first.
 async fn account_logins(env: &ResolvedEnv) -> Vec<String> {
+    signed_in_accounts(env)
+        .await
+        .into_iter()
+        .map(|(login, _)| login)
+        .collect()
+}
+
+/// The accounts `gh` is signed in to on github.com, each with whether it is the active one, the
+/// active one first.
+pub async fn signed_in_accounts(env: &ResolvedEnv) -> Vec<(String, bool)> {
     let Some(gh) = env.which("gh") else {
         return Vec::new();
     };
@@ -479,7 +489,46 @@ async fn account_logins(env: &ResolvedEnv) -> Vec<String> {
         })
         .unwrap_or_default();
     accounts.sort_by_key(|(active, _)| !active);
-    accounts.into_iter().map(|(_, login)| login).collect()
+    accounts
+        .into_iter()
+        .map(|(active, login)| (login, active))
+        .collect()
+}
+
+/// Makes `login` the active `gh` account. It must be one of the accounts `gh` is signed in to.
+pub async fn switch_account(env: &ResolvedEnv, login: &str) -> Result<(), GhError> {
+    let known = signed_in_accounts(env).await;
+    if !known.iter().any(|(l, _)| l == login) {
+        return Err(GhError::new(
+            GhErrorKind::Other,
+            format!("{login} is not signed in to the GitHub CLI."),
+            None,
+        ));
+    }
+    let gh = env.which("gh").ok_or_else(GhError::not_installed)?;
+    let mut cmd = Command::new(gh);
+    env.apply(&mut cmd);
+    cmd.args([
+        "auth",
+        "switch",
+        "--hostname",
+        "github.com",
+        "--user",
+        login,
+    ])
+    .env("GH_PROMPT_DISABLED", "1")
+    .env("NO_COLOR", "1")
+    .stdin(Stdio::null())
+    .kill_on_drop(true);
+    match tokio::time::timeout(Duration::from_secs(10), cmd.output()).await {
+        Ok(Ok(out)) if out.status.success() => Ok(()),
+        Ok(Ok(out)) => Err(classify(&String::from_utf8_lossy(&out.stderr))),
+        _ => Err(GhError::new(
+            GhErrorKind::Other,
+            "The GitHub CLI did not answer.",
+            None,
+        )),
+    }
 }
 
 /// The account for a repository: the one named like its owner, or else the first that can see it.
@@ -976,6 +1025,54 @@ mod tests {
         let err = Gh::new(Arc::new(env)).current_user().await.unwrap_err();
         assert_eq!(err.kind, GhErrorKind::NotInstalled);
         assert_eq!(err.fix.as_deref(), Some("brew install gh"));
+    }
+
+    #[tokio::test]
+    async fn accounts_are_listed_with_the_active_one_first_and_one_can_be_switched_to() {
+        use std::os::unix::fs::PermissionsExt;
+        let tmp = tempfile::tempdir().unwrap();
+        let bin = tmp.path().join("bin");
+        std::fs::create_dir_all(&bin).unwrap();
+        std::fs::write(tmp.path().join("active"), "work").unwrap();
+        let script = bin.join("gh");
+        std::fs::write(
+            &script,
+            r#"#!/bin/sh
+active=$(cat "$STATE/active")
+case "$1 $2" in
+  "auth status")
+    w=false; p=false
+    [ "$active" = work ] && w=true
+    [ "$active" = me ] && p=true
+    echo "{\"hosts\":{\"github.com\":[{\"state\":\"success\",\"active\":$w,\"login\":\"work\"},{\"state\":\"success\",\"active\":$p,\"login\":\"me\"},{\"state\":\"error\",\"active\":false,\"login\":\"old\"}]}}" ;;
+  "auth switch")
+    while [ $# -gt 0 ]; do [ "$1" = "--user" ] && echo "$2" > "$STATE/active"; shift; done ;;
+  *) echo "unexpected: $@" >&2; exit 2 ;;
+esac
+"#,
+        )
+        .unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let path = format!("{}:/usr/bin:/bin", bin.display());
+        let env = ResolvedEnv::for_test(&[
+            ("PATH", path.as_str()),
+            ("STATE", tmp.path().to_str().unwrap()),
+        ]);
+
+        let listed = signed_in_accounts(&env).await;
+        // The active one first, and an account that is not working is left out.
+        assert_eq!(
+            listed,
+            vec![("work".to_string(), true), ("me".to_string(), false)]
+        );
+        switch_account(&env, "me").await.unwrap();
+        assert_eq!(
+            signed_in_accounts(&env).await,
+            vec![("me".to_string(), true), ("work".to_string(), false)]
+        );
+        // An account that is not signed in cannot be switched to.
+        assert!(switch_account(&env, "stranger").await.is_err());
+        assert!(switch_account(&env, "old").await.is_err());
     }
 
     /// A repository whose `origin` is `url`, and a fake `gh` signed in to `accounts` (the first is

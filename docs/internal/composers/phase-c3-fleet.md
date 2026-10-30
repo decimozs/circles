@@ -12,9 +12,9 @@ C2.
 - **Parent links:** a workspace and a chat remember the run that started them. The sidebar and the Composer page show the family.
 - **Wait and collect tools:** `wait_for_chats` (until idle, blocked or a time limit), `get_chat_result` (last reply and changed files), `get_pr_status`.
 - **Fleet panel:** the Fleet tab in the right pane shows every child with its status, last activity, changes and a link to open it. Children keep their place in their project groups in the sidebar, with a small badge linking to the run.
-- **Limits that bite:** children at once, children in total, steps, wall time. Reaching one stops spawning and tells the person. This is the concurrency cap deferred in phase 13, now a real setting on the Composers page in Settings.
+- **Limits that bite** (removed later: a run now has no limit on children, steps or time, only the optional spending limit): children at once, children in total, steps, wall time. Reaching one stops spawning and tells the person. This is the concurrency cap deferred in phase 13, now a real setting on the Composers page in Settings.
 - **Control:** stop one child, stop all children of a run, and a global "stop all Composers" key.
-- **Pull requests:** `create_pr` and `merge_pr` for child branches, following the autonomy setting. `merge_pr` obeys the same blockers as the merge button (checks, conflicts, todos) unless the person allowed overriding them. `clone_github_project` uses the right GitHub account for the repository.
+- **Pull requests:** `create_pr` and `merge_pr` for child branches, following the autonomy setting. `merge_pr` obeys the same blockers as the merge button (checks and conflicts; todos were removed later) unless the person allowed overriding them. `clone_github_project` uses the right GitHub account for the repository.
 - **Waiting approvals:** a child or a run that needs an answer is stored as waiting and shown in the Approvals tab. This is what C6 builds the global inbox on.
 - **Results report:** at the end of a run, a summary of what each child did, with links.
 

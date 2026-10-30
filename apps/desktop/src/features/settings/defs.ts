@@ -215,13 +215,23 @@ export const SETTINGS: SettingDef[] = [
     keywords: "name email identity",
   },
   {
-    id: "account",
+    id: "github_account",
     page: "account",
-    title: "Account",
-    description: "Sign in arrives with accounts. Circles runs fully on this machine until then.",
+    title: "GitHub",
+    description:
+      "The GitHub account Circles works as, through the GitHub CLI. Switch account changes the one the CLI uses.",
     path: [],
     control: { kind: "custom" },
-    keywords: "login profile",
+    keywords: "login profile github gh sign in account switch",
+  },
+  {
+    id: "claude_account",
+    page: "account",
+    title: "Claude",
+    description: "The Claude account Claude Code is signed in with, and its plan.",
+    path: [],
+    control: { kind: "custom" },
+    keywords: "login profile claude anthropic subscription plan sign in account",
   },
   {
     id: "claude_path",
@@ -326,10 +336,10 @@ export const SETTINGS: SettingDef[] = [
     page: "smart",
     title: "Name new chats",
     description:
-      "A small model that ships inside Circles gives a new chat a short title from what you asked. It runs on this Mac and sends nothing anywhere. Your own name for a chat is never replaced.",
+      "Claude Haiku, through Claude Code, gives a new chat a short title from what you asked. It spends a little of your Claude usage and sends the start of your first message to Anthropic. Your own name for a chat is never replaced.",
     path: ["smart", "titles"],
     control: { kind: "toggle", default: true },
-    keywords: "title name chat model automatic",
+    keywords: "title name chat haiku anthropic automatic",
   },
   {
     id: "smart_first_prompt",
@@ -352,38 +362,10 @@ export const SETTINGS: SettingDef[] = [
     keywords: "placeholder suggestion autocomplete next prompt",
   },
   {
-    id: "smart_provider",
-    page: "smart",
-    title: "Model",
-    description:
-      "The model inside Circles runs on this Mac and needs nothing installed. Claude Haiku is faster to set up and better at wording, but it spends your Claude subscription and sends the text to Anthropic.",
-    path: ["smart", "provider"],
-    control: {
-      kind: "select",
-      options: opts(
-        ["embedded", "Built in (on this Mac)"],
-        ["claude", "Claude Haiku (sends text to Anthropic)"],
-        ["off", "Off"],
-      ),
-      default: "embedded",
-    },
-    keywords: "ollama local haiku anthropic",
-  },
-  {
-    id: "smart_notice",
-    page: "smart",
-    title: "About the built-in model",
-    description:
-      "SmolLM2-360M-Instruct by Hugging Face, Apache License 2.0, run with llama.cpp (MIT). It is packed into Circles and runs on this Mac only.",
-    path: [],
-    control: { kind: "custom" },
-    keywords: "licence license apache smollm llama.cpp",
-  },
-  {
     id: "smart_test",
     page: "smart",
     title: "Try it",
-    description: "Runs the model on an example and shows what it wrote and how long it took.",
+    description: "Asks Claude Haiku about an example and shows what it wrote and how long it took.",
     path: [],
     control: { kind: "custom" },
     keywords: "test check model",

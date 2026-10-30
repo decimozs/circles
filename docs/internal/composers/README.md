@@ -58,9 +58,9 @@ A tool with a setting of its own (a template can switch tools off, for example) 
 
 - **Per tool:** each tool of a Composer is `ask` (a card each time), `allow` (does it without asking) or `off` (the Composer does not have it). Defaults: `read` allow, `write` ask, `external` ask, `destructive` ask.
 - **Per project:** a Composer can be limited to certain projects, and a tool can be allowed in some and ask in others.
-- **Merging:** `merge_pr` still follows the same readiness rules as the merge button: failing checks, conflicts and open todos block it. Overriding those blockers is a separate switch, off by default.
+- **Merging:** `merge_pr` still follows the same readiness rules as the merge button: failing checks, conflicts and requested changes block it. Overriding those blockers is a separate switch, off by default.
 - **Visible:** enabling `allow` on an `external` or `destructive` tool shows a plain warning, and the Composer's page shows its autonomy at a glance. Every call is in the audit log either way.
-- **Always on:** limits (steps, children, wall time) and the stop-all key apply no matter what is allowed.
+- **Always on:** the optional spending limit and the stop-all key apply no matter what is allowed. A run has no limit on tool calls, time, or how many workspaces and chats it starts: a person can stop it, and Claude Code's rate limits apply.
 
 ## What is built
 

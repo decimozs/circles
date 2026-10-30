@@ -26,6 +26,16 @@ use crate::error::{AppError, AppResult};
 use crate::terminal::Context;
 
 /// How long a stopped process gets between SIGTERM and SIGKILL.
+/// What Claude Code says when it is asked to resume a conversation it does not have.
+const SESSION_LOST_TEXT: &str = "No conversation found with session ID";
+
+/// What the person is told when that happens.
+const SESSION_LOST: &str = "Claude Code cannot find this conversation. It began under another Claude account or config folder (CLAUDE_CONFIG_DIR). Send your message again: Circles continues in a new session and tells it what was said.";
+
+fn session_was_lost(errors: &[String]) -> bool {
+    errors.iter().any(|e| e.contains(SESSION_LOST_TEXT))
+}
+
 const STOP_GRACE: Duration = Duration::from_secs(5);
 
 /// Everything the UI is sent about a session, in order.
@@ -812,6 +822,45 @@ impl SessionManager {
         Ok(self.with_running(session))
     }
 
+    /// Claude Code could not find the conversation it was asked to resume, for example because the
+    /// account or config folder it runs with is not the one the chat began under. The chat goes on
+    /// in a new session that is told what was said, from the messages Circles kept. The message
+    /// that failed is left out, since the person sends it again.
+    fn start_session_over(&self, session_id: &str) {
+        let mut rows: Vec<(String, String, serde_json::Value)> = self
+            .store
+            .messages(session_id, None)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|m| {
+                (
+                    m.role.as_str().to_string(),
+                    m.kind.as_str().to_string(),
+                    m.content,
+                )
+            })
+            .collect();
+        if let Some(last_user) = rows
+            .iter()
+            .rposition(|(role, kind, _)| role == "user" && kind == "text")
+        {
+            rows.truncate(last_user);
+        }
+        let context = crate::checkpoint::transcript(&rows, crate::checkpoint::TRANSCRIPT_LIMIT);
+        if let Err(e) = self.store.forget_claude_session(session_id) {
+            tracing::warn!(error = %e, "cannot forget the lost session");
+            return;
+        }
+        if !context.is_empty() {
+            if let Err(e) = self.store.set_replay_context(session_id, Some(&context)) {
+                tracing::warn!(error = %e, "cannot keep what was said for the new session");
+            }
+        }
+        tracing::info!(
+            "Claude Code cannot find the conversation, so the chat starts a new session"
+        );
+    }
+
     // Output
 
     fn handle_line(&self, session_id: &str, live: &Arc<Live>, raw: &str) {
@@ -896,12 +945,21 @@ impl SessionManager {
                         duration_ms: result.duration_ms,
                     },
                 );
-                let error = result.is_error.then(|| {
-                    result
-                        .result
-                        .clone()
-                        .unwrap_or_else(|| result.subtype.clone())
-                });
+                let lost = result.is_error && session_was_lost(&result.errors);
+                let error = if lost {
+                    self.start_session_over(session_id);
+                    Some(SESSION_LOST.to_string())
+                } else {
+                    result.is_error.then(|| {
+                        result
+                            .result
+                            .clone()
+                            .or_else(|| {
+                                (!result.errors.is_empty()).then(|| result.errors.join(" "))
+                            })
+                            .unwrap_or_else(|| result.subtype.clone())
+                    })
+                };
                 self.set_status(session_id, SessionStatus::Idle, error.as_deref());
                 if result.is_error {
                     self.notify(session_id, NotificationKind::Failed, error);
@@ -2544,6 +2602,49 @@ mod tests {
             .unwrap()
             .to_string();
         assert!(last.contains("--resume"), "{last}");
+    }
+
+    #[test]
+    fn a_missing_conversation_is_told_from_the_errors_of_the_result() {
+        assert!(session_was_lost(&[
+            "No conversation found with session ID: 8def9b1f".to_string()
+        ]));
+        assert!(!session_was_lost(&["The model overloaded".to_string()]));
+        assert!(!session_was_lost(&[]));
+    }
+
+    #[tokio::test]
+    async fn a_lost_session_starts_over_with_what_was_said_but_not_the_failed_message() {
+        let fx = fixture();
+        let (session, _) = new_session(&fx);
+        let store = fx.manager.store();
+        store
+            .set_claude_session(&session.id, "gone-with-the-account", None)
+            .unwrap();
+        let text = |role: Role, text: &str| NewMessage {
+            role,
+            kind: MessageKind::Text,
+            content: serde_json::json!({ "text": text }),
+        };
+        store
+            .append_messages(
+                &session.id,
+                None,
+                &[
+                    text(Role::User, "first ask"),
+                    text(Role::Assistant, "first answer"),
+                    text(Role::User, "the message that failed"),
+                ],
+            )
+            .unwrap();
+
+        fx.manager.start_session_over(&session.id);
+
+        assert_eq!(store.get(&session.id).unwrap().claude_session_id, None);
+        let told = store.take_replay_context(&session.id).unwrap().unwrap();
+        assert!(told.contains("User: first ask"), "{told}");
+        assert!(told.contains("Assistant: first answer"), "{told}");
+        assert!(!told.contains("the message that failed"), "{told}");
     }
 
     #[tokio::test]

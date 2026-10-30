@@ -1,12 +1,10 @@
-//! Small text jobs done by a small model that ships inside Circles: a title for a chat, and a
-//! suggestion for the next message. Nothing here may block a chat. Every call has a timeout, and
-//! when no model is available the callers keep what they already have.
+//! Small text jobs done by Claude Haiku through Claude Code: a title for a chat, and a suggestion
+//! for the next message. Nothing here may block a chat. Every call has a timeout, and when Claude
+//! Code is not there the callers keep what they already have.
 
 pub mod claude;
-pub mod embedded;
 pub mod naming;
 pub mod sanitize;
-pub mod service;
 
 use std::time::Duration;
 
@@ -14,8 +12,8 @@ use async_trait::async_trait;
 
 /// How long a model has to answer before the caller moves on.
 ///
-/// The first answer after the model was unloaded includes loading it, and the Mac may be busy with
-/// a build or a test run, so this is generous. The caller never waits on it.
+/// Starting Claude Code takes a moment, and the Mac may be busy with a build or a test run, so
+/// this is generous. The caller never waits on it.
 pub const TIMEOUT: Duration = Duration::from_secs(25);
 
 /// The most characters of someone's text that are given to a model. A title needs the start of a

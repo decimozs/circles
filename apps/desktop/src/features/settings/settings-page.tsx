@@ -80,10 +80,7 @@ export function SettingsPage() {
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto max-w-3xl px-8 pt-10 pb-16">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-semibold">{title}</h1>
-          <OpenFileMenu projectId={repoId} />
-        </div>
+        <h1 className="mb-6 text-2xl font-semibold">{title}</h1>
         {view.error ? (
           <p role="alert" className="text-sm text-destructive">
             {(view.error as Error).message}

@@ -25,14 +25,14 @@ extra change in this one.
 ## Before the first ticket
 
 Circles has no Jira project recorded yet. Ask the user once for the **site** and the **project key**,
-and write both into `docs/JIRA.md` (create it if missing) so they are not asked again. Never guess a
+and write both into `.github/JIRA.md` (create it if missing) so they are not asked again. Never guess a
 key, and never use the employer tenant (`team-anervea`): Circles is a personal project.
 
 Transport, in order of preference:
 1. A helper `scripts/jira/jira.mjs` with credentials in the gitignored `jira.env`, when it exists.
    It does not exist in this repository yet.
 2. The connected Atlassian tools (read: search, get issue; write: create issue). Check that the
-   connected site is the one in `docs/JIRA.md` before the first write.
+   connected site is the one in `.github/JIRA.md` before the first write.
 
 Credentials are never printed, logged, committed, or pasted into a ticket.
 
@@ -58,7 +58,7 @@ Good: `Add a per-project branch naming rule`. Bad: `Bot stuff`, `Improve login`.
 - The body starts at `## Description`. No header line with Type, Size, Epic or Blocked by: those are
   fields and labels.
 - Acceptance-criteria Result values are the plain words `Pending`, `Pass`, `Fail`.
-- Labels: use only the labels listed in `docs/JIRA.md`. Never invent one without approval.
+- Labels: use only the labels listed in `.github/JIRA.md`. Never invent one without approval.
 
 ## Quality bar
 

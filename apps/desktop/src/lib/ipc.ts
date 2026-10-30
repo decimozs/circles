@@ -10,6 +10,7 @@ import type { BranchState } from "@circles/bindings/BranchState";
 import type { ChangedFile } from "@circles/bindings/ChangedFile";
 import type { Check } from "@circles/bindings/Check";
 import type { Checkpoint } from "@circles/bindings/Checkpoint";
+import type { ClaudeAccount } from "@circles/bindings/ClaudeAccount";
 import type { ClaudeCheck } from "@circles/bindings/ClaudeCheck";
 import type { Comment } from "@circles/bindings/Comment";
 import type { CommitInfo } from "@circles/bindings/CommitInfo";
@@ -31,6 +32,7 @@ import type { FleetItem } from "@circles/bindings/FleetItem";
 import type { FsEntry } from "@circles/bindings/FsEntry";
 import type { GhRepos } from "@circles/bindings/GhRepos";
 import type { GitGraph } from "@circles/bindings/GitGraph";
+import type { GithubAccounts } from "@circles/bindings/GithubAccounts";
 import type { GitIdentity } from "@circles/bindings/GitIdentity";
 import type { JiraStatus } from "@circles/bindings/JiraStatus";
 import type { Learned } from "@circles/bindings/Learned";
@@ -298,6 +300,9 @@ export const ipc = {
     call<string>("settings_open_file", { scope, projectId: projectId ?? null }),
   gitIdentity: () => call<GitIdentity>("git_identity"),
   claudeCheck: () => call<ClaudeCheck>("claude_check"),
+  claudeAccount: () => call<ClaudeAccount>("claude_account"),
+  githubAccounts: () => call<GithubAccounts>("github_accounts"),
+  githubSwitchAccount: (login: string) => call<GithubAccounts>("github_switch_account", { login }),
   soundPlay: () => call<null>("sound_play"),
   notifyTest: () => call<null>("notify_test"),
   dataReveal: () => call<null>("data_reveal"),

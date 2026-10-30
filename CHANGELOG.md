@@ -9,14 +9,14 @@
 
 ### Changed
 - The repository is a monorepo: the app is in `apps/desktop`, shared code in `packages/ui`, `packages/bindings` and `packages/config`.
-- Release builds target macOS 11 or later, which the bundled model runtime needs.
+- Release builds target macOS 11 or later.
 
 ### Added
 - Branch naming rule per project (Settings, Git, `branch_pattern`, for example `{ticket}-{slug}`): Composers name branches by it, and `list_projects` shows it to them.
 - Project skills: agents in every workspace are told about `.claude/skills`, `.agents/skills`, `.agent/skills`, `AGENTS.md` and `CLAUDE.md`, and a Composer no longer reads your user level instructions.
 - Cards from agents: a Composer (and, if switched on, any chat) can show a small checklist, form or plan in the chat and read your answer.
 - Side questions: `/btw` (or ⌘⇧B) asks a quick question about a chat and answers in a pane above the message box, without changing the chat or interrupting the agent.
-- Smart chat titles: a small model that ships inside Circles (SmolLM2-360M, nothing to install, nothing sent anywhere) names new chats, and can suggest the next message as the input placeholder.
+- Smart chat titles: Claude Haiku, through Claude Code, names new chats, and can suggest the next message as the input placeholder. It spends a little of your Claude usage and sends the start of your first message to Anthropic, and can be switched off in Settings. There is no model inside Circles and nothing to download when building it.
 - Sign in with Atlassian: connect Jira in the browser instead of pasting a token. The API token stays as a fallback.
 - Jira Cloud integration: connect in Settings, Integrations (token in the Keychain). Every chat can search and read issues, and change them after a permission prompt. Composers get a Jira switch, a choice of repositories, and a Jira trigger.
 - Local desktop app that runs Claude Code agents in parallel, each in its own git worktree.

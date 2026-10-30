@@ -240,6 +240,14 @@ export function Sidebar() {
       </div>
 
       <nav className="flex flex-col gap-0.5 px-2" aria-label="Primary">
+        <button type="button" className={NAV_ITEM} onClick={() => setPaletteOpen(true)}>
+          <SearchIcon className="size-4 text-muted-foreground" />
+          Search
+        </button>
+        <button type="button" className={NAV_ITEM} onClick={() => openCreate()}>
+          <PlusIcon className="size-4 text-muted-foreground" />
+          Create
+        </button>
         <NavLink
           to="/"
           end
@@ -248,10 +256,6 @@ export function Sidebar() {
           <HomeIcon className="size-4 text-muted-foreground" />
           Home
         </NavLink>
-        <button type="button" className={NAV_ITEM} onClick={() => openCreate()}>
-          <PlusIcon className="size-4 text-muted-foreground" />
-          Create
-        </button>
         <NavLink
           to="/composers"
           end
@@ -261,7 +265,7 @@ export function Sidebar() {
           )}
         >
           <BotIcon className="size-4 text-muted-foreground" />
-          Composers
+          Composer
           {waiting > 0 ? (
             <span
               role="status"
@@ -272,10 +276,6 @@ export function Sidebar() {
             </span>
           ) : null}
         </NavLink>
-        <button type="button" className={NAV_ITEM} onClick={() => setPaletteOpen(true)}>
-          <SearchIcon className="size-4 text-muted-foreground" />
-          Search
-        </button>
       </nav>
 
       <div className="my-2 border-t border-sidebar-border" />

@@ -32,7 +32,20 @@ export function defaultBackend() {
     .on("genui_cards", [])
     .on("genui_pending", [])
     .on("smart_suggest", null)
-    .on("smart_status", { embedded_available: true, provider: "embedded" })
+    .on("smart_status", { available: true })
+    .on("github_accounts", {
+      installed: true,
+      accounts: [{ login: "me", active: true }],
+      fix: null,
+    })
+    .on("claude_account", {
+      found: true,
+      signed_in: true,
+      email: "me@example.com",
+      method: "claude.ai",
+      plan: "pro",
+      fix: null,
+    })
     .on("jira_status", {
       connected: false,
       site: null,

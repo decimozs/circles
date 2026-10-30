@@ -22,6 +22,7 @@ import { useJiraStatus } from "@/features/integrations/api";
 import { JiraCard } from "@/features/integrations/jira-card";
 import { useOnboarding } from "@/features/onboarding/store";
 import { ipc } from "@/lib/ipc";
+import { ClaudeAccountCard, GithubAccountCard } from "./account-cards";
 import { layerValue, useSetSetting } from "./api";
 import { SETTINGS, type SettingDef } from "./defs";
 import { DefRow, SettingRow } from "./rows";
@@ -30,14 +31,6 @@ const message = (e: unknown) =>
   e instanceof Error ? e.message : ((e as { message?: string })?.message ?? String(e));
 
 const FULL_DISK_URL = "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles";
-
-function AccountRow({ def, highlight }: { def: SettingDef; highlight?: string }) {
-  return (
-    <SettingRow title={def.title} description={def.description} highlight={highlight}>
-      <span className="text-xs text-muted-foreground">Not signed in</span>
-    </SettingRow>
-  );
-}
 
 function TestRow({ def, highlight }: { def: SettingDef; highlight?: string }) {
   const run = async (fn: () => Promise<unknown>) => {
@@ -249,9 +242,9 @@ function SmartTestRow({ def, highlight }: { def: SettingDef; highlight?: string 
           <Button size="sm" variant="outline" disabled={busy} onClick={run}>
             {busy ? "Running…" : "Try it"}
           </Button>
-          {status.data && !status.data.embedded_available && status.data.provider === "embedded" ? (
+          {status.data && !status.data.available ? (
             <span role="alert" className="text-warning">
-              The built-in model file was not found in this copy of Circles.
+              Claude Code was not found, so nothing can be named or suggested. See Agents.
             </span>
           ) : null}
         </div>
@@ -472,8 +465,10 @@ export function CustomRow({
   highlight?: string;
 }) {
   switch (def.id) {
-    case "account":
-      return <AccountRow def={def} highlight={highlight} />;
+    case "github_account":
+      return <GithubAccountCard />;
+    case "claude_account":
+      return <ClaudeAccountCard />;
     case "sound_test":
       return <TestRow def={def} highlight={highlight} />;
     case "full_disk_access":
@@ -484,12 +479,6 @@ export function CustomRow({
       return <ClaudeCheckRow def={def} highlight={highlight} />;
     case "env_vars":
       return <EnvRow def={def} view={view} highlight={highlight} />;
-    case "smart_notice":
-      return (
-        <SettingRow title={def.title} description={def.description} highlight={highlight}>
-          {null}
-        </SettingRow>
-      );
     case "smart_test":
       return <SmartTestRow def={def} highlight={highlight} />;
     case "jira_card":

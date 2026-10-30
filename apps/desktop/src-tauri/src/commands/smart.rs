@@ -1,4 +1,4 @@
-//! Titles and suggestions made by a small model. Nothing here waits on the model before a chat can
+//! Titles and suggestions made by Claude Haiku. Nothing here waits on the model before a chat can
 //! go on: the caller already has a title, and the model's one replaces it later.
 
 use std::sync::Arc;
@@ -21,20 +21,11 @@ pub(crate) fn settings_of(state: &AppState) -> SmartSettings {
         .unwrap_or_default()
 }
 
-/// The model to use for these settings, if there is one.
-pub(crate) async fn provider(
-    state: &AppState,
-    settings: &SmartSettings,
-) -> Option<Arc<dyn TextModel>> {
-    match settings.provider.as_deref().unwrap_or("embedded") {
-        "off" => None,
-        "claude" => {
-            let env = state.env.get().await;
-            let program = env.which("claude")?;
-            Some(Arc::new(ClaudeHaiku { program, env }))
-        }
-        _ => state.smart.embedded().map(|m| m as Arc<dyn TextModel>),
-    }
+/// Claude Haiku through Claude Code, when Claude Code is installed.
+pub(crate) async fn provider(state: &AppState) -> Option<Arc<dyn TextModel>> {
+    let env = crate::commands::app::env_with_settings(state, None).await;
+    let program = env.which("claude")?;
+    Some(Arc::new(ClaudeHaiku { program, env }))
 }
 
 /// Names a chat that has no name: first from its first words, at once, and then, in the
@@ -64,7 +55,7 @@ pub async fn smart_suggest(
     if settings.suggestions != Some(true) {
         return Ok(None);
     }
-    let Some(model) = provider(&state, &settings).await else {
+    let Some(model) = provider(&state).await else {
         return Ok(None);
     };
     let redactor = &state.redactor;
@@ -86,7 +77,7 @@ pub async fn smart_first_prompt(
     if settings.first_prompt == Some(false) {
         return Ok(None);
     }
-    let Some(model) = provider(&state, &settings).await else {
+    let Some(model) = provider(&state).await else {
         return Ok(None);
     };
     let purpose = state.redactor.redact(&purpose);
@@ -96,17 +87,14 @@ pub async fn smart_first_prompt(
 #[derive(Debug, Clone, Serialize, TS)]
 #[ts(export)]
 pub struct SmartStatus {
-    /// The model file is in place.
-    pub embedded_available: bool,
-    pub provider: String,
+    /// Claude Code was found, so Haiku can be asked.
+    pub available: bool,
 }
 
 #[tauri::command]
 pub async fn smart_status(state: State<'_, AppState>) -> IpcResult<SmartStatus> {
-    let settings = settings_of(&state);
     Ok(SmartStatus {
-        embedded_available: state.smart.embedded().is_some(),
-        provider: settings.provider.unwrap_or_else(|| "embedded".into()),
+        available: provider(&state).await.is_some(),
     })
 }
 
@@ -117,23 +105,16 @@ pub struct SmartTest {
     pub suggestion: Option<String>,
     #[ts(type = "number")]
     pub millis: u64,
-    pub provider: String,
 }
 
 /// Tries the model on a fixed example, so the person can see it works and how long it takes.
 #[tauri::command]
 pub async fn smart_test(state: State<'_, AppState>) -> IpcResult<SmartTest> {
-    let settings = settings_of(&state);
-    let name = settings
-        .provider
-        .clone()
-        .unwrap_or_else(|| "embedded".into());
-    let Some(model) = provider(&state, &settings).await else {
+    let Some(model) = provider(&state).await else {
         return Ok(SmartTest {
             title: None,
             suggestion: None,
             millis: 0,
-            provider: name,
         });
     };
     let start = std::time::Instant::now();
@@ -152,6 +133,5 @@ pub async fn smart_test(state: State<'_, AppState>) -> IpcResult<SmartTest> {
         title,
         suggestion,
         millis: start.elapsed().as_millis() as u64,
-        provider: name,
     })
 }

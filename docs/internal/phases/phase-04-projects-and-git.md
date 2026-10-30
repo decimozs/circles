@@ -7,7 +7,7 @@ Add repositories as projects, and a tested git service that all workspace featur
 Phase 3.
 
 ## In scope
-- **Add project flows:** open a local repo, open a GitHub repo (via `gh repo list`, then clone into `~/circles/repos/`), quick start (create new repo with an initial commit).
+- **Add project flows:** open a local repo, open a GitHub repo (via `gh repo list`, then clone into `~/circles/repos/`; see `docs/projects.md` for what the picker lists now), quick start (create new repo with an initial commit).
 - **Validation:** is it a git repo, is it already added, is the path inside an existing worktree.
 - **Base branch detection:** read `origin/HEAD`, fall back to `main`, then `master`. Stored per project, editable.
 - **Git service** (shells out to the `git` CLI, never libgit2). Operations: `fetch`, `worktree add/remove/list/prune`, `branch` (create, rename, delete, exists), `status`, `diff` (numstat and patch), `log`, `rev-parse`, `merge-base`, `ahead/behind`.

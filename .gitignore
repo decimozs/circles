@@ -25,6 +25,3 @@ dist-ssr
 
 # Rust build output of the workspace.
 /target/
-
-# The title model is large. It is fetched by `pnpm model:fetch` and packed into the app.
-apps/desktop/src-tauri/resources/models/*.gguf

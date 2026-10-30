@@ -186,7 +186,11 @@ pub async fn pr_draft(
         &settings.instructions,
         &docs,
     );
-    let env = state.env.get().await;
+    let env = state
+        .env
+        .get()
+        .await
+        .with_overrides(settings.environment_variables.clone());
     let model = model
         .filter(|m| !m.trim().is_empty())
         .unwrap_or_else(|| "sonnet".into());
@@ -385,7 +389,11 @@ pub async fn commit_with_claude(
     }
     let docs = docs::read(&cwd);
     let prompt = prompts::commit_plan(&pending.files, &pending.diff, &settings.instructions, &docs);
-    let env = state.env.get().await;
+    let env = state
+        .env
+        .get()
+        .await
+        .with_overrides(settings.environment_variables.clone());
     let model = model
         .filter(|m| !m.trim().is_empty())
         .unwrap_or_else(|| "sonnet".into());

@@ -131,6 +131,25 @@ pub(crate) fn settings_layers(
     Ok(layers)
 }
 
+/// The login environment with the variables from the settings on top: the user's, and the
+/// project's when there is one. Everything that starts Claude Code outside a chat uses it, so the
+/// account a person chose with `CLAUDE_CONFIG_DIR` there is the account it works as.
+pub(crate) async fn env_with_settings(
+    state: &AppState,
+    project_id: Option<&str>,
+) -> std::sync::Arc<crate::env::ResolvedEnv> {
+    let env = state.env.get().await;
+    let extra = settings_layers(state, project_id)
+        .ok()
+        .and_then(|layers| crate::settings::load_merged(&layers).ok())
+        .map(|payload| payload.settings.environment_variables)
+        .unwrap_or_default();
+    if extra.is_empty() {
+        return env;
+    }
+    std::sync::Arc::new(env.with_overrides(extra))
+}
+
 /// Merged settings: user, then the project's shared file, then the local override.
 /// Without a `project_id` only the user file applies.
 #[tauri::command]

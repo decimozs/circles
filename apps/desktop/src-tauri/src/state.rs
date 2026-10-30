@@ -51,8 +51,6 @@ pub struct AppState {
     pub genui_events: Arc<crate::genui::LateEvents>,
     /// Side questions that are running.
     pub side: crate::side::service::SideService,
-    /// The small model that names chats.
-    pub smart: crate::smart::service::SmartService,
     /// Jira and other outside services.
     pub integrations: Arc<Integrations>,
     /// Comments on lines of workspace files.
@@ -116,7 +114,6 @@ impl AppState {
             genui,
             genui_events,
             side: crate::side::service::SideService::default(),
-            smart: crate::smart::service::SmartService::default(),
             integrations: Integrations::new(Box::new(KeychainSecrets::new()), integrations_file),
             comments,
             watchers: Watchers::default(),

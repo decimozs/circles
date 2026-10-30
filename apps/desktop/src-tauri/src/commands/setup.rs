@@ -70,12 +70,7 @@ fn dep<'a>(deps: &'a [Dependency], name: &str) -> Option<&'a Dependency> {
 }
 
 /// The rows, from what was found. Pure, so every state is testable.
-pub fn build_items(
-    deps: &[Dependency],
-    model_found: bool,
-    login_item: bool,
-    menu_bar: bool,
-) -> Vec<SetupItem> {
+pub fn build_items(deps: &[Dependency], login_item: bool, menu_bar: bool) -> Vec<SetupItem> {
     let mut out = Vec::new();
 
     let mut git = item(
@@ -218,21 +213,6 @@ pub fn build_items(
     ));
     out.push(login);
 
-    let mut model = item(
-        "model",
-        "Built-in model",
-        "Names your chats and writes examples. It is inside Circles and runs on this Mac.",
-        false,
-    );
-    if model_found {
-        model.state = "ready".into();
-        model.action = action("test_model", "Test");
-    } else {
-        model.state = "optional".into();
-        model.detail = Some("The model file was not found in this copy of Circles.".into());
-    }
-    out.push(model);
-
     out
 }
 
@@ -256,7 +236,6 @@ pub async fn setup_status(state: State<'_, AppState>) -> IpcResult<Vec<SetupItem
         .unwrap_or_default();
     Ok(build_items(
         &deps,
-        state.smart.embedded().is_some(),
         settings.start_at_login == Some(true),
         settings.menu_bar == Some(true),
     ))
@@ -274,7 +253,7 @@ fn open_quiet(args: &[&str]) -> Result<(), AppError> {
 
 /// Does what a row's button says. Returns what to tell the person.
 #[tauri::command]
-pub async fn setup_action(state: State<'_, AppState>, id: String) -> IpcResult<ActionResult> {
+pub async fn setup_action(id: String) -> IpcResult<ActionResult> {
     let done = |message: &str| ActionResult {
         ok: true,
         message: message.to_string(),
@@ -347,30 +326,6 @@ pub async fn setup_action(state: State<'_, AppState>, id: String) -> IpcResult<A
             ])?;
             Ok(done("System Settings is open. You can leave this off."))
         }
-        "test_model" => {
-            let Some(model) = state.smart.embedded() else {
-                return Ok(ActionResult {
-                    ok: false,
-                    message: "The model file was not found.".into(),
-                });
-            };
-            let start = std::time::Instant::now();
-            let title = crate::smart::title_for(
-                model.as_ref(),
-                "fix the failing test in the checkout flow and open a pull request",
-            )
-            .await;
-            Ok(match title {
-                Some(t) => ActionResult {
-                    ok: true,
-                    message: format!("“{t}” in {} ms.", start.elapsed().as_millis()),
-                },
-                None => ActionResult {
-                    ok: false,
-                    message: "The model did not answer.".into(),
-                },
-            })
-        }
         other => Err(AppError::Invalid(format!(
             "\"{other}\" is not a setup action."
         ))),
@@ -404,13 +359,12 @@ mod tests {
             dep("gh", true, true, None),
             dep("claude", true, true, None),
         ];
-        let items = build_items(&deps, true, false, false);
+        let items = build_items(&deps, false, false);
         for id in ["git", "claude_installed", "claude_signed_in"] {
             assert_eq!(get(&items, id).state, "ready", "{id}");
             assert!(get(&items, id).required);
         }
         assert_eq!(get(&items, "gh").state, "ready");
-        assert_eq!(get(&items, "model").state, "ready");
     }
 
     #[test]
@@ -419,7 +373,7 @@ mod tests {
             dep("git", true, true, None),
             dep("claude", false, false, Some("not found")),
         ];
-        let items = build_items(&deps, false, false, false);
+        let items = build_items(&deps, false, false);
         let installed = get(&items, "claude_installed");
         assert_eq!(installed.state, "needs_you");
         assert!(installed
@@ -439,7 +393,7 @@ mod tests {
             dep("git", true, true, None),
             dep("claude", true, false, Some("Not logged in")),
         ];
-        let items = build_items(&deps, true, false, false);
+        let items = build_items(&deps, false, false);
         assert_eq!(get(&items, "claude_installed").state, "ready");
         let signed = get(&items, "claude_signed_in");
         assert_eq!(signed.state, "needs_you");
@@ -453,7 +407,7 @@ mod tests {
             dep("git", false, false, Some("git was not found.")),
             dep("claude", true, true, None),
         ];
-        let git = &build_items(&deps, true, false, false)[0];
+        let git = &build_items(&deps, false, false)[0];
         assert_eq!(git.state, "needs_you");
         assert_eq!(git.action.as_ref().unwrap().id, "install_git");
         assert_eq!(git.fix.as_deref(), Some("xcode-select --install"));
@@ -466,7 +420,7 @@ mod tests {
             dep("claude", true, true, None),
             dep("gh", false, false, Some("no gh")),
         ];
-        let items = build_items(&deps, false, false, false);
+        let items = build_items(&deps, false, false);
         let required_not_ready = items
             .iter()
             .filter(|i| i.required && i.state != "ready")
@@ -474,7 +428,6 @@ mod tests {
         assert_eq!(required_not_ready, 0);
         assert!(!get(&items, "gh").required);
         assert!(!get(&items, "full_disk").required);
-        assert_eq!(get(&items, "model").state, "optional");
     }
 
     #[test]
@@ -483,9 +436,9 @@ mod tests {
             dep("git", true, true, None),
             dep("claude", true, true, None),
         ];
-        let off = build_items(&deps, true, false, false);
+        let off = build_items(&deps, false, false);
         assert_eq!(get(&off, "login").state, "optional");
-        let on = build_items(&deps, true, true, false);
+        let on = build_items(&deps, true, false);
         assert_eq!(get(&on, "login").state, "ready");
         assert!(get(&on, "login")
             .detail

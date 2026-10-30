@@ -82,6 +82,8 @@ pub struct TurnResult {
     pub subtype: String,
     pub is_error: bool,
     pub result: Option<String>,
+    /// What went wrong, when Claude Code says so in a list instead of in `result`.
+    pub errors: Vec<String>,
     pub total_cost_usd: f64,
     pub duration_ms: u64,
     pub stop_reason: Option<String>,
@@ -245,6 +247,7 @@ fn parse_result(v: &Value) -> TurnResult {
             .unwrap_or(subtype != "success"),
         subtype,
         result: str_of(v, "result"),
+        errors: strings_of(v, "errors"),
         total_cost_usd: v
             .get("total_cost_usd")
             .and_then(Value::as_f64)
@@ -941,6 +944,20 @@ mod tests {
         let system =
             parse_line(r#"{"type":"system","subtype":"future_thing","session_id":"s1"}"#).unwrap();
         assert!(matches!(system.event, Event::System(ref s) if s == "future_thing"));
+    }
+
+    #[test]
+    fn the_errors_of_a_failed_result_are_kept() {
+        let line = r#"{"type":"result","subtype":"error_during_execution","is_error":true,"session_id":"s1","errors":["No conversation found with session ID: s1"],"duration_ms":0}"#;
+        let parsed = parse_line(line).unwrap();
+        let Event::Result(result) = parsed.event else {
+            panic!("a result");
+        };
+        assert_eq!(result.result, None);
+        assert_eq!(
+            result.errors,
+            vec!["No conversation found with session ID: s1".to_string()]
+        );
     }
 
     #[test]

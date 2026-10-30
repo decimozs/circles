@@ -229,7 +229,7 @@ export function emptySettings(): Settings {
       notify_waiting: null,
     },
     integrations: { jira_in_chats: null },
-    smart: { titles: null, suggestions: null, first_prompt: null, provider: null },
+    smart: { titles: null, suggestions: null, first_prompt: null },
     side: { model: null, read_files: null },
     genui: { composers: null, chats: null },
     experimental: {},

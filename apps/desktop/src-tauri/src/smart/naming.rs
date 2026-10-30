@@ -1,4 +1,4 @@
-//! Naming a chat that has no name: its first words at once, and a model's title in their place a
+//! Naming a chat that has no name: its first words at once, and Claude Haiku's title in their place a
 //! moment later, unless a person named it in the meantime. Used by the app's own chat box and by
 //! the chats that Composers start.
 
@@ -31,7 +31,7 @@ pub async fn name_new_chat(app: &AppHandle, session_id: &str, title: &str, text:
     if settings.titles == Some(false) {
         return;
     }
-    let Some(model) = crate::commands::smart::provider(&state, &settings).await else {
+    let Some(model) = crate::commands::smart::provider(&state).await else {
         return;
     };
     let Ok(session) = state.sessions.get(session_id) else {

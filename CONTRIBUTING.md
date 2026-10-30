@@ -1,6 +1,6 @@
 # Contributing
 
-- Plan and scope per phase: `docs/phases/`.
+- Plan and scope per phase: `docs/internal/phases/`.
 - `scripts/test-all.sh` runs every check. Run it before sending a change.
 - Colours live only in `apps/desktop/src/styles/tokens.css` (`pnpm check:tokens`).
 - Rust types shared with the UI are generated: `pnpm gen:types`, never edited by hand.

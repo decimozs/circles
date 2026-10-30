@@ -398,53 +398,54 @@ describe("the New Composer dialog", () => {
 });
 
 describe("settings, smart titles", () => {
-  function openSmart(status = { embedded_available: true, provider: "embedded" }) {
+  function openSmart(status = { available: true }) {
     defaultBackend();
     settingsBackend({});
     backend.on("smart_status", status);
     return renderApp("/settings/smart");
   }
 
-  it("has its own page in the sidebar, with the switches and the model choice", async () => {
+  it("has its own page in the sidebar, with the switches and no model choice", async () => {
     openSmart();
     const nav = await screen.findByRole("navigation", { name: "Settings" });
     expect(within(nav).getByRole("link", { name: "Smart titles" })).toBeInTheDocument();
     expect(await screen.findByRole("switch", { name: "Name new chats" })).toBeChecked();
     // Suggestions are off until switched on.
     expect(screen.getByRole("switch", { name: "Suggest the next message" })).not.toBeChecked();
-    expect(screen.getByLabelText("Model")).toHaveValue("embedded");
+    expect(screen.queryByLabelText("Model")).not.toBeInTheDocument();
     // The example for a new Composer is on by default, and has its own switch.
     expect(
       screen.getByRole("switch", { name: "Show an example of what to ask a Composer" }),
     ).toBeChecked();
   });
 
-  it("says where the text goes and which model is inside", async () => {
+  it("says that Claude Haiku is used and where the text goes", async () => {
     openSmart();
     expect(
-      await screen.findByText(/runs on this Mac and sends nothing anywhere/),
+      await screen.findByText(
+        /Claude Haiku, through Claude Code.*sends the start of your first message to Anthropic/,
+      ),
     ).toBeInTheDocument();
-    expect(screen.getByText(/SmolLM2-360M-Instruct.*Apache License 2.0/)).toBeInTheDocument();
+    expect(screen.queryByText(/SmolLM2/)).not.toBeInTheDocument();
   });
 
   it("tries the model and shows what it wrote and how long it took", async () => {
     backend.on("smart_test", {
       title: "Fix failing checkout test",
       suggestion: "Open a pull request for this fix",
-      millis: 183,
-      provider: "embedded",
+      millis: 1830,
     });
     const app = openSmart();
     await app.user.click(await screen.findByRole("button", { name: "Try it" }));
     const result = await screen.findByTestId("smart-result");
     expect(result).toHaveTextContent("Fix failing checkout test");
     expect(result).toHaveTextContent("Open a pull request for this fix");
-    expect(result).toHaveTextContent("183 ms");
+    expect(result).toHaveTextContent("1830 ms");
   });
 
-  it("warns when the model file is not in this copy of Circles", async () => {
-    openSmart({ embedded_available: false, provider: "embedded" });
-    expect(await screen.findByRole("alert")).toHaveTextContent("model file was not found");
+  it("warns when Claude Code is not found", async () => {
+    openSmart({ available: false });
+    expect(await screen.findByRole("alert")).toHaveTextContent("Claude Code was not found");
   });
 
   it("writes the choice to the settings file", async () => {

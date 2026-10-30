@@ -4,23 +4,23 @@ Run Claude Code agents in parallel, each in an isolated git worktree. Local-firs
 
 <img width="1337" height="864" alt="image" src="https://github.com/user-attachments/assets/48a38932-baa2-40fd-9a30-997aa046be3e" />
 
-Plan: [docs/phases/README.md](docs/phases/README.md)
+Guide: [docs/README.md](docs/README.md)
 
 ## Install
-Build the app with `scripts/release.sh` (run `pnpm model:fetch` first, once) and open the `.dmg`, or
+Build the app with `scripts/release.sh` and open the `.dmg`, or
 run it from source with `pnpm tauri dev`.
 
 The app is not signed yet, because there is no Apple Developer account. macOS will not open it with
 a double click the first time: right-click the app, choose **Open**, and confirm. If macOS says it is
 damaged, run `xattr -dr com.apple.quarantine /Applications/Circles.app` once. Details:
-[docs/troubleshooting.md](docs/troubleshooting.md).
+[docs/troubleshooting.md](docs/troubleshooting.md). Everything else is in the [guide](docs/README.md).
 
 On first launch Circles shows a setup checklist: `git`, Claude Code (installed and signed in),
 the GitHub CLI, notifications, the folders where your code lives, and the notice that agents run
 with your permissions. Required items must be ready before the first project is added. Security and
-audit notes: [docs/hardening.md](docs/hardening.md). Releasing:
-[docs/release-checklist.md](docs/release-checklist.md). What macOS may ask, and when:
-[docs/setup-audit.md](docs/setup-audit.md).
+audit notes: [docs/internal/hardening.md](docs/internal/hardening.md). Releasing:
+[docs/internal/release-checklist.md](docs/internal/release-checklist.md). What macOS may ask, and when:
+[docs/internal/setup-audit.md](docs/internal/setup-audit.md).
 
 ## Requirements
 macOS, Node 24 (`.nvmrc`), pnpm, Rust stable, Xcode Command Line Tools, `git`, `gh`, `claude`.
@@ -33,9 +33,9 @@ packages/bindings    @circles/bindings: TypeScript types generated from Rust
 packages/config      @circles/config: shared tsconfig presets
 Cargo.toml           Rust workspace; the build output is target/ at the root
 pnpm-workspace.yaml  apps/* and packages/*
-scripts/  docs/      checks, release, documentation
+scripts/  docs/      checks and release scripts, the user guide (docs/internal: plans and audits)
 ```
-Commands are run from the repository root. See [docs/phases/phase-20-monorepo.md](docs/phases/phase-20-monorepo.md).
+Commands are run from the repository root. See [docs/internal/phases/phase-20-monorepo.md](docs/internal/phases/phase-20-monorepo.md).
 
 ## Commands
 ```bash
