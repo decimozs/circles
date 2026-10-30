@@ -78,38 +78,41 @@ export function SettingsPage() {
       : (page?.title ?? "Settings");
 
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-3xl px-8 pt-10 pb-16">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <h1 className="text-2xl font-semibold">{title}</h1>
-          <OpenFileMenu projectId={repoId} />
-        </div>
-        {view.error ? (
-          <p role="alert" className="text-sm text-destructive">
-            {(view.error as Error).message}
-          </p>
-        ) : null}
-        {!view.data ? null : query ? (
-          found.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Nothing matches “{query}”.</p>
+    <div className="relative h-full">
+      {/* In the corner of the page, not beside the title, so it stays out of the way of both. */}
+      <div className="absolute top-3 right-4 z-10">
+        <OpenFileMenu projectId={repoId} />
+      </div>
+      <div className="h-full overflow-y-auto">
+        <div className="mx-auto max-w-3xl px-8 pt-10 pb-16">
+          <h1 className="mb-6 text-2xl font-semibold">{title}</h1>
+          {view.error ? (
+            <p role="alert" className="text-sm text-destructive">
+              {(view.error as Error).message}
+            </p>
+          ) : null}
+          {!view.data ? null : query ? (
+            found.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nothing matches “{query}”.</p>
+            ) : (
+              found.map((def) => <Row key={def.id} def={def} view={view.data} highlight={query} />)
+            )
+          ) : repoId ? (
+            <RepoSettings projectId={repoId} />
+          ) : page?.id === "jira" && jira && !jira.connected ? (
+            <p className="text-sm text-muted-foreground">
+              Jira is not connected. Connect it in{" "}
+              <Link className="underline" to="/settings/integrations">
+                Integrations
+              </Link>
+              .
+            </p>
+          ) : page ? (
+            <SettingsGroupPage page={page.id} view={view.data} />
           ) : (
-            found.map((def) => <Row key={def.id} def={def} view={view.data} highlight={query} />)
-          )
-        ) : repoId ? (
-          <RepoSettings projectId={repoId} />
-        ) : page?.id === "jira" && jira && !jira.connected ? (
-          <p className="text-sm text-muted-foreground">
-            Jira is not connected. Connect it in{" "}
-            <Link className="underline" to="/settings/integrations">
-              Integrations
-            </Link>
-            .
-          </p>
-        ) : page ? (
-          <SettingsGroupPage page={page.id} view={view.data} />
-        ) : (
-          <p className="text-sm text-muted-foreground">No such settings page.</p>
-        )}
+            <p className="text-sm text-muted-foreground">No such settings page.</p>
+          )}
+        </div>
       </div>
     </div>
   );
