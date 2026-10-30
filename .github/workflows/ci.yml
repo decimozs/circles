@@ -99,8 +99,8 @@ jobs:
           test "${{ needs.frontend-checks.result }}" = "success"
           test "${{ needs.frontend-tests.result }}" = "success"
 
-  # The first build compiles the whole dependency tree, including llama.cpp from source, which is
-  # about ten minutes on a runner. A pull request cannot use another pull request's cache, only
+  # The first build compiles the whole dependency tree, which takes several minutes on a runner.
+  # A pull request cannot use another pull request's cache, only
   # its own and the one of `main`, so only `main` saves one: each pull request used to save a
   # gigabyte nobody could reuse, and together they pushed the cache of `main` out. Line tables
   # keep backtraces and skip the rest of the debug information, which is most of the build output.

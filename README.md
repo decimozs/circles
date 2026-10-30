@@ -7,7 +7,7 @@ Run Claude Code agents in parallel, each in an isolated git worktree. Local-firs
 Guide: [docs/README.md](docs/README.md)
 
 ## Install
-Build the app with `scripts/release.sh` (run `pnpm model:fetch` first, once) and open the `.dmg`, or
+Build the app with `scripts/release.sh` and open the `.dmg`, or
 run it from source with `pnpm tauri dev`.
 
 The app is not signed yet, because there is no Apple Developer account. macOS will not open it with

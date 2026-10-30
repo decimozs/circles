@@ -38,7 +38,7 @@ Type `/btw` followed by a question, or use its button, to ask something about th
 
 ## Titles
 
-A new chat gets a short title from what you asked. By default a small model that ships inside Circles writes it on your Mac and sends nothing anywhere. You can switch to Claude Haiku instead, which wording is better with and which spends your Claude usage (Settings > Smart titles).
+A new chat gets a short title from what you asked. Claude Haiku writes it, through Claude Code: it spends a little of your Claude usage and sends the start of your first message to Anthropic. The first words of the message are the title until Haiku answers, and a name you gave a chat is never replaced. You can switch titles off in Settings > Smart titles. Without Claude Code the first words stay.
 
 ## Cards
 

@@ -1,5 +1,7 @@
 # Phase 16: Smart chat titles and input suggestions
 
+> Changed later: the model that shipped inside Circles (SmolLM2 through llama.cpp) was removed. Titles, suggestions and the Composer example now come from Claude Haiku through Claude Code, and there is no provider setting. Everything below about the built-in model, its file, `pnpm model:fetch` and its licence notice no longer applies.
+
 Status: S0 to S5 built and tested. Real-model checks only on this Mac. See "Built" and "Gaps" at the end.
 
 ## Goals

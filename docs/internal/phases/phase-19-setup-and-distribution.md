@@ -1,5 +1,7 @@
 # Phase 19: First-run setup and distribution
 
+> Changed later: the title model is no longer packed into the app, so `pnpm model:fetch`, `scripts/check-model.sh` and the "Built-in model" row of the setup checklist are gone.
+
 Status: P0 (written audit), P1, P2, P3 and the unsigned parts of P4 and P5 are built. Signing, notarisation, the universal build and the updater are not. See "Built" and "Gaps" at the end.
 
 ## Goal

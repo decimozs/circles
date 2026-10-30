@@ -2,7 +2,7 @@
 
 ## Install
 
-Build the app with `scripts/release.sh` (run `pnpm model:fetch` once first) and open the `.dmg`, or run it from source with `pnpm tauri dev`. From source you need macOS, Node 24, pnpm, Rust stable and the Xcode Command Line Tools.
+Build the app with `scripts/release.sh` and open the `.dmg`, or run it from source with `pnpm tauri dev`. From source you need macOS, Node 24, pnpm, Rust stable and the Xcode Command Line Tools.
 
 The app is not signed yet, because there is no Apple Developer account. The first time, macOS will not open it with a double click: right-click the app, choose **Open**, and confirm. If macOS says it is damaged, run `xattr -dr com.apple.quarantine /Applications/Circles.app` once. More in [Troubleshooting](troubleshooting.md).
 

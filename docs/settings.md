@@ -31,7 +31,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Page | What it holds |
 |---|---|
 | Agents | The `claude` to use, a check of its version, the default permission mode, extra arguments for every Claude Code start, the model for side questions and whether they may read files, and whether chats may ask with cards. |
-| Smart titles | Naming new chats, suggesting the next message and an example for a new Composer's first message, with the built-in model or Claude Haiku. |
+| Smart titles | Naming new chats, suggesting the next message and an example for a new Composer's first message. They use Claude Haiku through Claude Code, which spends a little of your Claude usage. |
 | Environment | Environment variables set for every agent and terminal. Values are hidden and never logged. |
 | Composers | Pause and stop, the daily cap of runs started on their own, notifications, the menu bar, open at login, keep awake, and cards. |
 | Integrations | The Jira connection. See [Jira](jira.md). |

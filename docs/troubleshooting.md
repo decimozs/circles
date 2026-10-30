@@ -14,8 +14,8 @@ Notifications, and use the installed app rather than a development build.
 A development build is a new program every time it is built, so macOS asks again. The installed
 app asks once: choose Always Allow.
 
-**The title model is missing (building from source)**
-Run `pnpm model:fetch`, then build again. The release script stops when it is not there.
+**Chats are not named, or the next message is not suggested**
+Titles and suggestions use Claude Haiku through Claude Code, so Claude Code has to be installed and signed in (see "Claude Code was not found" below). Settings > Smart titles has a **Try it** button that shows whether it answers, and the switches for each job.
 
 **"Claude Code was not found"**
 Install it from https://claude.com/claude-code, run `claude` once in a terminal to sign in, then
