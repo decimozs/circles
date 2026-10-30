@@ -63,7 +63,6 @@ import type { SmartTest } from "@circles/bindings/SmartTest";
 import type { StoredCard } from "@circles/bindings/StoredCard";
 import type { StreamItem } from "@circles/bindings/StreamItem";
 import type { Terminal } from "@circles/bindings/Terminal";
-import type { Todo } from "@circles/bindings/Todo";
 import type { Trigger } from "@circles/bindings/Trigger";
 import type { TriggerInput } from "@circles/bindings/TriggerInput";
 import type { UndoableRevert } from "@circles/bindings/UndoableRevert";
@@ -410,12 +409,6 @@ export const ipc = {
     call<null>("agent_respond_review", { workspaceId, sessionId }),
   agentResolveConflicts: (workspaceId: string, sessionId: string) =>
     call<null>("agent_resolve_conflicts", { workspaceId, sessionId }),
-  todoList: (workspaceId: string) => call<Todo[]>("todo_list", { workspaceId }),
-  todoCreate: (workspaceId: string, text: string, fromAgent = false) =>
-    call<Todo>("todo_create", { workspaceId, text, fromAgent }),
-  todoUpdate: (id: string, text: string) => call<Todo>("todo_update", { id, text }),
-  todoSetDone: (id: string, done: boolean) => call<Todo>("todo_set_done", { id, done }),
-  todoDelete: (id: string) => call<null>("todo_delete", { id }),
 
   sectionList: () => call<Section[]>("section_list"),
   sectionCreate: (name: string) => call<Section>("section_create", { name }),

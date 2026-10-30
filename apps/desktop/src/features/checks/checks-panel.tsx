@@ -23,7 +23,6 @@ import {
   useThreads,
 } from "@/features/pr/api";
 import { ipc } from "@/lib/ipc";
-import { TodosSection } from "./todos-section";
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
@@ -304,8 +303,6 @@ export function ChecksPanel({ workspaceId }: { workspaceId: string }) {
           )}
         </Section>
       ) : null}
-
-      <TodosSection workspaceId={workspaceId} />
     </div>
   );
 }

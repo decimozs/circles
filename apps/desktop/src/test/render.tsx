@@ -65,7 +65,6 @@ export function defaultBackend() {
     .on("pr_checks", [])
     .on("pr_threads", [])
     .on("pr_deployments", [])
-    .on("todo_list", [])
     .on("workspace_branch_states", [])
     .on("composer_list", [])
     .on("composer_runs", [])

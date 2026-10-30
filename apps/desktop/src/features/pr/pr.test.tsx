@@ -2,7 +2,6 @@ import type { Check } from "@circles/bindings/Check";
 import type { PrStatus } from "@circles/bindings/PrStatus";
 import type { Readiness } from "@circles/bindings/Readiness";
 import type { ReviewThread } from "@circles/bindings/ReviewThread";
-import type { Todo } from "@circles/bindings/Todo";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useChat } from "@/stores/chat";
@@ -20,15 +19,6 @@ const check = (name: string, bucket: Check["bucket"], extra: Partial<Check> = {}
   link: `https://github.com/o/r/actions/runs/1/job/${name}`,
   run_id: 1,
   ...extra,
-});
-const todo = (id: string, text: string, done = false): Todo => ({
-  id,
-  workspace_id: "w1",
-  text,
-  done,
-  source: "user",
-  created_at: 1,
-  completed_at: null,
 });
 const thread = (id: string, extra: Partial<ReviewThread> = {}): ReviewThread => ({
   id,
@@ -743,109 +733,5 @@ describe("checks tab", () => {
     expect(
       within(await screen.findByRole("region", { name: "Checks" })).getByRole("alert"),
     ).toHaveTextContent("Could not reach GitHub");
-    expect(screen.getByRole("region", { name: "Todos" })).toBeInTheDocument();
-  });
-});
-
-describe("todos", () => {
-  const setup =
-    (todos: Todo[] = []) =>
-    () => {
-      backend.on("todo_list", todos);
-      backend.on("todo_create", todo("new", "Added"));
-      backend.on("todo_update", todo("t1", "Edited"));
-      backend.on("todo_set_done", todo("t1", "Write tests", true));
-      backend.on("todo_delete", null);
-    };
-  async function todosSection(app: ReturnType<typeof open>) {
-    await app.user.click(await screen.findByRole("tab", { name: "Checks" }));
-    return screen.findByRole("region", { name: "Todos" });
-  }
-
-  it("adds a todo", async () => {
-    const app = open(readiness(), setup());
-    const section = await todosSection(app);
-    await app.user.type(within(section).getByLabelText("New todo"), "Update the docs{Enter}");
-    await waitFor(() => expect(backend.callsTo("todo_create")).toHaveLength(1));
-    expect(backend.callsTo("todo_create")[0]).toEqual({
-      workspaceId: "w1",
-      text: "Update the docs",
-      fromAgent: false,
-    });
-    expect(within(section).getByLabelText("New todo")).toHaveValue("");
-  });
-
-  it("does not add an empty todo", async () => {
-    const app = open(readiness(), setup());
-    const section = await todosSection(app);
-    expect(within(section).getByRole("button", { name: "Add todo" })).toBeDisabled();
-  });
-
-  it("completes, edits and deletes todos, and counts the open ones", async () => {
-    const app = open(readiness(), setup([todo("t1", "Write tests"), todo("t2", "Old", true)]));
-    const section = await todosSection(app);
-    expect(await within(section).findByText("Write tests")).toBeInTheDocument();
-    expect(section).toHaveTextContent("1 open");
-
-    await app.user.click(within(section).getByLabelText('Mark "Write tests" as done'));
-    expect(backend.callsTo("todo_set_done")[0]).toEqual({ id: "t1", done: true });
-
-    await app.user.click(within(section).getByText("Write tests"));
-    const input = within(section).getByLabelText("Edit todo");
-    await app.user.clear(input);
-    await app.user.type(input, "Edited{Enter}");
-    await waitFor(() =>
-      expect(backend.callsTo("todo_update")[0]).toEqual({ id: "t1", text: "Edited" }),
-    );
-
-    await app.user.click(within(section).getByLabelText('Delete "Old"'));
-    expect(backend.callsTo("todo_delete")).toEqual([{ id: "t2" }]);
-  });
-
-  it("shows when an agent added a todo", async () => {
-    const app = open(readiness(), setup([{ ...todo("t1", "Add a migration"), source: "agent" }]));
-    const section = await todosSection(app);
-    expect(await within(section).findByText("agent")).toBeInTheDocument();
-  });
-
-  it("adds the open todos to a message that mentions @todos", async () => {
-    const app = open(readiness(), setup([todo("t1", "Write tests")]));
-    await screen.findByLabelText("Message");
-    await app.user.type(screen.getByLabelText("Message"), "do the @to");
-    const list = await screen.findByRole("listbox", { name: "Files" });
-    await app.user.click(within(list).getByRole("option", { name: /@todos/ }));
-    await waitFor(() => expect(screen.getByLabelText("Message")).toHaveValue("do the @todos "));
-    await app.user.type(screen.getByLabelText("Message"), "now{Enter}");
-    await waitFor(() => expect(backend.callsTo("session_send")).toHaveLength(1));
-    const sent = String(backend.callsTo("session_send")[0].text);
-    expect(sent).toContain("do the @todos now");
-    expect(sent).toContain("- [ ] Write tests");
-    expect(sent).toContain("circles-todos");
-  });
-
-  it("adds the todos an agent suggests when its turn ends", async () => {
-    open(readiness(), setup());
-    await screen.findByLabelText("Message");
-    const attach = backend.callsTo("session_attach");
-    const channel = attach[attach.length - 1].onEvent as { emit: (m: unknown) => void };
-    act(() => channel.emit({ type: "status", status: "working", running: true, error: null }));
-    act(() =>
-      channel.emit({
-        type: "message",
-        id: "m9",
-        session_id: "s1",
-        seq: 9,
-        role: "assistant",
-        kind: "text",
-        created_at: 1,
-        content: { text: 'Done.\n```circles-todos\n["Add a migration","Update the README"]\n```' },
-      }),
-    );
-    act(() => channel.emit({ type: "status", status: "idle", running: true, error: null }));
-    await waitFor(() => expect(backend.callsTo("todo_create")).toHaveLength(2));
-    expect(backend.callsTo("todo_create").map((c) => [c.text, c.fromAgent])).toEqual([
-      ["Add a migration", true],
-      ["Update the README", true],
-    ]);
   });
 });
