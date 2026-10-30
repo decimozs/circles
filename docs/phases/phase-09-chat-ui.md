@@ -17,7 +17,7 @@ Phases 6 and 8.
   - Turn summary row: duration, copy, menu, changed-file chips with `+/-`.
   - Scroll-to-bottom button, sticky autoscroll that pauses when the user scrolls up, and a right-edge turn minimap.
 - **Composer:**
-  - `@` file mentions (search the worktree), `@todos`, `/` slash commands (project and user `.claude/commands`, plus built-ins such as `/add-dir`), image and file attachments, paste handling (auto-convert text over 5000 chars into an attachment).
+  - `@` file mentions (search the worktree), `@todos` (removed later with the todos), `/` slash commands (project and user `.claude/commands`, plus built-ins such as `/add-dir`), image and file attachments, paste handling (auto-convert text over 5000 chars into an attachment).
   - Model and effort picker, Plan mode toggle, Fast mode toggle.
   - Send with Enter or Cmd+Enter (setting). While working, the button becomes Stop. Follow-up behavior: Steer or Queue (setting), Cmd+Enter queues.
   - Queued message chips, editable and cancellable.

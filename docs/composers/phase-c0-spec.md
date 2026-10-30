@@ -19,7 +19,7 @@ Circles phases 0 to 15.
 - **Threat model:** runaway spawning, cost, and prompt injection (a pull request comment, issue, file or commit message that tells the Composer to do something harmful). List each threat with the mitigation and the phase that builds it.
 - **Run and step data model** on paper: tables, states, what resume means for each kind of step.
 - **Autonomy rules:** the per-tool `ask`, `allow` and `off` settings, their defaults, the per-project rules, what "allow for this run" covers, which merge blockers can be overridden, and the warnings shown when a person allows an `external` or `destructive` tool.
-- **Limits:** steps per run, children at once, children in total, wall time, spend.
+- **Limits (all but the spending limit removed later):** steps per run, children at once, children in total, wall time, spend.
 - **Attended and unattended:** write down how each tier behaves in both modes. In unattended mode a tool set to `ask` waits in an inbox and the run goes on with whatever else it can do, or pauses.
 - Name the screens: Composers list, Composer page (chat, fleet, approvals), edit dialog.
 

@@ -1,5 +1,7 @@
 # Phase 11: Checks, Todos, PRs
 
+> Changed later: the todos were removed, in the app and in the backend (migration `0014_drop_todos`). Nothing about todos below applies any more. A merge is held back by checks, conflicts and requested changes. See `docs/repositories.md`.
+
 ## Goal
 Merge readiness: Checks tab, merge-blocking todos, PR creation and updates via `gh`, and the "suggested next action" button.
 
@@ -8,7 +10,7 @@ Phases 9 and 10.
 
 ## In scope
 - **Checks tab sections:** git status (ahead, behind, dirty, conflicts), PR metadata, CI and status checks, deployments, GitHub review threads, todos.
-- **Todos:** manual add, edit, complete, delete. Agents can add via `@todos` context. Open todos block or warn on merge. Completed means done, irrelevant means delete.
+- **Todos (removed later, in the app and in the backend; open todos no longer block a merge):** manual add, edit, complete, delete. Agents can add via `@todos` context. Open todos block or warn on merge. Completed means done, irrelevant means delete.
 - **PR creation** (Cmd+Shift+P): push branch, agent drafts title and body using the repo's PR instructions, create with `gh pr create`, store PR number and URL on the workspace.
 - **Next action button** in the top bar, driven by workspace state: Create PR, Respond to review, Fix failing checks, Resolve conflicts, Merge, with the "Ready to merge" pill and PR chip (`#123 ↗`).
 - **Fix checks and respond to review:** one click starts an agent turn with the failing logs or the unresolved threads as context.

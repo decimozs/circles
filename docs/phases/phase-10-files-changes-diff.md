@@ -1,5 +1,7 @@
 # Phase 10: Files, Changes, Monaco diff
 
+> Changed later: the Review tab was removed. The right pane has All files, Changes and Checks. See `docs/repositories.md`.
+
 ## Goal
 The right panel: browse files, see changes, review diffs in Monaco, and comment on lines for the agent.
 
@@ -7,13 +9,13 @@ The right panel: browse files, see changes, review diffs in Monaco, and comment 
 Phase 5. Works best after phase 9.
 
 ## In scope
-- **Right panel tabs:** All files, Changes (with count), Checks (stub until phase 11), Review.
+- **Right panel tabs:** All files, Changes (with count), Checks (stub until phase 11), Review (the Review tab was removed later; see `docs/repositories.md`).
 - **All files:** lazy file tree with icons, search, show or hide ignored files, open in Monaco (read-only by default, optional edit), context menu (copy path, reveal in Finder, open in editor, attach to chat).
 - **Changes:** list of changed files with `+/-` counts and status icons, grouped optionally by directory, filter by commit or uncommitted. Live updates from a file watcher.
 - **Diff viewer** (Cmd+Shift+D): Monaco diff editor, unified and split toggle, file navigation (next and previous), language detection, large-file guard, binary and image file handling.
 - **Line comments:** click the gutter to comment on a line or range. Comments are sent to the agent as structured context ("fix this" with file and lines). Stored locally, resolvable.
 - **Top-bar actions:** open in Cursor or VS Code (detected apps), copy path.
-- **Review tab:** "Run review" starts an agent session with a review prompt (and the repo's review instructions) over the diff. Findings appear as comments.
+- **Review tab (removed later):** "Run review" starts an agent session with a review prompt (and the repo's review instructions) over the diff. Findings appear as comments.
 
 ## Out of scope
 GitHub review comments sync and PR status (phase 11).
