@@ -493,6 +493,7 @@ export function Composer({
                 type="button"
                 size="icon-sm"
                 variant="outline"
+                className="rounded-full"
                 aria-label="Stop"
                 onClick={onStop}
               >
@@ -503,6 +504,7 @@ export function Composer({
               <Button
                 type="button"
                 size="icon-sm"
+                className="rounded-full"
                 aria-label={
                   working ? (followUp === "queue" ? "Queue message" : "Send to steer") : "Send"
                 }
