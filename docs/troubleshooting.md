@@ -14,7 +14,7 @@ Notifications, and use the installed app rather than a development build.
 A development build is a new program every time it is built, so macOS asks again. The installed
 app asks once: choose Always Allow.
 
-**The title model is missing**
+**The title model is missing (building from source)**
 Run `pnpm model:fetch`, then build again. The release script stops when it is not there.
 
 **"Claude Code was not found"**
