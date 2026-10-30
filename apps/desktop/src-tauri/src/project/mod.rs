@@ -217,11 +217,11 @@ impl ProjectService {
         }
 
         std::fs::create_dir_all(&self.paths.repos_dir)?;
-        let mut dest = self.paths.repos_dir.join(&name);
-        let mut n = 2;
-        while dest.exists() {
-            dest = self.paths.repos_dir.join(format!("{name}-{n}"));
-            n += 1;
+        let (dest, leftover) = self.clone_target(&owner, &name).await;
+        if leftover {
+            // A folder from before the project was removed: removing a project keeps its clone,
+            // so adding it again picks the same folder up instead of cloning next to it.
+            return self.register(&dest).await;
         }
 
         self.gh.clone_repo(&owner, &name, &dest).await?;
@@ -233,6 +233,36 @@ impl ProjectService {
                 Err(e)
             }
         }
+    }
+
+    /// Where to clone `owner/name`, and whether that folder already holds this repository from an
+    /// earlier add. The first free `name`, `name-2`, ... otherwise.
+    async fn clone_target(&self, owner: &str, name: &str) -> (PathBuf, bool) {
+        let mut dest = self.paths.repos_dir.join(name);
+        let mut n = 2;
+        while dest.exists() {
+            if self.is_leftover_clone(&dest, owner, name).await {
+                return (dest, true);
+            }
+            dest = self.paths.repos_dir.join(format!("{name}-{n}"));
+            n += 1;
+        }
+        (dest, false)
+    }
+
+    /// A clone of `owner/name` that no project uses.
+    async fn is_leftover_clone(&self, dir: &Path, owner: &str, name: &str) -> bool {
+        let Ok(top) = std::fs::canonicalize(dir) else {
+            return false;
+        };
+        if !matches!(self.find_by_path(&top.to_string_lossy()), Ok(None)) {
+            return false;
+        }
+        let Ok(Some(url)) = self.git.remote_url(&top, "origin").await else {
+            return false;
+        };
+        github::parse_repo_ref(&url)
+            .is_some_and(|(o, n)| o.eq_ignore_ascii_case(owner) && n.eq_ignore_ascii_case(name))
     }
 
     fn find_by_remote(&self, owner: &str, name: &str) -> AppResult<Option<Project>> {
@@ -355,6 +385,57 @@ mod tests {
         let dir = f.root.join(name);
         repo_with_commit(&f.svc.git, &dir).await;
         dir
+    }
+
+    #[tokio::test]
+    async fn adding_a_removed_repository_again_reuses_its_folder() {
+        let f = fixture();
+        std::fs::create_dir_all(&f.svc.paths.repos_dir).unwrap();
+        let dir = f.svc.paths.repos_dir.join("test-repo");
+        repo_with_commit(&f.svc.git, &dir).await;
+        let remote = |dir: &Path, url: &str| {
+            assert!(std::process::Command::new("git")
+                .args(["remote", "add", "origin", url])
+                .current_dir(dir)
+                .status()
+                .unwrap()
+                .success());
+        };
+        remote(&dir, "https://github.com/decimozs/test-repo.git");
+
+        // Nothing uses the folder, so it is the place for the repository.
+        let (dest, leftover) = f.svc.clone_target("decimozs", "test-repo").await;
+        assert_eq!((dest, leftover), (dir.clone(), true));
+
+        // A project that uses it holds it, so the next clone goes beside it.
+        let project = f.svc.add_local(&dir.to_string_lossy()).await.unwrap();
+        let (dest, leftover) = f.svc.clone_target("decimozs", "test-repo").await;
+        assert_eq!(
+            (dest, leftover),
+            (f.svc.paths.repos_dir.join("test-repo-2"), false)
+        );
+
+        // Removing the project frees it again.
+        f.svc.remove(&project.id).unwrap();
+        assert!(f.svc.clone_target("decimozs", "test-repo").await.1);
+
+        // A folder of another repository is never taken over.
+        let other = f.svc.paths.repos_dir.join("test-repo");
+        std::process::Command::new("git")
+            .args([
+                "remote",
+                "set-url",
+                "origin",
+                "https://github.com/someone/else.git",
+            ])
+            .current_dir(&other)
+            .status()
+            .unwrap();
+        let (dest, leftover) = f.svc.clone_target("decimozs", "test-repo").await;
+        assert_eq!(
+            (dest, leftover),
+            (f.svc.paths.repos_dir.join("test-repo-2"), false)
+        );
     }
 
     fn git_kind(e: &AppError) -> Option<GitErrorKind> {
