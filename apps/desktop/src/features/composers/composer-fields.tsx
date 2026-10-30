@@ -242,7 +242,9 @@ export function InstructionsField({
       {view === "write" ? (
         <SkillTextarea
           aria-label="Instructions"
-          readOnly={improving}
+          disabled={improving}
+          aria-busy={improving}
+          className={improving ? "animate-pulse cursor-wait text-muted-foreground" : undefined}
           value={value}
           onValueChange={onChange}
           placeholder="What it should do, how it should work, and what it must never do. Markdown works. Type / to use one of your skills."

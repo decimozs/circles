@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useChat } from "@/stores/chat";
 import { useUi } from "@/stores/ui";
@@ -361,6 +361,28 @@ describe("Composer dialog", () => {
     await app.user.click(within(dialog).getByRole("button", { name: "Undo" }));
     expect(within(dialog).getByLabelText("Instructions")).toHaveValue("get my tickets, fill em");
     expect(within(dialog).queryByRole("button", { name: "Undo" })).not.toBeInTheDocument();
+  });
+
+  it("locks and pulses the instructions while Claude improves them", async () => {
+    let finish: (text: string) => void = () => {};
+    const answer = new Promise<string>((resolve) => {
+      finish = resolve;
+    });
+    seed(() => backend.on("composer_improve_instructions", () => answer));
+    const app = renderApp("/composers");
+    await app.user.click(await screen.findByRole("button", { name: "New Composer" }));
+    const dialog = await screen.findByRole("dialog", { name: "New Composer" });
+    const box = within(dialog).getByLabelText("Instructions");
+    expect(box).toBeEnabled();
+    await app.user.type(box, "do it");
+    await app.user.click(within(dialog).getByRole("button", { name: "Improve" }));
+    expect(await within(dialog).findByRole("button", { name: "Improving" })).toBeDisabled();
+    expect(box).toBeDisabled();
+    expect(box).toHaveClass("animate-pulse");
+    await act(async () => finish("# Goal\n\nDo it."));
+    await waitFor(() => expect(box).toBeEnabled());
+    expect(box).not.toHaveClass("animate-pulse");
+    expect(box).toHaveValue("# Goal\n\nDo it.");
   });
 
   it("leaves the instructions as they were when improving fails", async () => {
