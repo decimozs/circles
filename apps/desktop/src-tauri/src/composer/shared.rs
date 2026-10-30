@@ -191,7 +191,7 @@ mod tests {
         let dir = repo_with(&[
             (
                 "reviewer.toml",
-                "name = \"Reviewer\"\ninstructions = \"Review PRs.\"\ntools = [\"list_pull_requests\", \"create_workspace\"]\n[limits]\nmax_steps = 7\n",
+                "name = \"Reviewer\"\ninstructions = \"Review PRs.\"\ntools = [\"list_pull_requests\", \"create_workspace\"]\n[limits]\nmax_budget_usd = 7.0\n",
             ),
             ("notes.txt", "not a composer"),
         ]);
@@ -203,12 +203,7 @@ mod tests {
             ("Reviewer", "reviewer.toml")
         );
         assert_eq!(f.tools.as_ref().unwrap().len(), 2);
-        assert_eq!(f.limits.as_ref().unwrap().max_steps, 7);
-        assert_eq!(
-            f.limits.as_ref().unwrap().max_children_total,
-            10,
-            "the rest is the default"
-        );
+        assert_eq!(f.limits.as_ref().unwrap().max_budget_usd, Some(7.0));
         assert!(f.error.is_none());
     }
 

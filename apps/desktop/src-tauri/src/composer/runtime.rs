@@ -118,14 +118,6 @@ impl ToolRuntime for AppRuntime {
             .branch_pattern_for_project(project_id)
     }
 
-    async fn chat_active(&self, chat_id: &str) -> bool {
-        self.state()
-            .sessions
-            .get(chat_id)
-            .map(|s| matches!(s.status, SessionStatus::Working | SessionStatus::Blocked))
-            .unwrap_or(false)
-    }
-
     async fn run(
         &self,
         composer: &Composer,

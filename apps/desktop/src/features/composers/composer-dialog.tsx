@@ -25,10 +25,6 @@ import {
 import { useComposerDialog } from "./store";
 
 const EMPTY_LIMITS: Limits = {
-  max_steps: 100,
-  max_children_at_once: 3,
-  max_children_total: 10,
-  max_minutes: 120,
   max_budget_usd: null,
 };
 

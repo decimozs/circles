@@ -336,7 +336,7 @@ describe("Composer dialog", () => {
       autonomy: {},
       projects: null,
       allow_override: false,
-      limits: { max_steps: 100, max_children_at_once: 3, max_children_total: 10, max_minutes: 120 },
+      limits: { max_budget_usd: null },
     });
   });
 
@@ -433,7 +433,7 @@ describe("Composer dialog", () => {
             autonomy: { merge_pr: "allow" },
             projects: ["p1"],
             allow_override: true,
-            limits: { ...composer().limits, max_steps: 5 },
+            limits: { ...composer().limits, max_budget_usd: 5 },
           }),
         ])
         .on("composer_update", composer());
@@ -455,13 +455,16 @@ describe("Composer dialog", () => {
       autonomy: { merge_pr: "allow" },
       projects: ["p1"],
       allow_override: true,
-      limits: { max_steps: 5 },
+      limits: { max_budget_usd: 5 },
     });
   });
 
   it("shows the reason when it cannot be saved", async () => {
     seed(() =>
-      backend.fail("composer_create", { code: "invalid", message: "Limits must be at least 1." }),
+      backend.fail("composer_create", {
+        code: "invalid",
+        message: "The spending limit must be more than 0.",
+      }),
     );
     const app = renderApp("/composers");
     await app.user.click(await screen.findByRole("button", { name: "New Composer" }));
@@ -469,7 +472,7 @@ describe("Composer dialog", () => {
     await app.user.type(within(dialog).getByLabelText("Name"), "X");
     await app.user.click(within(dialog).getByRole("button", { name: "Create Composer" }));
     expect(await within(dialog).findByRole("alert")).toHaveTextContent(
-      "Limits must be at least 1.",
+      "The spending limit must be more than 0.",
     );
   });
 });

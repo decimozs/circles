@@ -561,7 +561,7 @@ function AutonomyFields({
   );
 }
 
-/** How many agents one run may start. There is no limit on time or steps. */
+/** The spending limit of one request. Nothing else is limited: only Claude Code's rate limits apply. */
 function LimitsFields({
   limits,
   onChange,
@@ -569,40 +569,14 @@ function LimitsFields({
   limits: Limits;
   onChange: (limits: Limits) => void;
 }) {
-  const count = (
-    label: string,
-    key: "max_children_at_once" | "max_children_total",
-    hint: string,
-  ) => (
-    <div className="flex flex-col gap-1">
-      <span className="font-medium">{label}</span>
-      <Input
-        aria-label={label}
-        type="number"
-        min={1}
-        value={limits[key]}
-        onChange={(e) => onChange({ ...limits, [key]: Math.max(1, Number(e.target.value) || 1) })}
-        className="h-8 w-28"
-      />
-      <span className="text-muted-foreground">{hint}</span>
-    </div>
-  );
   return (
     <section aria-label="Limits" className="flex flex-col gap-4 text-xs">
       <div>
         <h3 className="text-sm font-medium">Limits for one request</h3>
-        <p className="mt-0.5 text-muted-foreground">No limit on time or steps.</p>
+        <p className="mt-0.5 text-muted-foreground">
+          No limit on time, steps or how many agents it starts.
+        </p>
       </div>
-      {count(
-        "Agents at once",
-        "max_children_at_once",
-        "Chats it started that work at the same moment.",
-      )}
-      {count(
-        "Agents in total",
-        "max_children_total",
-        "Workspaces and chats one request may start.",
-      )}
       <div className="flex flex-col gap-1">
         <span className="font-medium">Spending limit in USD</span>
         <Input

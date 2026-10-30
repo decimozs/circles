@@ -351,8 +351,10 @@ describe("Details tab", () => {
     // The same pair stays when another section is open.
     const nav = screen.getByRole("navigation", { name: "Composer settings" });
     await app.user.click(within(nav).getByRole("button", { name: "Limits" }));
-    const agents = await screen.findByRole("spinbutton", { name: "Agents at once" });
-    await app.user.tripleClick(agents);
+    const spending = await screen.findByRole("spinbutton", { name: "Spending limit in USD" });
+    expect(screen.queryByRole("spinbutton", { name: "Agents at once" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("spinbutton", { name: "Agents in total" })).not.toBeInTheDocument();
+    await app.user.tripleClick(spending);
     await app.user.keyboard("5");
     await app.user.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(backend.callsTo("composer_update")).toHaveLength(1));
@@ -360,7 +362,7 @@ describe("Details tab", () => {
       .input;
     expect(input).toMatchObject({
       autonomy: { merge_pr: "allow" },
-      limits: { max_children_at_once: 5 },
+      limits: { max_budget_usd: 5 },
     });
   });
 
