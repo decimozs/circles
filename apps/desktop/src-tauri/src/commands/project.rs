@@ -1,6 +1,6 @@
 use tauri::State;
 
-use crate::github::GhRepo;
+use crate::github::GhRepos;
 use crate::ipc::IpcResult;
 use crate::project::Project;
 use crate::state::AppState;
@@ -82,8 +82,8 @@ pub async fn project_set_base_branch(
         .await
 }
 
-/// Repositories of the signed in GitHub user, for the "Open GitHub project" picker.
+/// Repositories of the signed in GitHub account and its organizations, for the project picker.
 #[tauri::command]
-pub async fn github_list_repos(state: State<'_, AppState>) -> IpcResult<Vec<GhRepo>> {
+pub async fn github_list_repos(state: State<'_, AppState>) -> IpcResult<GhRepos> {
     state.project_service().await.github_repos().await
 }

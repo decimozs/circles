@@ -11,9 +11,12 @@ use ts_rs::TS;
 use crate::db::Db;
 use crate::error::{AppError, AppResult};
 use crate::git::{Git, GitError, GitErrorKind};
-use crate::github::{self, Gh, GhRepo};
+use crate::github::{self, Gh, GhRepos};
 use crate::ipc::{new_id, now_ms};
 use crate::paths::AppPaths;
+
+/// The most repositories listed for one owner. A repository outside it is cloned by its name.
+const PER_OWNER: u32 = 100;
 
 #[derive(Debug, Clone, Serialize, TS, PartialEq)]
 #[ts(export)]
@@ -195,10 +198,41 @@ impl ProjectService {
         self.get(&id)
     }
 
-    /// Repositories of the signed in GitHub user.
-    pub async fn github_repos(&self) -> AppResult<Vec<GhRepo>> {
-        self.gh.current_user().await?;
-        Ok(self.gh.list_repos(200).await?)
+    /// Repositories of the signed in GitHub account and of the organizations it belongs to. An
+    /// organization that cannot be listed is named, not failed on.
+    pub async fn github_repos(&self) -> AppResult<GhRepos> {
+        let account = self.gh.current_user().await?;
+        let mut repos = self.gh.list_repos(None, PER_OWNER).await?;
+        // Organizations are a bonus: when they cannot be listed the account's own still show.
+        let orgs = self.gh.list_orgs().await.unwrap_or_default();
+        let mut tasks = tokio::task::JoinSet::new();
+        for org in orgs {
+            let gh = self.gh.clone();
+            tasks.spawn(async move {
+                let listed = gh.list_repos(Some(&org), PER_OWNER).await;
+                (org, listed)
+            });
+        }
+        let mut by_org = Vec::new();
+        let mut failed_orgs = Vec::new();
+        while let Some(done) = tasks.join_next().await {
+            let Ok((org, listed)) = done else { continue };
+            match listed {
+                Ok(list) => by_org.push((org, list)),
+                Err(e) => {
+                    tracing::warn!(%org, error = %e, "cannot list an organization's repositories");
+                    failed_orgs.push(org);
+                }
+            }
+        }
+        by_org.sort_by_key(|(org, _)| org.to_lowercase());
+        failed_orgs.sort();
+        repos.extend(by_org.into_iter().flat_map(|(_, list)| list));
+        Ok(GhRepos {
+            account,
+            repos,
+            failed_orgs,
+        })
     }
 
     /// Clones a GitHub repository into `~/circles/repos/` and adds it.
@@ -436,6 +470,51 @@ mod tests {
             (dest, leftover),
             (f.svc.paths.repos_dir.join("test-repo-2"), false)
         );
+    }
+
+    #[tokio::test]
+    async fn github_repos_list_the_account_and_then_each_organization() {
+        const FAKE_GH: &str = r#"#!/bin/sh
+repo() { echo "[{\"nameWithOwner\":\"$1/$2\",\"name\":\"$2\",\"description\":\"\",\"isPrivate\":true,\"url\":\"https://github.com/$1/$2\",\"owner\":{\"login\":\"$1\"}}]"; }
+case "$1 $2" in
+  "api user") echo me ;;
+  "api user/orgs") printf 'zeta\nacme\nlocked\n' ;;
+  "repo list")
+    case "$3" in
+      --limit) repo me mine ;;
+      zeta) repo zeta last ;;
+      acme) repo acme first ;;
+      *) echo "SAML enforcement" >&2; exit 1 ;;
+    esac ;;
+  *) echo "unexpected: $@" >&2; exit 2 ;;
+esac
+"#;
+        let mut f = fixture();
+        let bin = f.root.join("bin");
+        std::fs::create_dir_all(&bin).unwrap();
+        let script = bin.join("gh");
+        std::fs::write(&script, FAKE_GH).unwrap();
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        }
+        let path = format!("{}:/usr/bin:/bin", bin.display());
+        f.svc.gh = Gh::new(Arc::new(crate::env::ResolvedEnv::for_test(&[(
+            "PATH",
+            path.as_str(),
+        )])));
+
+        let listed = f.svc.github_repos().await.unwrap();
+        assert_eq!(listed.account, "me");
+        let names: Vec<_> = listed
+            .repos
+            .iter()
+            .map(|r| r.name_with_owner.as_str())
+            .collect();
+        // The account's own first, then the organizations by name.
+        assert_eq!(names, ["me/mine", "acme/first", "zeta/last"]);
+        // An organization that cannot be listed is named and the rest still show.
+        assert_eq!(listed.failed_orgs, ["locked"]);
     }
 
     fn git_kind(e: &AppError) -> Option<GitErrorKind> {
@@ -796,8 +875,9 @@ mod tests {
         let listed = svc.github_repos().await.unwrap();
         println!(
             "[list] {} repos, first: {}",
-            listed.len(),
+            listed.repos.len(),
             listed
+                .repos
                 .first()
                 .map(|r| r.name_with_owner.as_str())
                 .unwrap_or("-")

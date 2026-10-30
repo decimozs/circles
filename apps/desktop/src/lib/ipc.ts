@@ -29,7 +29,7 @@ import type { FileHit } from "@circles/bindings/FileHit";
 import type { FilePair } from "@circles/bindings/FilePair";
 import type { FleetItem } from "@circles/bindings/FleetItem";
 import type { FsEntry } from "@circles/bindings/FsEntry";
-import type { GhRepo } from "@circles/bindings/GhRepo";
+import type { GhRepos } from "@circles/bindings/GhRepos";
 import type { GitGraph } from "@circles/bindings/GitGraph";
 import type { GitIdentity } from "@circles/bindings/GitIdentity";
 import type { JiraStatus } from "@circles/bindings/JiraStatus";
@@ -132,7 +132,7 @@ export const ipc = {
     call<null>("project_remove", { id, workspaces: workspaces ?? null }),
   projectSetBaseBranch: (id: string, branch: string) =>
     call<Project>("project_set_base_branch", { id, branch }),
-  githubListRepos: () => call<GhRepo[]>("github_list_repos"),
+  githubListRepos: () => call<GhRepos>("github_list_repos"),
 
   workspaceList: (projectId?: string) =>
     call<Workspace[]>("workspace_list", { projectId: projectId ?? null, includeArchived: true }),

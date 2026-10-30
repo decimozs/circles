@@ -84,15 +84,29 @@ function GithubTab({ active, onAdded }: { active: boolean; onAdded: (p: Project)
     add.mutate(ref, { onSuccess: onAdded, onSettled: () => setCloning(null) });
   };
 
-  const visible = (repos.data ?? []).filter((r) =>
-    r.name_with_owner.toLowerCase().includes(filter.trim().toLowerCase()),
+  const account = repos.data?.account;
+  const failedOrgs = repos.data?.failed_orgs ?? [];
+  const query = filter.trim().toLowerCase();
+  // Searches the owner, the name and the description, over the account and every organization.
+  const visible = (repos.data?.repos ?? []).filter(
+    (r) =>
+      !query ||
+      r.name_with_owner.toLowerCase().includes(query) ||
+      r.description?.toLowerCase().includes(query),
   );
+  const owners = [...new Set(visible.map((r) => r.owner))];
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <p className="text-sm text-muted-foreground">
         Clones the repository into <span className="font-mono text-xs">~/circles/repos</span> using
         the GitHub CLI.
+        {account ? (
+          <>
+            {" "}
+            Signed in as <span className="font-medium text-foreground">{account}</span>.
+          </>
+        ) : null}
       </p>
       <form
         className="flex gap-2"
@@ -118,7 +132,7 @@ function GithubTab({ active, onAdded }: { active: boolean; onAdded: (p: Project)
         <Input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          placeholder="Filter your repositories"
+          placeholder="Search your repositories and organizations"
           aria-label="Filter your repositories"
           className="pl-8"
         />
@@ -135,39 +149,69 @@ function GithubTab({ active, onAdded }: { active: boolean; onAdded: (p: Project)
             <ErrorMessage error={repos.error} />
           </div>
         ) : visible.length === 0 ? (
-          <p className="p-3 text-sm text-muted-foreground">No repositories found.</p>
+          <p className="p-3 text-sm text-muted-foreground">
+            {query
+              ? "No repository matches. Type owner/name above to clone one that is not listed."
+              : `No repositories found${account ? ` for ${account}` : ""}.`}
+          </p>
         ) : (
           <ul>
-            {visible.map((repo) => (
-              <li key={repo.name_with_owner} className="border-b border-border last:border-b-0">
-                <button
-                  type="button"
-                  disabled={add.isPending}
-                  onClick={() => clone(repo.name_with_owner)}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted focus-visible:bg-muted disabled:opacity-60"
-                >
-                  <img src={repo.avatar_url} alt="" className="size-5 shrink-0 rounded-full" />
-                  <span className="min-w-0 flex-1 overflow-hidden">
-                    <span className="block truncate">{repo.name_with_owner}</span>
-                    {repo.description ? (
-                      <span className="block truncate text-xs text-muted-foreground">
-                        {repo.description}
-                      </span>
-                    ) : null}
-                  </span>
-                  {cloning === repo.name_with_owner ? (
-                    <Loader2Icon className="size-3.5 animate-spin" />
-                  ) : repo.is_private ? (
-                    <LockIcon className="size-3.5 text-muted-foreground" />
-                  ) : (
-                    <GlobeIcon className="size-3.5 text-muted-foreground" />
-                  )}
-                </button>
+            {owners.map((owner) => (
+              <li key={owner}>
+                {owners.length > 1 ? (
+                  <p className="sticky top-0 border-b border-border bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                    {owner}
+                  </p>
+                ) : null}
+                <ul>
+                  {visible
+                    .filter((repo) => repo.owner === owner)
+                    .map((repo) => (
+                      <li
+                        key={repo.name_with_owner}
+                        className="border-b border-border last:border-b-0"
+                      >
+                        <button
+                          type="button"
+                          disabled={add.isPending}
+                          onClick={() => clone(repo.name_with_owner)}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted focus-visible:bg-muted disabled:opacity-60"
+                        >
+                          <img
+                            src={repo.avatar_url}
+                            alt=""
+                            className="size-5 shrink-0 rounded-full"
+                          />
+                          <span className="min-w-0 flex-1 overflow-hidden">
+                            <span className="block truncate">{repo.name_with_owner}</span>
+                            {repo.description ? (
+                              <span className="block truncate text-xs text-muted-foreground">
+                                {repo.description}
+                              </span>
+                            ) : null}
+                          </span>
+                          {cloning === repo.name_with_owner ? (
+                            <Loader2Icon className="size-3.5 animate-spin" />
+                          ) : repo.is_private ? (
+                            <LockIcon className="size-3.5 text-muted-foreground" />
+                          ) : (
+                            <GlobeIcon className="size-3.5 text-muted-foreground" />
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                </ul>
               </li>
             ))}
           </ul>
         )}
       </div>
+      {failedOrgs.length > 0 ? (
+        <p className="text-xs text-muted-foreground">
+          Could not list {failedOrgs.join(", ")}. Its repositories may need SSO access. You can
+          still clone one by typing owner/name.
+        </p>
+      ) : null}
       {add.isPending ? (
         <p className="text-sm text-muted-foreground">Cloning {cloning}. This can take a minute.</p>
       ) : null}

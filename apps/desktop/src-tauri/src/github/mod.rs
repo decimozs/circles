@@ -135,6 +135,18 @@ pub struct GhRepo {
     pub avatar_url: String,
 }
 
+/// The repositories to pick from: the signed in account's own, then those of each organization it
+/// belongs to.
+#[derive(Debug, Clone, Serialize, TS, PartialEq, Eq)]
+#[ts(export)]
+pub struct GhRepos {
+    /// The account `gh` is signed in as.
+    pub account: String,
+    pub repos: Vec<GhRepo>,
+    /// Organizations whose repositories could not be listed, such as ones that need SSO.
+    pub failed_orgs: Vec<String>,
+}
+
 #[derive(Deserialize)]
 struct RawRepo {
     #[serde(rename = "nameWithOwner")]
@@ -660,22 +672,39 @@ impl Gh {
         })
     }
 
-    pub async fn list_repos(&self, limit: u32) -> Result<Vec<GhRepo>, GhError> {
+    /// Repositories of `owner`, a user or an organization, or of the signed in account.
+    pub async fn list_repos(
+        &self,
+        owner: Option<&str>,
+        limit: u32,
+    ) -> Result<Vec<GhRepo>, GhError> {
         let limit = limit.to_string();
+        let mut args = vec!["repo", "list"];
+        args.extend(owner);
+        args.extend([
+            "--limit",
+            &limit,
+            "--json",
+            "nameWithOwner,name,description,isPrivate,url,owner",
+        ]);
+        let out = self.run(&args, DEFAULT_TIMEOUT).await?;
+        parse_repo_list(&out)
+    }
+
+    /// Logins of the organizations the signed in account belongs to.
+    pub async fn list_orgs(&self) -> Result<Vec<String>, GhError> {
         let out = self
             .run(
-                &[
-                    "repo",
-                    "list",
-                    "--limit",
-                    &limit,
-                    "--json",
-                    "nameWithOwner,name,description,isPrivate,url,owner",
-                ],
+                &["api", "user/orgs", "--paginate", "--jq", ".[].login"],
                 DEFAULT_TIMEOUT,
             )
             .await?;
-        parse_repo_list(&out)
+        Ok(out
+            .lines()
+            .map(str::trim)
+            .filter(|l| !l.is_empty())
+            .map(String::from)
+            .collect())
     }
 
     /// Open pull requests of the repository in `repo`.
@@ -907,7 +936,7 @@ mod tests {
         let gh = Gh::new(env);
         let login = gh.current_user().await.unwrap();
         assert!(!login.is_empty());
-        let repos = gh.list_repos(5).await.unwrap();
+        let repos = gh.list_repos(None, 5).await.unwrap();
         assert!(repos.len() <= 5);
         for repo in &repos {
             assert!(repo.name_with_owner.contains('/'));
