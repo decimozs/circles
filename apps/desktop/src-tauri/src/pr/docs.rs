@@ -407,4 +407,41 @@ mod tests {
         assert!(!prompt.contains("Pull request template") && !prompt.contains("Recent branch"));
         assert!(prompt.contains("circles-conventions"));
     }
+
+    /// Uses the real Claude Code and a little API credit:
+    /// `cargo test --lib -- --ignored --nocapture real_claude`
+    #[tokio::test]
+    #[ignore = "uses the real Claude Code and a little API credit"]
+    async fn real_claude_learns_this_repository() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../..");
+        let docs = read(&root);
+        assert!(docs.pr_template.is_some() && docs.conventions.is_some());
+        let commits = vec![
+            "feat(pr): follow the repository's template and conventions in drafts (KEY-12)"
+                .to_string(),
+            "fix(chat): stop the work spinner when the chat is not working (KEY-9)".to_string(),
+        ];
+        let branches = vec![
+            "feat/KEY-12-follow-the-template".to_string(),
+            "fix/KEY-9-spinner".to_string(),
+        ];
+        let evidence = Evidence {
+            docs: &docs,
+            commits: &commits,
+            branches: &branches,
+        };
+        let env = crate::env::resolve().await;
+        let answer = crate::pr::draft::run_once_with(
+            &env,
+            &std::env::temp_dir(),
+            &learn_prompt(&evidence),
+            "sonnet",
+            &["--setting-sources", "project,local"],
+        )
+        .await
+        .unwrap();
+        let learned = parse_learned(&answer).expect("an answer in the asked form");
+        println!("{learned:#?}");
+        assert!(learned.branch_pattern.is_some());
+    }
 }

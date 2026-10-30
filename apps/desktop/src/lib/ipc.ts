@@ -33,6 +33,7 @@ import type { GhRepos } from "@circles/bindings/GhRepos";
 import type { GitGraph } from "@circles/bindings/GitGraph";
 import type { GitIdentity } from "@circles/bindings/GitIdentity";
 import type { JiraStatus } from "@circles/bindings/JiraStatus";
+import type { Learned } from "@circles/bindings/Learned";
 import type { Message } from "@circles/bindings/Message";
 import type { NewComment } from "@circles/bindings/NewComment";
 import type { PendingPrompt } from "@circles/bindings/PendingPrompt";
@@ -132,6 +133,8 @@ export const ipc = {
     call<null>("project_remove", { id, workspaces: workspaces ?? null }),
   projectSetBaseBranch: (id: string, branch: string) =>
     call<Project>("project_set_base_branch", { id, branch }),
+  projectLearnConventions: (projectId: string, model?: string) =>
+    call<Learned>("project_learn_conventions", { projectId, model: model ?? null }),
   githubListRepos: () => call<GhRepos>("github_list_repos"),
 
   workspaceList: (projectId?: string) =>

@@ -239,6 +239,7 @@ pub fn run() {
             commands::project::project_remove,
             commands::project::project_set_base_branch,
             commands::project::github_list_repos,
+            commands::project::project_learn_conventions,
             commands::session::session_create,
             commands::session::session_list,
             commands::session::session_get,
