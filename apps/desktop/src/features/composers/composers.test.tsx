@@ -16,7 +16,7 @@ function seed(extra?: () => void) {
 }
 
 describe("sidebar", () => {
-  it("has a Composers item below Create, and one row per Composer with no runs under it", async () => {
+  it("lists Search, Create, Home and Composer in that order, and one row per Composer with no runs under it", async () => {
     seed();
     renderApp("/");
     const nav = await screen.findByRole("navigation", { name: "Primary" });
@@ -24,9 +24,9 @@ describe("sidebar", () => {
       .getAllByRole("link")
       .concat(within(nav).getAllByRole("button"))
       .map((e) => e.textContent?.trim());
-    expect(labels).toContain("Composers");
+    expect(labels).toContain("Composer");
     const items = [...nav.children].map((e) => e.textContent?.trim());
-    expect(items.indexOf("Composers")).toBe(items.indexOf("Create") + 1);
+    expect(items).toEqual(["Search", "Create", "Home", "Composer"]);
 
     const group = await screen.findByRole("region", { name: "Composers" });
     const row = await within(group).findByRole("link", { name: /Release captain/ });
