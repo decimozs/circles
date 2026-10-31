@@ -1,4 +1,7 @@
-# Chats
+---
+title: "Chats"
+description: "Talk to a Claude Code agent: the message box, permissions, checkpoints and side questions."
+---
 
 A chat is a conversation with one Claude Code agent inside a workspace. A workspace can have several chats at once, each in its own tab. Closed chats stay in the chat history of the top bar.
 

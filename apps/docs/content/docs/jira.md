@@ -1,4 +1,7 @@
-# Jira
+---
+title: "Jira"
+description: "Let chats and Composers read and work with Jira Cloud."
+---
 
 Circles can let every chat, and every Composer that you allow, read and work with Jira Cloud. Jira Server and Data Center are not supported.
 

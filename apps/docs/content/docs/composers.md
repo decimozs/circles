@@ -1,4 +1,7 @@
-# Composers
+---
+title: "Composers"
+description: "A manager agent that starts workspaces and agents for you, and how to follow its run."
+---
 
 A Composer is a manager agent. You give it a goal in plain words, and it uses Circles' own actions to look at your projects, create workspaces, start coding agents in them, follow their progress and open pull requests. It does not edit code itself: the agents it starts do.
 
@@ -9,7 +12,7 @@ Open **Composers** in the sidebar and press **New Composer**, or start from a te
 - **Name** and **Mode.** The mode works like a chat's permission mode (Ask, Accept edits, Plan, Full access) and is the starting point for what the Composer may do on its own. New Composers start in the mode set in Settings > Agents.
 - **Instructions:** what it should do, how, and what it must never do. Markdown works, and typing `/` offers your skills. The **Improve** button rewrites rough instructions as clear Markdown. See below.
 - **Repositories:** all of your projects, or only the ones you pick. It cannot see or change any other.
-- **Integrations:** a switch for Jira. Off, the Composer has no Jira tools at all. See [Jira](jira.md).
+- **Integrations:** a switch for Jira. Off, the Composer has no Jira tools at all. See [Jira](./jira.md).
 
 ### Improve
 

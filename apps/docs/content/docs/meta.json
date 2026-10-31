@@ -1,4 +1,17 @@
 {
   "title": "Circles",
-  "pages": ["index", "getting-started"]
+  "pages": [
+    "index",
+    "getting-started",
+    "projects",
+    "workspaces",
+    "chats",
+    "pull-requests",
+    "composers",
+    "jira",
+    "usage",
+    "settings",
+    "shortcuts",
+    "troubleshooting"
+  ]
 }
