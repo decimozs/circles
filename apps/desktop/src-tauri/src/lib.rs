@@ -351,6 +351,7 @@ pub fn run() {
             commands::session::permission_reply,
             commands::session::claude_rate_limit,
             commands::usage::usage_summary,
+            commands::pr_browse::pr_browse_list,
             commands::workspace::workspace_take_pending_prompt,
             commands::terminal::terminal_list,
             commands::terminal::terminal_create,

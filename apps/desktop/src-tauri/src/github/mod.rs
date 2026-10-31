@@ -1,6 +1,7 @@
 //! GitHub through the `gh` CLI. No OAuth and no tokens of our own: `gh` owns authentication.
 
 use std::path::{Path, PathBuf};
+pub mod browse;
 pub mod pr;
 
 use std::process::Stdio;

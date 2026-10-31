@@ -8,6 +8,7 @@ pub mod files;
 pub mod genui;
 pub mod integrations;
 pub mod pr;
+pub mod pr_browse;
 pub mod project;
 pub mod session;
 pub mod settings;
