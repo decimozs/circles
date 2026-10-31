@@ -1,6 +1,7 @@
 # A run popover instead of the right pane for Composer chats
 
-Status: plan, nothing built.
+Status: phase 1 is built (the panel replaces the pane, and is a toggle that stays open and is
+remembered). The live sections below are planned, not built.
 
 A Composer's page has a right pane with four tabs (Fleet, Approvals, Steps, Details). It is replaced
 by a small popover from the top bar, laid out like the T3 Code one in the reference screenshot:
@@ -71,18 +72,91 @@ of this popover.
   proves slow, a `workspace_summaries(ids)` command that returns branch, ahead, changes and pull
   request number in one go is the fallback. This is checked while building, not guessed here.
 
+## Live: the fleet, approvals and steps in the panel itself
+
+The second reference screenshot (a "Lineage, 4 running" list with a spinner and a ticking time per
+agent) changes what the panel is for. It is not a menu that leads to dialogs; it is where you watch
+the run. So the footer links of phase 1 (Fleet, Approvals, Steps, Details) are replaced by three
+live sections, and only **Details** stays a link.
+
+```
+This Mac
+Fleet · 3 running                      ...
+  spinner  Add dark mode           19s
+  spinner  Fix login               21s
+  amber    Release notes  waits    2m 05s
+  idle     Docs                    done
+Approvals · 1 waiting
+  Delete workspace "Oslo"   [Allow] [Allow for this run] [Deny]
+Steps · running
+  spinner  Read file src/a.ts       3s
+  ok       Start chat in Oslo       12s ago
+  ok       List projects            40s ago      All steps...
+Details
+```
+
+- **Fleet.** One row per workspace of the run: a spinner while its agent works, an amber dot while it
+  waits for a permission, a mark when done, a quiet dot when idle. The time beside a working row counts
+  up from when its current turn started; for the others it says how long ago. The heading counts
+  what is running ("3 running"). Finished rows fold under "Done 5". A row opens the workspace; a
+  row expands to the branch, pull request and changes of phase 5.
+- **Approvals.** What waits for you is answered here, with the same Allow, Allow for this run and Deny
+  as the card in the chat, so nothing needs a click through to a dialog. The last answered few are
+  folded under the heading.
+- **Steps.** The calls the Composer is making right now (a tool call that has no result yet) with a
+  spinner and a time that counts up, then the last few that finished with their outcome and how long
+  ago. "All steps" opens the full list in the dialog from phase 1.
+- **The button shows it too.** While anything runs, the panel's button at the top right has a small
+  spinner on it, and the amber badge for approvals stays, so a closed panel still tells you.
+
+### What it needs
+
+- **A time to count from.** A session has `updated_at`, which changes on every message, so it is not
+  when a turn began. The backend sets `working_since` on the session when its status becomes
+  working and clears it when it stops (a migration and one field in the generated `Session`). Steps
+  need nothing new: the start of a tool call is the time of its message, and it is "running" while no
+  result message follows.
+- **One clock.** A single timer, one second, in the panel, running only while the panel is open and
+  something runs. Rows do not each keep a timer. The times are read from the server's timestamps, so
+  they are right after a restart or a reopen.
+- **Updates by event.** The panel already reacts to `session:changed` and `composer:approvals-changed`;
+  the four second poll stays as a fallback. No new events.
+- **Reading, not reading aloud.** The headings count is a polite live region that changes when the
+  numbers change. The ticking times are not announced.
+- **Reduced motion.** Spinners stop spinning for people who ask for it, and say "working" in text.
+
+### What the child agents are doing
+
+The reference also shows a line per agent. For a Composer, a child's own tool calls are in its own
+chat, which the panel does not follow. Showing "Edit src/a.ts" under a fleet row needs the session
+manager to keep the name of the tool call in progress for each session, as one more field on
+`Session` (`activity`). It is cheap and useful, and kept out of the first live PR so it can be judged on
+its own.
+
+### Tests for the live part
+
+- Fake timers: a working row counts up each second and stops when the agent stops; no timer runs
+  while nothing runs or the panel is closed.
+- Rows move between Fleet states, and the heading count follows.
+- An approval answered in the panel calls the same command as the chat's card and leaves the list.
+- A tool call without a result shows as running, and finishing it moves it to the finished list.
+- The button shows a spinner while anything runs and the badge while anything waits.
+- Reduced motion and the live region, as accessibility tests.
+- Not testable here: how it feels; checked by hand.
+
 ## Phases (stacked PRs)
 
-1. **Move, don't lose.** Remove the right pane for Composer pages; add the top-bar button with the
-   approvals badge and the popover shell; add the foot links that open Fleet graph, Approvals, Steps
-   and Details as dialogs (the existing tab bodies, moved into dialogs). The popover lists the
-   workspaces with name, status and Open. Nothing is lost at this point and nothing is new.
-2. **Branch, editor and changes** per workspace: editor menu, branch row, changes totals and the
-   link to the Changes tab.
-3. **Pull request and next step** per workspace: title, number, checks mark, and the next-step row
-   with its menu, through the cache.
-4. **Docs and shortcut**: `docs/composers.md` (the right pane described there is gone),
-   `docs/shortcuts.md`, `CHANGELOG.md`.
+1. **Built.** The pane is gone for Composer pages, the toggled panel with the run's workspaces and the
+   dialog for the old tabs.
+2. **Live fleet.** `working_since` on sessions, the one clock, the Fleet section with its states and
+   times, and the spinner on the button.
+3. **Live approvals.** The Approvals section with the answers inline.
+4. **Live steps.** The running calls and the last finished ones.
+5. **Workspace detail.** Per workspace, expanded from its Fleet row: editor, branch, changes, the pull
+   request and the next step.
+6. **Child activity** (the optional `activity` field) and the dialog links removed once nothing needs
+   them.
+7. **Docs.**
 
 ## Tests
 
@@ -111,9 +185,8 @@ of this popover.
 
 ## Questions for you
 
-1. **Where should Approvals, Steps and Details live?** Recommended: dialogs from the popover's foot,
-   as above. The alternative is a second button beside the popover for each, which is more visible
-   and noisier.
+1. **Where should Approvals, Steps and Details live?** Decided: Fleet, Approvals and Steps are live in
+   the panel (above); Details stays a link to its dialog.
 2. **Keep the popover for workspace chats too?** Recommended: no. Workspaces have Files, Changes and
    Checks in the pane, and a branch and a pull request of their own in the top bar already.
 3. **Open in editor for the Composer's own folder?** Recommended: leave it out. It holds notes, not
