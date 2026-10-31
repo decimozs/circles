@@ -2,6 +2,19 @@
 
 Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in. It never stores a token. Pushing uses your existing git credentials.
 
+## Browsing pull requests
+
+**Pull requests** in the sidebar, under Composer, lists the pull requests of the repositories you added, whether or not a workspace is on their branch.
+
+- **Which repositories:** the project you worked in last, or all projects. Choose with the project button beside the search box.
+- **Groups:** *Needs your review* (you are asked to review), *Yours*, and *Others*.
+- **Each row:** state (open, draft, merged, closed), number, title, checks, review state, author, branch, size (`+added -removed`) and when it last changed.
+- **Search:** plain words match the title, branch, author and repository. `#123` finds a number. `label:bug`, `author:ana`, `repo:backend`, `branch:feat/`, `is:draft`, `is:mine`, `review:approved` and `checks:failing` narrow it. Put quotes around a value with spaces: `label:"good first issue"`.
+- **Sort and Filters:** sort by activity, age or size. Filters choose open, merged, closed or all, hide or show drafts, and filter by checks and review.
+- **If a repository cannot be asked** (for example `gh` is not signed in for it), its name and the fix are shown above the list, and the other repositories still show.
+
+Choosing a pull request opens it on GitHub.
+
 ## The next step
 
 The top bar of a workspace shows one button for the next thing worth doing, driven by the state of the branch:
