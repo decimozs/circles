@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { backend } from "@/test/backend";
+import { backend, emitBackendEvent } from "@/test/backend";
 import { defaultBackend, renderApp, settingsBackend } from "@/test/render";
 
 function open() {
@@ -103,5 +103,26 @@ describe("account cards", () => {
     expect(within(github).getByText("brew install gh")).toBeInTheDocument();
     const claude = await screen.findByRole("region", { name: "Claude" });
     expect(await within(claude).findByTestId("claude-state")).toHaveTextContent("Not installed");
+  });
+
+  it("shows the account that was kept at once and changes when it is asked again in the background", async () => {
+    let calls = 0;
+    defaultBackend();
+    settingsBackend({});
+    backend.on("github_accounts", () => {
+      calls += 1;
+      return {
+        installed: true,
+        accounts: [{ login: calls === 1 ? "kept-account" : "new-account", active: true }],
+        fix: null,
+      };
+    });
+    renderApp("/settings/account");
+    const github = await screen.findByRole("region", { name: "GitHub" });
+    expect(await within(github).findByTestId("github-details")).toHaveTextContent("@kept-account");
+    emitBackendEvent("cache:changed", "github-accounts");
+    await waitFor(() =>
+      expect(within(github).getByTestId("github-details")).toHaveTextContent("@new-account"),
+    );
   });
 });

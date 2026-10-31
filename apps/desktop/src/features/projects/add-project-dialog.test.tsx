@@ -2,7 +2,7 @@ import { open as pickFolder } from "@tauri-apps/plugin-dialog";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { useUi } from "@/stores/ui";
-import { backend } from "@/test/backend";
+import { backend, emitBackendEvent } from "@/test/backend";
 import { project } from "@/test/fixtures";
 import { defaultBackend, renderApp } from "@/test/render";
 
@@ -135,6 +135,33 @@ describe("Add project dialog", () => {
     backend.on("github_list_repos", { account: "Alfa", repos: [], failed_orgs: [] });
     const { dialog } = await openDialog("github");
     expect(await within(dialog).findByText("No repositories found for Alfa.")).toBeInTheDocument();
+  });
+
+  it("shows the repositories that were kept at once and adds the ones found since", async () => {
+    let calls = 0;
+    defaultBackend();
+    const repo = (name: string) => ({
+      name_with_owner: `me/${name}`,
+      name,
+      description: null,
+      is_private: false,
+      url: "u",
+      owner: "me",
+      avatar_url: "a",
+    });
+    backend.on("github_list_repos", () => {
+      calls += 1;
+      return {
+        account: "me",
+        failed_orgs: [],
+        repos: calls === 1 ? [repo("kept")] : [repo("kept"), repo("found-later")],
+      };
+    });
+    const { dialog } = await openDialog("github");
+    expect(await within(dialog).findByText("me/kept")).toBeInTheDocument();
+    expect(within(dialog).queryByText("me/found-later")).not.toBeInTheDocument();
+    emitBackendEvent("cache:changed", "github-repos");
+    expect(await within(dialog).findByText("me/found-later")).toBeInTheDocument();
   });
 
   it("clones a repository typed as owner/name or a URL", async () => {

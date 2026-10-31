@@ -1,8 +1,6 @@
 import type { BrowseState } from "@circles/bindings/BrowseState";
 import type { PrFileRequest } from "@circles/bindings/PrFileRequest";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { listen } from "@tauri-apps/api/event";
-import { useEffect } from "react";
+import { keepPreviousData, useQuery, type useQueryClient } from "@tanstack/react-query";
 import { ipc } from "@/lib/ipc";
 
 export const prKeys = {
@@ -28,32 +26,6 @@ export function usePrList(projectId: string | null, which: BrowseState, enabled 
     refetchOnWindowFocus: true,
     placeholderData: keepPreviousData,
   });
-}
-
-/** Reads again when something kept from GitHub was fetched again in the background. */
-export function useCacheSync() {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    let cancelled = false;
-    let stop: (() => void) | undefined;
-    listen<string>("cache:changed", (event) => {
-      if (event.payload === "pr-list") {
-        queryClient.invalidateQueries({ queryKey: prKeys.all });
-      }
-      if (event.payload === "pr-detail") {
-        queryClient.invalidateQueries({ queryKey: prKeys.detailAll });
-      }
-    })
-      .then((unlisten) => {
-        if (cancelled) unlisten();
-        else stop = unlisten;
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-      stop?.();
-    };
-  }, [queryClient]);
 }
 
 /** Asks GitHub now, and waits for the answer. */

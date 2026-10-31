@@ -7,7 +7,7 @@ import { describeError } from "@/features/chat/use-session";
 import { useProjects } from "@/features/projects/api";
 import { useWorkspaces } from "@/features/workspaces/api";
 import { formatAge } from "@/lib/time";
-import { refreshPrList, useCacheSync, usePrList } from "./api";
+import { refreshPrList, usePrList } from "./api";
 import { DetailPane } from "./detail-pane";
 import { PrRow } from "./pr-row";
 import { PrToolbar } from "./pr-toolbar";
@@ -47,7 +47,6 @@ export function PullRequestsPage() {
   // for the wrong one while those load.
   const ready = chosen !== undefined || (projectsQuery.isSuccess && workspacesQuery.isSuccess);
   const list = usePrList(scope, which, ready);
-  useCacheSync();
   const [forcing, setForcing] = useState(false);
   const refreshing = forcing || list.isFetching || list.data?.refreshing === true;
   const fetchedAt = list.data?.fetched_at ?? null;

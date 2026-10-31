@@ -8,6 +8,7 @@ import { ShortcutsDialog } from "@/components/shell/shortcuts-dialog";
 import { TitleBar } from "@/components/shell/title-bar";
 import { TopBar } from "@/components/shell/top-bar";
 import { Workbench } from "@/components/shell/workbench";
+import { useCacheSync } from "@/features/app/cache-sync";
 import { useSessionSync, useSideSync } from "@/features/chat/api";
 import { useComposerSync } from "@/features/composers/api";
 import { ComposerDialog } from "@/features/composers/composer-dialog";
@@ -39,6 +40,7 @@ export function AppShell() {
   useGlobalShortcuts();
   useApplySettings();
   useComposerSync();
+  useCacheSync();
   useWorkspaceStateSync();
   useTerminalSync();
   const openId = useMatch("/workspace/:id")?.params.id;
