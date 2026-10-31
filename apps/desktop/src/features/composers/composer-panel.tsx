@@ -18,7 +18,7 @@ import {
 import { Input } from "@circles/ui/components/input";
 import { Textarea } from "@circles/ui/components/textarea";
 import { cn } from "@circles/ui/utils";
-import { Loader2Icon, Maximize2Icon, SettingsIcon, Trash2Icon } from "lucide-react";
+import { Loader2Icon, Maximize2Icon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -38,7 +38,6 @@ import {
   modeAutonomy,
   TIER_LABEL,
   useApprovals,
-  useAudit,
   useDeleteComposer,
   useFleet,
   useStopChild,
@@ -55,13 +54,11 @@ import {
 import { FleetGraph } from "./fleet-graph";
 import { TriggersEditor } from "./triggers-editor";
 
-export type Tab = "fleet" | "approvals" | "steps" | "details";
+export type Tab = "fleet" | "approvals";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "fleet", label: "Fleet" },
   { id: "approvals", label: "Approvals" },
-  { id: "steps", label: "Steps" },
-  { id: "details", label: "Details" },
 ];
 
 function Empty({ children }: { children: React.ReactNode }) {
@@ -354,19 +351,6 @@ export function AuditRow({ entry }: { entry: AuditEntry }) {
   );
 }
 
-/** Every tool call of this run, newest first. */
-function StepsTab({ composer, runId }: { composer: Composer; runId?: string }) {
-  const entries = useAudit({ composerId: composer.id, sessionId: runId }).data ?? [];
-  if (entries.length === 0) return <Empty>No tool has been called yet.</Empty>;
-  return (
-    <ul aria-label="Steps" className="flex flex-col divide-y divide-border">
-      {entries.map((e) => (
-        <AuditRow key={e.id} entry={e} />
-      ))}
-    </ul>
-  );
-}
-
 function Notes({ value, onChange }: { value: string; onChange: (notes: string) => void }) {
   return (
     <section aria-label="Notes" className="flex flex-col gap-1.5">
@@ -388,7 +372,7 @@ function Notes({ value, onChange }: { value: string; onChange: (notes: string) =
 }
 
 /** The repositories a Composer may work on: the ones picked, or all of them. */
-function RepositoriesSection({ composer }: { composer: Composer }) {
+export function RepositoriesSection({ composer }: { composer: Composer }) {
   const projects = useProjects().data ?? [];
   const picked = composer.projects;
   const all = picked === null;
@@ -438,7 +422,7 @@ function RepositoriesSection({ composer }: { composer: Composer }) {
 }
 
 /** The outside services a Composer can use: which ones it has on, and whether each one works. */
-function IntegrationsSection({ composer }: { composer: Composer }) {
+export function IntegrationsSection({ composer }: { composer: Composer }) {
   const jira = useJiraStatus().data;
   const used = composer.integrations.includes("jira");
   const state = !jira?.connected
@@ -651,7 +635,7 @@ const SETTINGS_SECTIONS: { id: SettingsSection; label: string }[] = [
 ];
 
 /** Everything that sets how a Composer behaves, in one dialog. The Details tab only shows facts. */
-function ComposerSettingsDialog({
+export function ComposerSettingsDialog({
   composer,
   open,
   onOpenChange,
@@ -811,30 +795,6 @@ function ComposerSettingsDialog({
 }
 
 /** The facts about a Composer: its name, the repositories it handles and its integrations. */
-function DetailsTab({ composer }: { composer: Composer }) {
-  const [settings, setSettings] = useState(false);
-  return (
-    <div className="flex h-full min-h-0 flex-col text-sm">
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3">
-        <RepositoriesSection composer={composer} />
-        <IntegrationsSection composer={composer} />
-      </div>
-      <div className="shrink-0 border-t border-border p-3">
-        <Button
-          size="sm"
-          variant="outline"
-          aria-label="Composer settings"
-          onClick={() => setSettings(true)}
-        >
-          <SettingsIcon />
-          Settings
-        </Button>
-      </div>
-      <ComposerSettingsDialog composer={composer} open={settings} onOpenChange={setSettings} />
-    </div>
-  );
-}
-
 /** The right pane of a Composer: what it started, what waits for you, what it did, and its setup. */
 export function ComposerPanel({
   composer,
@@ -878,8 +838,6 @@ export function ComposerPanel({
       <div className="min-h-0 flex-1 overflow-y-auto">
         {tab === "fleet" ? <FleetTab composer={composer} runId={runId} /> : null}
         {tab === "approvals" ? <ApprovalsTab composer={composer} /> : null}
-        {tab === "steps" ? <StepsTab composer={composer} runId={runId} /> : null}
-        {tab === "details" ? <DetailsTab composer={composer} /> : null}
       </div>
     </div>
   );

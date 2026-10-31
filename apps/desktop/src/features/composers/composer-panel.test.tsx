@@ -264,52 +264,6 @@ describe("Approvals tab", () => {
   });
 });
 
-describe("Steps tab", () => {
-  const entry = (over: object) => ({
-    id: "e1",
-    at: Date.now() - 120_000,
-    composer_id: "c1",
-    session_id: "r1",
-    tool: "create_workspace",
-    tier: "write",
-    input: "{}",
-    outcome: "ok",
-    summary: "made one",
-    approval_id: null,
-    ...over,
-  });
-
-  it("lists the run's calls with their outcome, newest first", async () => {
-    seed(() => {
-      backend.on("audit_list", [
-        entry({
-          id: "e2",
-          tool: "delete_workspace",
-          tier: "destructive",
-          outcome: "denied",
-          summary: "A person declined it.",
-        }),
-        entry({}),
-      ]);
-    });
-    await open("Steps");
-    const list = await screen.findByRole("list", { name: "Steps" });
-    const rows = within(list).getAllByRole("listitem");
-    expect(rows[0]).toHaveTextContent("delete workspace");
-    expect(rows[0]).toHaveTextContent("denied");
-    expect(rows[0]).toHaveTextContent("A person declined it.");
-    expect(rows[1]).toHaveTextContent("create workspace");
-    expect(rows[1]).toHaveTextContent("2min");
-    expect(backend.callsTo("audit_list")[0]).toMatchObject({ composerId: "c1", sessionId: "r1" });
-  });
-
-  it("says when no tool was called", async () => {
-    seed();
-    await open("Steps");
-    expect(await screen.findByText(/No tool has been called yet/)).toBeInTheDocument();
-  });
-});
-
 /** The Details tab, then Settings, then one of the categories in its sidebar. */
 const openSettings = async (section: string) => {
   const app = await open("Details");

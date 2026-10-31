@@ -180,7 +180,7 @@ describe("accessibility of the Composer screens", () => {
     expect(await violations()).toEqual([]);
     await openRunTab(app.user, "Fleet");
     expect(await violations()).toEqual([]);
-    for (const tab of ["Approvals", "Steps", "Details"]) {
+    for (const tab of ["Approvals"]) {
       await app.user.click(await screen.findByRole("tab", { name: new RegExp(tab) }));
       expect(await violations()).toEqual([]);
     }

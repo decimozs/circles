@@ -1,9 +1,12 @@
 # A run popover instead of the right pane for Composer chats
 
-Status: phase 1 is built (the panel replaces the pane, and is a toggle that stays open and is
-remembered). The live sections below are planned, not built.
+Status: phases 1 and 2 are built (the toggled panel, and the live Fleet section with its clock and the
+spinner on the button). **Steps were dropped** at the owner's request: no Steps tab, dialog or live
+section, and the Details link became the repositories, integrations and a Settings button in the
+panel. The approvals section, the per-workspace branch and pull request rows, and child activity are
+still planned.
 
-A Composer's page has a right pane with four tabs (Fleet, Approvals, Steps, Details). It is replaced
+A Composer's page had a right pane with four tabs (Fleet, Approvals, Steps, Details). It is replaced
 by a small popover from the top bar, laid out like the T3 Code one in the reference screenshot:
 where the work runs, which editor opens it, the branch, the pull request, and what changed.
 Workspace chats (not Composers) keep the right pane, with Files, Changes and Checks.
@@ -40,7 +43,7 @@ of this popover.
 |---|---|
 | **Fleet**: the tree of workspaces and agents, status, link to open | The workspace blocks of the popover replace the tree. A status dot and an **Open** link stay on each block. **Expand** (the fleet graph) stays as a dialog from the popover's foot. |
 | **Approvals**: pending and answered | Pending ones are already shown above the message box (`RunApprovals`). The top-bar button shows how many wait, as a badge. The answered list opens in a dialog from the popover's foot. |
-| **Steps**: every reply and tool call with cost | A dialog from the foot. |
+| **Steps**: every reply and tool call with cost | Dropped. |
 | **Details**: instructions, notes, autonomy, repositories, integrations | The existing Composer settings dialog, opened from the foot. |
 
 ## Design
@@ -76,8 +79,8 @@ of this popover.
 
 The second reference screenshot (a "Lineage, 4 running" list with a spinner and a ticking time per
 agent) changes what the panel is for. It is not a menu that leads to dialogs; it is where you watch
-the run. So the footer links of phase 1 (Fleet, Approvals, Steps, Details) are replaced by three
-live sections, and only **Details** stays a link.
+the run. So the footer links of phase 1 (Fleet, Approvals, Steps, Details) are replaced by live
+sections. **Details** became the repositories, the integrations and a Settings button, in the panel.
 
 ```
 This Mac
@@ -88,11 +91,8 @@ Fleet · 3 running                      ...
   idle     Docs                    done
 Approvals · 1 waiting
   Delete workspace "Oslo"   [Allow] [Allow for this run] [Deny]
-Steps · running
-  spinner  Read file src/a.ts       3s
-  ok       Start chat in Oslo       12s ago
-  ok       List projects            40s ago      All steps...
-Details
+Repositories ... Integrations ...
+[Settings]
 ```
 
 - **Fleet.** One row per workspace of the run: a spinner while its agent works, an amber dot while it
@@ -103,9 +103,6 @@ Details
 - **Approvals.** What waits for you is answered here, with the same Allow, Allow for this run and Deny
   as the card in the chat, so nothing needs a click through to a dialog. The last answered few are
   folded under the heading.
-- **Steps.** The calls the Composer is making right now (a tool call that has no result yet) with a
-  spinner and a time that counts up, then the last few that finished with their outcome and how long
-  ago. "All steps" opens the full list in the dialog from phase 1.
 - **The button shows it too.** While anything runs, the panel's button at the top right has a small
   spinner on it, and the amber badge for approvals stays, so a closed panel still tells you.
 
@@ -113,9 +110,8 @@ Details
 
 - **A time to count from.** A session has `updated_at`, which changes on every message, so it is not
   when a turn began. The backend sets `working_since` on the session when its status becomes
-  working and clears it when it stops (a migration and one field in the generated `Session`). Steps
-  need nothing new: the start of a tool call is the time of its message, and it is "running" while no
-  result message follows.
+  working, keeps it while the chat waits for a permission, and clears it when it stops (a migration and
+  one field in the generated `Session`). Built.
 - **One clock.** A single timer, one second, in the panel, running only while the panel is open and
   something runs. Rows do not each keep a timer. The times are read from the server's timestamps, so
   they are right after a restart or a reopen.
@@ -139,7 +135,6 @@ its own.
   while nothing runs or the panel is closed.
 - Rows move between Fleet states, and the heading count follows.
 - An approval answered in the panel calls the same command as the chat's card and leaves the list.
-- A tool call without a result shows as running, and finishing it moves it to the finished list.
 - The button shows a spinner while anything runs and the badge while anything waits.
 - Reduced motion and the live region, as accessibility tests.
 - Not testable here: how it feels; checked by hand.
@@ -151,7 +146,7 @@ its own.
 2. **Live fleet.** `working_since` on sessions, the one clock, the Fleet section with its states and
    times, and the spinner on the button.
 3. **Live approvals.** The Approvals section with the answers inline.
-4. **Live steps.** The running calls and the last finished ones.
+4. **Dropped.** Live steps.
 5. **Workspace detail.** Per workspace, expanded from its Fleet row: editor, branch, changes, the pull
    request and the next step.
 6. **Child activity** (the optional `activity` field) and the dialog links removed once nothing needs
@@ -185,8 +180,8 @@ its own.
 
 ## Questions for you
 
-1. **Where should Approvals, Steps and Details live?** Decided: Fleet, Approvals and Steps are live in
-   the panel (above); Details stays a link to its dialog.
+1. **Where should Approvals, Steps and Details live?** Decided: Fleet is live in the panel, Approvals
+   follow, Steps are dropped, and Details became the repositories, integrations and Settings.
 2. **Keep the popover for workspace chats too?** Recommended: no. Workspaces have Files, Changes and
    Checks in the pane, and a branch and a pull request of their own in the top bar already.
 3. **Open in editor for the Composer's own folder?** Recommended: leave it out. It holds notes, not

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatAge, groupByRecency, recencyGroup } from "@/lib/time";
+import { formatAge, formatElapsed, groupByRecency, recencyGroup } from "@/lib/time";
 
 // 8 October 2026, 15:30 local time.
 const now = new Date(2026, 9, 8, 15, 30).getTime();
@@ -45,5 +45,19 @@ describe("formatAge", () => {
     expect(formatAge(now - 5 * 60_000, now)).toBe("5min");
     expect(formatAge(now - 3 * 3_600_000, now)).toBe("3h");
     expect(formatAge(now - 2 * 86_400_000, now)).toBe("2d");
+  });
+});
+
+describe("formatElapsed", () => {
+  it("reads like a clock: seconds, then minutes and seconds, then hours and minutes", () => {
+    expect(formatElapsed(0)).toBe("0s");
+    expect(formatElapsed(19_400)).toBe("19s");
+    expect(formatElapsed(59_999)).toBe("59s");
+    expect(formatElapsed(60_000)).toBe("1m 00s");
+    expect(formatElapsed(125_000)).toBe("2m 05s");
+    expect(formatElapsed(3_600_000)).toBe("1h 00m");
+    expect(formatElapsed(3_780_000)).toBe("1h 03m");
+    // A clock that is a little behind does not show a negative time.
+    expect(formatElapsed(-4_000)).toBe("0s");
   });
 });

@@ -46,7 +46,7 @@ The tabs change to ones that suit a Composer. The pane, its resize handle and it
 
 - **Fleet:** every child workspace and chat with status, last activity, changes and an open link (C3).
 - **Approvals:** what is waiting for an answer, across this Composer's runs (the global inbox arrives in C6).
-- **Steps:** the run log, each model reply and tool call with its result and cost.
+- **Steps:** the run log, each model reply and tool call with its result and cost. (Removed later: the panel has no Steps.)
 - **Details:** the Composer's instructions, limits and notes, and its **autonomy**: a list of its tools, each set to ask, allow or off, with a warning on any `external` or `destructive` tool set to allow. Editable.
 
 The git graph at the bottom of the pane is hidden for a Composer, since it has no repository.

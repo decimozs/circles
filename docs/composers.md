@@ -19,12 +19,12 @@ It runs once with no tools, away from any project and without your own Claude se
 
 ## Running one
 
-Open a Composer and type a goal, for example "List my projects and tell me what each one is." Each start is a **run**, shown as a chat tab. The run page has no right pane. A button at the top right (a list icon, with the number of approvals waiting for you) shows or hides a panel that stays open while you work in the chat. It shows this Mac and the workspaces the run started, and its entries open the rest:
+Open a Composer and type a goal, for example "List my projects and tell me what each one is." Each start is a **run**, shown as a chat tab. The run page has no right pane. A button at the top right (a list icon) shows or hides a panel that stays open while you work in the chat, and the choice is remembered. The button shows a small spinner while anything of the run works, and the number of approvals waiting for you. The panel has:
 
-- **Fleet:** every workspace and chat the Composer started, with status, last activity, changes and a link to open it. The workspaces also show in their project's group in the sidebar with a small badge linking back to the run.
-- **Approvals:** what is waiting for your answer.
-- **Steps:** every model reply and tool call, with its result and cost.
-- **Details:** the instructions, notes and autonomy.
+- **Fleet:** the workspaces the run started, live. Each row shows what its agent is doing: a spinner while it works, an amber dot while it waits for your answer, a tick when it is done. The time beside a working row counts up from when its current turn began. What waits for you comes first, then what works. Finished ones are folded under **Done**. Click a row to open that workspace. **Fleet graph** draws the run as a graph.
+- **Approvals:** what is waiting for your answer, and what was answered.
+- **Repositories** and **Integrations:** which of your repositories the Composer can see, and whether Jira is on for it and connected.
+- **Settings:** the Composer's instructions, notes, autonomy and limits.
 
 A Composer keeps notes between runs, and closed runs stay in the chat history.
 

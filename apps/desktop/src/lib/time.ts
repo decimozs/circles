@@ -43,3 +43,15 @@ export function groupByRecency<T>(
     items: sorted.filter((item) => recencyGroup(timestampOf(item), now) === group),
   })).filter((g) => g.items.length > 0);
 }
+
+/** How long a thing has gone on, as a clock would say: `19s`, `2m 05s`, `1h 03m`. */
+export function formatElapsed(ms: number): string {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  if (hours > 0) return `${hours}h ${pad(minutes)}m`;
+  if (minutes > 0) return `${minutes}m ${pad(seconds)}s`;
+  return `${seconds}s`;
+}
