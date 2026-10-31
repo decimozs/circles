@@ -2,7 +2,7 @@ import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
 import type { PermissionRequest } from "@circles/bindings/PermissionRequest";
 import { cn } from "@circles/ui/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ArrowDownIcon, Loader2Icon } from "lucide-react";
+import { ChevronDownIcon, Loader2Icon } from "lucide-react";
 import {
   type ReactNode,
   useCallback,
@@ -146,6 +146,7 @@ export function MessageList({
   }, [items, live, pending, working, root, onReply, turns]);
 
   const scroller = useRef<HTMLDivElement>(null);
+  const content = useRef<HTMLDivElement>(null);
   const stick = useRef(true);
   const [atBottom, setAtBottom] = useState(true);
   const virtual = rows.length > VIRTUALISE_FROM;
@@ -169,6 +170,18 @@ export function MessageList({
   useLayoutEffect(() => {
     if (stick.current) scrollToBottom();
   }, [rows, scrollToBottom]);
+
+  // The content grows when the message box does, and when images and the like finish loading.
+  // While the view is at the end it stays there.
+  useEffect(() => {
+    const el = content.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const watcher = new ResizeObserver(() => {
+      if (stick.current) scrollToBottom();
+    });
+    watcher.observe(el);
+    return () => watcher.disconnect();
+  }, [scrollToBottom]);
 
   const [current, setCurrent] = useState(0);
 
@@ -250,7 +263,11 @@ export function MessageList({
         data-testid="messages"
       >
         <ChatStoppedContext.Provider value={!working}>
-          <div className="mx-auto flex max-w-3xl flex-col gap-3 px-6 py-5">
+          <div
+            ref={content}
+            // The message box floats over the end of the list, so the list leaves room for it.
+            className="mx-auto flex max-w-3xl flex-col gap-3 px-6 pt-5 pb-[calc(var(--dock-height,0px)+1.25rem)]"
+          >
             {header}
             {virtual ? (
               <div style={{ height: virtualizer.getTotalSize() }} className="relative">
@@ -308,18 +325,19 @@ export function MessageList({
       {!atBottom ? (
         <button
           type="button"
-          aria-label="Scroll to bottom"
+          aria-label="Scroll to end"
           onClick={() => {
             stick.current = true;
             setAtBottom(true);
             scrollToBottom();
           }}
           className={cn(
-            "absolute bottom-3 left-1/2 flex size-8 -translate-x-1/2 items-center justify-center rounded-full",
-            "border border-border bg-popover text-muted-foreground shadow-md hover:text-foreground",
+            "glass-panel absolute shadow-md bottom-[calc(var(--dock-height,0px)+0.75rem)] left-1/2 z-20 flex h-7 -translate-x-1/2 items-center gap-1 rounded-full border px-3",
+            "text-xs text-foreground hover:bg-accent",
           )}
         >
-          <ArrowDownIcon className="size-4" />
+          <ChevronDownIcon className="size-3.5 text-muted-foreground" />
+          Scroll to end
         </button>
       ) : null}
     </div>

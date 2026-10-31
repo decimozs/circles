@@ -88,6 +88,22 @@ describe("chat messages", () => {
     expect(screen.getByRole("button", { name: "Copy reply" })).toBeInTheDocument();
   });
 
+  it("floats the message box over the conversation and leaves room for it at the end", async () => {
+    await pane(
+      open([msg("user", "text", { text: "hello" }), msg("assistant", "text", { text: "hi" })]),
+    );
+    expect(await screen.findByText("hello")).toBeInTheDocument();
+    const dock = screen.getByTestId("chat-dock");
+    expect(dock).toHaveClass("absolute", "bottom-0");
+    // Clicks beside the box reach the messages under it.
+    expect(dock).toHaveClass("pointer-events-none");
+    const box = within(dock).getByRole("textbox");
+    expect(box.closest(".glass-panel")).not.toBeNull();
+    // The list's end is padded by the height the pane measured for the dock.
+    const content = screen.getByTestId("messages").firstElementChild;
+    expect((content as HTMLElement).className).toContain("var(--dock-height");
+  });
+
   it("renders unknown tools generically", async () => {
     const { app } = await pane(
       open([

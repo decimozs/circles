@@ -17,3 +17,16 @@ describe("the window does not scroll as a whole", () => {
     expect(css).toMatch(/#root\s*\{[^}]*overflow:\s*clip;/);
   });
 });
+
+describe("the glass panel", () => {
+  it("blurs what is behind it, in both spellings WebKit needs", () => {
+    expect(css).toMatch(/\.glass-panel\s*\{[^}]*-webkit-backdrop-filter:\s*blur/);
+    expect(css).toMatch(/\.glass-panel\s*\{[^}]*\bbackdrop-filter:\s*blur/);
+  });
+
+  it("is opaque for people who ask for less transparency", () => {
+    expect(css).toMatch(
+      /prefers-reduced-transparency:\s*reduce\)\s*\{\s*\.glass-panel\s*\{[^}]*backdrop-filter:\s*none/,
+    );
+  });
+});

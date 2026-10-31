@@ -6,7 +6,7 @@ import type { Session } from "@circles/bindings/Session";
 import type { Workspace } from "@circles/bindings/Workspace";
 import { Button } from "@circles/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   useApprovals,
@@ -240,8 +240,24 @@ function ChatPane({
     </>
   );
 
+  // The message box floats over the end of the conversation, so messages scroll under it. The pane
+  // learns how tall everything under the messages is, and the list leaves that much room.
+  const pane = useRef<HTMLDivElement>(null);
+  const dock = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = dock.current;
+    const root = pane.current;
+    if (!el || !root) return;
+    const measure = () => root.style.setProperty("--dock-height", `${el.offsetHeight}px`);
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const watcher = new ResizeObserver(measure);
+    watcher.observe(el);
+    return () => watcher.disconnect();
+  }, []);
+
   return (
-    <>
+    <div ref={pane} className="relative flex min-h-0 flex-1 flex-col">
       <MessageList
         items={timeline}
         live={view.live}
@@ -257,54 +273,62 @@ function ChatPane({
         sessionId={session.id}
         onClose={() => setRevertTurn(null)}
       />
-      {lastRevert && !working ? (
-        <RevertBanner sessionId={session.id} revertId={lastRevert.id} turn={lastRevert.turn} />
-      ) : null}
-      {view.error ? (
-        <div
-          role="alert"
-          className="mx-auto mb-2 flex w-full max-w-3xl items-center justify-between gap-3 px-6 text-xs text-destructive"
-        >
-          <span>{view.error}</span>
-          <button type="button" className="underline" onClick={() => view.setError(null)}>
-            Dismiss
-          </button>
-        </div>
-      ) : null}
-      {composer ? <RunApprovals sessionId={session.id} /> : null}
-      <CardsPanel sessionId={session.id} />
-      <SidePane sessionId={session.id} />
-      <Composer
-        variant={composer ? "composer" : "workspace"}
-        modeControl={
-          composer
-            ? {
-                value: composer.mode,
-                onChange: (mode) =>
-                  setComposerMode.mutate(
-                    { id: composer.id, mode },
-                    { onError: (e) => toast.error(describeError(e)) },
-                  ),
-              }
-            : undefined
-        }
-        workspaceId={workspace.id}
-        onSide={(question) => {
-          useSide.getState().start(session.id, question);
-          ipc.sessionSideQuestion(session.id, question).catch((e) => {
-            useSide.getState().event(session.id, "failed", describeError(e), true);
-          });
-        }}
-        suggestion={working ? null : (suggestion ?? (composer && empty ? firstPrompt : null))}
-        session={live}
-        working={working}
-        disabled={!usable}
-        queue={queue}
-        onSend={send}
-        onStop={() => ipc.sessionInterrupt(session.id).catch((e) => toast.error(describeError(e)))}
-        onChangeOptions={changeOptions}
-      />
-    </>
+      <div
+        ref={dock}
+        data-testid="chat-dock"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col [&>*]:pointer-events-auto"
+      >
+        {lastRevert && !working ? (
+          <RevertBanner sessionId={session.id} revertId={lastRevert.id} turn={lastRevert.turn} />
+        ) : null}
+        {view.error ? (
+          <div
+            role="alert"
+            className="mx-auto mb-2 flex w-full max-w-3xl items-center justify-between gap-3 px-6 text-xs text-destructive"
+          >
+            <span>{view.error}</span>
+            <button type="button" className="underline" onClick={() => view.setError(null)}>
+              Dismiss
+            </button>
+          </div>
+        ) : null}
+        {composer ? <RunApprovals sessionId={session.id} /> : null}
+        <CardsPanel sessionId={session.id} />
+        <SidePane sessionId={session.id} />
+        <Composer
+          variant={composer ? "composer" : "workspace"}
+          modeControl={
+            composer
+              ? {
+                  value: composer.mode,
+                  onChange: (mode) =>
+                    setComposerMode.mutate(
+                      { id: composer.id, mode },
+                      { onError: (e) => toast.error(describeError(e)) },
+                    ),
+                }
+              : undefined
+          }
+          workspaceId={workspace.id}
+          onSide={(question) => {
+            useSide.getState().start(session.id, question);
+            ipc.sessionSideQuestion(session.id, question).catch((e) => {
+              useSide.getState().event(session.id, "failed", describeError(e), true);
+            });
+          }}
+          suggestion={working ? null : (suggestion ?? (composer && empty ? firstPrompt : null))}
+          session={live}
+          working={working}
+          disabled={!usable}
+          queue={queue}
+          onSend={send}
+          onStop={() =>
+            ipc.sessionInterrupt(session.id).catch((e) => toast.error(describeError(e)))
+          }
+          onChangeOptions={changeOptions}
+        />
+      </div>
+    </div>
   );
 }
 
