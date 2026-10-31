@@ -417,7 +417,7 @@ describe("Composer dialog", () => {
       "Ask",
       "Accept edits",
       "Plan",
-      "Bypass",
+      "Full access",
     ]);
     await app.user.type(name, "X");
     await app.user.click(within(dialog).getByRole("button", { name: "Create Composer" }));
@@ -679,7 +679,7 @@ describe("Composer page", () => {
       "Ask",
       "Accept edits",
       "Plan",
-      "Bypass",
+      "Full access",
     ]);
     await app.user.selectOptions(mode, "plan");
     await waitFor(() =>

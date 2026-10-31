@@ -52,7 +52,7 @@ How much a Composer may do without asking is the person's choice, per Composer. 
 | Ask (`manual`) | Looking is free. Everything else asks. |
 | Accept edits (`accept_edits`) | Looking and changes on this Mac go ahead. Opening or merging pull requests, and deleting, ask. |
 | Plan (`plan`) | Looking only. The other tools are not given to it. |
-| Bypass (`bypass`) | Nothing asks. Merging past failing checks is still its own switch, off by default. |
+| Full access (`bypass`) | Nothing asks. Merging past failing checks is still its own switch, off by default. |
 
 A tool with a setting of its own (a template can switch tools off, for example) keeps it whatever the mode says.
 

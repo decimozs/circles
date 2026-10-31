@@ -197,7 +197,7 @@ export function WelcomeDialog() {
             <p>
               Agents run with your user's permissions. They can read and change files and run
               commands on this Mac. Each works in its own workspace folder, and Circles asks before
-              risky steps unless you change that in Settings. Bypass mode is off by default.
+              risky steps unless you change that in Settings. Full access is off by default.
             </p>
             <label className="flex items-center gap-2 text-sm font-medium">
               <input

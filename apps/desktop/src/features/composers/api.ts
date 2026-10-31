@@ -233,7 +233,7 @@ export const MODES = [
   { value: "plan", label: "Plan", hint: "Only looks and makes a plan. It cannot change anything." },
   {
     value: "bypass",
-    label: "Bypass",
+    label: "Full access",
     hint: "Does everything on its own, including opening and merging pull requests and deleting.",
   },
 ] as const;
