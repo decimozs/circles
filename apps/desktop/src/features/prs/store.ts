@@ -1,9 +1,29 @@
 import type { BrowseState } from "@circles/bindings/BrowseState";
+import type { PrRow } from "@circles/bindings/PrRow";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { type Filters, NO_FILTERS, type SortId } from "./query";
 
+/** A pull request opened beside the list. */
+export type PrTab = {
+  key: string;
+  projectId: string;
+  repo: string;
+  number: number;
+  title: string;
+  url: string;
+};
+
+export const tabKey = (projectId: string, number: number) => `${projectId}#${number}`;
+
 type PrsState = {
+  /** Pull requests opened beside the list. They are not kept between runs: what they show changes. */
+  tabs: PrTab[];
+  /** The open tab that shows, or none when only the list does. */
+  selected: string | null;
+  openTab: (row: PrRow) => void;
+  closeTab: (key: string) => void;
+  selectTab: (key: string | null) => void;
   /** The project whose pull requests show, `null` for all of them, and unset until the person
    * chooses, when the project they worked in last is used. */
   scope: string | null | undefined;
@@ -21,6 +41,33 @@ type PrsState = {
 export const usePrs = create<PrsState>()(
   persist(
     (set) => ({
+      tabs: [],
+      selected: null,
+      openTab: (row) =>
+        set((s) => {
+          const key = tabKey(row.project_id, row.number);
+          const tab: PrTab = {
+            key,
+            projectId: row.project_id,
+            repo: row.repo,
+            number: row.number,
+            title: row.title,
+            url: row.url,
+          };
+          return {
+            tabs: s.tabs.some((t) => t.key === key) ? s.tabs : [...s.tabs, tab],
+            selected: key,
+          };
+        }),
+      closeTab: (key) =>
+        set((s) => {
+          const index = s.tabs.findIndex((t) => t.key === key);
+          const tabs = s.tabs.filter((t) => t.key !== key);
+          // Closing the one that shows moves to its neighbour, or back to the list alone.
+          const next = tabs[Math.min(index, tabs.length - 1)]?.key ?? null;
+          return { tabs, selected: s.selected === key ? next : s.selected };
+        }),
+      selectTab: (selected) => set({ selected }),
       scope: undefined,
       which: "open",
       sort: "updated",

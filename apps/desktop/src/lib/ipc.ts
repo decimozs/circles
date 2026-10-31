@@ -41,6 +41,7 @@ import type { Message } from "@circles/bindings/Message";
 import type { NewComment } from "@circles/bindings/NewComment";
 import type { PendingPrompt } from "@circles/bindings/PendingPrompt";
 import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
+import type { PrDetail } from "@circles/bindings/PrDetail";
 import type { PrDraft } from "@circles/bindings/PrDraft";
 import type { PrDraftSeed } from "@circles/bindings/PrDraftSeed";
 import type { PrList } from "@circles/bindings/PrList";
@@ -240,6 +241,8 @@ export const ipc = {
   permissionReply: (sessionId: string, requestId: string, decision: PermissionDecision) =>
     call<null>("permission_reply", { sessionId, requestId, decision }),
   claudeRateLimit: () => call<RateLimit | null>("claude_rate_limit"),
+  prBrowseDetail: (projectId: string, number: number) =>
+    call<PrDetail>("pr_browse_detail", { projectId, number }),
   prBrowseList: (projectId: string | null, which: BrowseState) =>
     call<PrList>("pr_browse_list", { projectId, which }),
   usageSummary: (sinceSecs: number | null, folder: string | null) =>

@@ -1,15 +1,15 @@
-import type { PrRow as Row } from "@circles/bindings/PrRow";
+import { cn } from "@circles/ui/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { openUrl } from "@tauri-apps/plugin-opener";
 import { GitPullRequestIcon, Loader2Icon } from "lucide-react";
 import { useMemo } from "react";
 import { useProjects } from "@/features/projects/api";
 import { useWorkspaces } from "@/features/workspaces/api";
 import { prKeys, usePrList } from "./api";
+import { DetailPane } from "./detail-pane";
 import { PrRow } from "./pr-row";
 import { PrToolbar } from "./pr-toolbar";
 import { groupRows, matches, parseQuery, sortRows } from "./query";
-import { usePrs } from "./store";
+import { tabKey, usePrs } from "./store";
 
 /** The project whose workspace was opened last, when the person has not chosen one. */
 function lastWorkedIn(
@@ -29,8 +29,10 @@ export function PullRequestsPage() {
   const workspacesQuery = useWorkspaces();
   const projects = projectsQuery.data ?? [];
   const workspaces = workspacesQuery.data ?? [];
-  const { scope: chosen, which, sort, filters, query } = usePrs();
-  const { setScope, setWhich, setSort, setFilters, setQuery } = usePrs();
+  const { scope: chosen, which, sort, filters, query, tabs, selected } = usePrs();
+  const { setScope, setWhich, setSort, setFilters, setQuery, openTab } = usePrs();
+  // Something is open beside the list: the list narrows to a column.
+  const split = tabs.length > 0;
   const scope =
     chosen === undefined
       ? lastWorkedIn(
@@ -51,88 +53,98 @@ export function PullRequestsPage() {
   }, [list.data, query, filters, sort]);
   const shown = groups.reduce((n, g) => n + g.rows.length, 0);
 
-  const open = (row: Row) => {
-    openUrl(row.url).catch(() => {});
-  };
-
   return (
-    <section className="h-full overflow-y-auto" aria-label="Pull requests">
-      <div className="mx-auto flex max-w-4xl flex-col gap-4 px-6 pt-12 pb-10">
-        <h1 className="text-base font-semibold">Pull requests</h1>
-        <PrToolbar
-          query={query}
-          onQuery={setQuery}
-          sort={sort}
-          onSort={setSort}
-          filters={filters}
-          onFilters={setFilters}
-          which={which}
-          onWhich={setWhich}
-          projects={projects}
-          scope={scope}
-          onScope={setScope}
-          fetching={list.isFetching}
-          onRefresh={() => queryClient.invalidateQueries({ queryKey: prKeys.list(scope, which) })}
-        />
-
-        {(list.data?.failures ?? []).map((f) => (
-          <p
-            key={f.project_id}
-            role="alert"
-            className="rounded-md border border-warning/40 bg-warning/5 px-3 py-2 text-xs"
-          >
-            <strong className="font-medium">{f.project_name}:</strong> {f.message}
-            {f.fix ? (
-              <>
-                {" "}
-                Run <code className="rounded bg-muted px-1 font-mono">{f.fix}</code>.
-              </>
-            ) : null}
-          </p>
-        ))}
-
-        {list.isPending ? (
-          <p role="status" className="flex items-center gap-2 py-6 text-sm text-muted-foreground">
-            <Loader2Icon className="size-4 animate-spin" />
-            Asking GitHub…
-          </p>
-        ) : list.isError ? (
-          <p role="alert" className="py-6 text-sm text-destructive">
-            {String((list.error as { message?: string })?.message ?? list.error)}
-          </p>
-        ) : projects.length === 0 ? (
-          <div className="flex flex-col items-center gap-1 py-16 text-center text-sm text-muted-foreground">
-            <GitPullRequestIcon className="mb-2 size-6" />
-            <p>Add a repository to see its pull requests.</p>
-          </div>
-        ) : shown === 0 ? (
-          <div className="flex flex-col items-center gap-1 py-16 text-center text-sm text-muted-foreground">
-            <GitPullRequestIcon className="mb-2 size-6" />
-            <p>
-              {(list.data?.rows.length ?? 0) > 0
-                ? "No pull request matches."
-                : "No pull requests here."}
-            </p>
-          </div>
-        ) : (
-          groups.map((group) => (
-            <section key={group.id} aria-label={group.title} className="flex flex-col gap-0.5">
-              <h2 className="flex items-center gap-2 border-b border-border px-3 pb-1.5 text-xs text-muted-foreground">
-                {group.title}
-                <span className="tabular-nums">{group.rows.length}</span>
-              </h2>
-              {group.rows.map((row) => (
-                <PrRow
-                  key={`${row.project_id}-${row.number}`}
-                  row={row}
-                  onOpen={open}
-                  showProject={showProject}
-                />
-              ))}
-            </section>
-          ))
+    <section className="flex h-full" aria-label="Pull requests">
+      <div
+        className={cn(
+          "h-full overflow-y-auto",
+          split ? "w-[26rem] shrink-0 border-r border-border" : "min-w-0 flex-1",
         )}
+      >
+        <div className={cn("mx-auto flex flex-col gap-4 px-6 pt-12 pb-10", !split && "max-w-4xl")}>
+          <h1 className="text-base font-semibold">Pull requests</h1>
+          <PrToolbar
+            query={query}
+            onQuery={setQuery}
+            sort={sort}
+            onSort={setSort}
+            filters={filters}
+            onFilters={setFilters}
+            which={which}
+            onWhich={setWhich}
+            projects={projects}
+            scope={scope}
+            onScope={setScope}
+            fetching={list.isFetching}
+            onRefresh={() => queryClient.invalidateQueries({ queryKey: prKeys.list(scope, which) })}
+          />
+
+          {(list.data?.failures ?? []).map((f) => (
+            <p
+              key={f.project_id}
+              role="alert"
+              className="rounded-md border border-warning/40 bg-warning/5 px-3 py-2 text-xs"
+            >
+              <strong className="font-medium">{f.project_name}:</strong> {f.message}
+              {f.fix ? (
+                <>
+                  {" "}
+                  Run <code className="rounded bg-muted px-1 font-mono">{f.fix}</code>.
+                </>
+              ) : null}
+            </p>
+          ))}
+
+          {list.isPending ? (
+            <p role="status" className="flex items-center gap-2 py-6 text-sm text-muted-foreground">
+              <Loader2Icon className="size-4 animate-spin" />
+              Asking GitHub…
+            </p>
+          ) : list.isError ? (
+            <p role="alert" className="py-6 text-sm text-destructive">
+              {String((list.error as { message?: string })?.message ?? list.error)}
+            </p>
+          ) : projects.length === 0 ? (
+            <div className="flex flex-col items-center gap-1 py-16 text-center text-sm text-muted-foreground">
+              <GitPullRequestIcon className="mb-2 size-6" />
+              <p>Add a repository to see its pull requests.</p>
+            </div>
+          ) : shown === 0 ? (
+            <div className="flex flex-col items-center gap-1 py-16 text-center text-sm text-muted-foreground">
+              <GitPullRequestIcon className="mb-2 size-6" />
+              <p>
+                {(list.data?.rows.length ?? 0) > 0
+                  ? "No pull request matches."
+                  : "No pull requests here."}
+              </p>
+            </div>
+          ) : (
+            groups.map((group) => (
+              <section key={group.id} aria-label={group.title} className="flex flex-col gap-0.5">
+                <h2 className="flex items-center gap-2 border-b border-border px-3 pb-1.5 text-xs text-muted-foreground">
+                  {group.title}
+                  <span className="tabular-nums">{group.rows.length}</span>
+                </h2>
+                {group.rows.map((row) => (
+                  <PrRow
+                    key={`${row.project_id}-${row.number}`}
+                    row={row}
+                    compact={split}
+                    selected={selected === tabKey(row.project_id, row.number)}
+                    onOpen={openTab}
+                    showProject={showProject}
+                  />
+                ))}
+              </section>
+            ))
+          )}
+        </div>
       </div>
+      {split ? (
+        <div className="min-w-0 flex-1 pt-10">
+          <DetailPane />
+        </div>
+      ) : null}
     </section>
   );
 }
