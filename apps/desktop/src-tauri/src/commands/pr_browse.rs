@@ -318,17 +318,61 @@ pub async fn pr_browse_detail(
     Ok(detail)
 }
 
-/// The files a pull request changes, and the commits to read them at.
+/// Where the files of a pull request at one tip of its branch are kept. A commit never changes,
+/// so what is kept under this key is right for ever and is never fetched again.
+fn files_key(repo: &str, number: u32, head_sha: &str) -> String {
+    format!("pr-files:{repo}:{number}:{head_sha}")
+}
+
+/// Where one file of a pull request, read at two commits, is kept. Also right for ever.
+fn file_key(r: &PrFileRequest) -> String {
+    format!(
+        "pr-file:{}:{}:{}:{}:{}:{}",
+        r.repo,
+        r.base_sha,
+        r.head_sha,
+        r.status,
+        r.previous_path.as_deref().unwrap_or(""),
+        r.path
+    )
+}
+
+/// Keeps the cache within its size after something large was added.
+fn keep_small(cache: &CacheStore) {
+    if cache
+        .info()
+        .is_ok_and(|(_, bytes)| bytes as i64 > crate::cache::MAX_BYTES)
+    {
+        let _ = cache.prune(crate::cache::MAX_BYTES, crate::cache::MAX_AGE_MS);
+    }
+}
+
+/// The files a pull request changes, and the commits to read them at. Given the tip of the branch
+/// (`head_sha`, which the pull request itself says), what was kept for that tip is returned without
+/// asking GitHub, because it cannot have changed.
 #[tauri::command]
 pub async fn pr_browse_files(
     state: State<'_, AppState>,
     project_id: String,
     repo: String,
     number: u32,
+    head_sha: Option<String>,
 ) -> IpcResult<PrFiles> {
+    let cache = CacheStore::new(state.db.clone());
+    if let Some(sha) = head_sha
+        .as_deref()
+        .filter(|s| crate::github::browse_files::valid_sha(s))
+    {
+        if let Some(kept) = cache.get::<PrFiles>(&files_key(&repo, number, sha))? {
+            return Ok(kept.value);
+        }
+    }
     let (folder, _) = project_folder(&state, &project_id).await?;
     let gh = state.pr_service().await.gh.clone();
-    Ok(gh.browse_pr_files(&folder, &repo, number).await?)
+    let files = gh.browse_pr_files(&folder, &repo, number).await?;
+    let _ = cache.put(&files_key(&repo, number, &files.head_sha), &files);
+    keep_small(&cache);
+    Ok(files)
 }
 
 /// Which file of which pull request to read, and at which commits.
@@ -353,6 +397,19 @@ pub async fn pr_browse_file(
     state: State<'_, AppState>,
     request: PrFileRequest,
 ) -> IpcResult<FilePair> {
+    let cache = CacheStore::new(state.db.clone());
+    let key = file_key(&request);
+    if let Some(kept) = cache.get::<FilePair>(&key)? {
+        return Ok(kept.value);
+    }
+    let pair = read_file_pair(&state, request).await?;
+    let _ = cache.put(&key, &pair);
+    keep_small(&cache);
+    Ok(pair)
+}
+
+/// Reads both sides of a file: from the project's own git when it has the commit, else GitHub.
+async fn read_file_pair(state: &AppState, request: PrFileRequest) -> Result<FilePair, AppError> {
     let PrFileRequest {
         project_id,
         repo,
@@ -362,7 +419,7 @@ pub async fn pr_browse_file(
         previous_path,
         status,
     } = request;
-    let (folder, _) = project_folder(&state, &project_id).await?;
+    let (folder, _) = project_folder(state, &project_id).await?;
     let service = state.pr_service().await;
     let (gh, git) = (service.gh.clone(), service.git.clone());
     let read = |sha: String, at: String| {
@@ -577,5 +634,73 @@ mod cache_tests {
         assert!(Flight::start("pr-list:y:open").is_some());
         drop(first);
         assert!(Flight::start("pr-list:x:open").is_some());
+    }
+
+    fn request(path: &str, status: &str, previous: Option<&str>) -> PrFileRequest {
+        PrFileRequest {
+            project_id: "p".into(),
+            repo: "o/r".into(),
+            base_sha: "b".repeat(40),
+            head_sha: "a".repeat(40),
+            path: path.into(),
+            previous_path: previous.map(String::from),
+            status: status.into(),
+        }
+    }
+
+    #[test]
+    fn a_file_and_the_files_are_kept_under_keys_that_tell_every_difference_apart() {
+        let base = file_key(&request("src/a.rs", "modified", None));
+        assert_ne!(base, file_key(&request("src/b.rs", "modified", None)));
+        assert_ne!(base, file_key(&request("src/a.rs", "added", None)));
+        assert_ne!(
+            base,
+            file_key(&request("src/a.rs", "modified", Some("src/old.rs")))
+        );
+        let mut other_head = request("src/a.rs", "modified", None);
+        other_head.head_sha = "c".repeat(40);
+        assert_ne!(base, file_key(&other_head));
+        // A new tip of the branch is a new set of files.
+        let sha = "a".repeat(40);
+        assert_ne!(
+            files_key("o/r", 5, &sha),
+            files_key("o/r", 5, &"d".repeat(40))
+        );
+        assert_ne!(files_key("o/r", 5, &sha), files_key("o/r", 6, &sha));
+    }
+
+    #[test]
+    fn what_was_read_of_a_file_comes_back_as_it_was_and_the_cache_stays_small() {
+        let (_tmp, cache) = store();
+        let pair = FilePair {
+            path: "src/a.rs".into(),
+            original: Some("old\n".into()),
+            modified: Some("new\n".into()),
+            language: "rust".into(),
+            binary: false,
+            too_large: false,
+        };
+        let key = file_key(&request("src/a.rs", "modified", None));
+        cache.put(&key, &pair).unwrap();
+        assert_eq!(cache.get::<FilePair>(&key).unwrap().unwrap().value, pair);
+        let files = PrFiles {
+            base_sha: "b".repeat(40),
+            head_sha: "a".repeat(40),
+            files: vec![],
+        };
+        cache
+            .put(&files_key("o/r", 5, &files.head_sha), &files)
+            .unwrap();
+        assert_eq!(
+            cache
+                .get::<PrFiles>(&files_key("o/r", 5, &files.head_sha))
+                .unwrap()
+                .unwrap()
+                .value,
+            files
+        );
+        // Under the limit, nothing is removed.
+        keep_small(&cache);
+        assert_eq!(cache.info().unwrap().0, 2);
     }
 }

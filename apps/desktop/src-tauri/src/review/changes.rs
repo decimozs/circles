@@ -169,7 +169,7 @@ pub async fn changed_files(
     Ok(files)
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize, TS)]
 #[ts(export)]
 pub struct FilePair {
     pub path: String,

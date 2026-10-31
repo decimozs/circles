@@ -8,7 +8,7 @@ use ts_rs::TS;
 use super::{bad_output, Gh, GhError, GhErrorKind, DEFAULT_TIMEOUT};
 
 /// One file a pull request changes.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrFile {
     pub path: String,
@@ -23,7 +23,7 @@ pub struct PrFile {
 }
 
 /// The files of a pull request and the two commits they are read from.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrFiles {
     /// Where the branch left the base. The "before" side of every file is read at this commit.
