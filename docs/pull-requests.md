@@ -24,6 +24,8 @@ Choosing a pull request opens it beside the list, in a tab. The tabs are in the 
 
 - **Code:** the files the pull request changes, each with its status (added, modified, deleted, renamed), its size and a **Viewed** box. Open a file to see it before and after in a diff editor, side by side or in one column. Two files can be open at once. Marking a file as viewed puts it away and counts it, and Circles remembers that until the branch gets a new commit. A binary file or one that is too large says so; open the pull request on GitHub to see it.
 
+Files and what they said are kept too, and they never need fetching again: a commit does not change, so a file you opened once, or the list of files at one tip of a branch, opens at once the next time, also after Circles restarts. A new commit on the branch is a new set of files and is fetched once.
+
 Circles reads the files from your own copy of the repository when it already has the commits, and from GitHub when not. It does not fetch into your repository.
 
 The copies are kept in Circles' own data folder, as the rest of your workspace records are. A copy goes after 90 days unused, and when GitHub says a repository is not there or not allowed. **Settings > Advanced > Clear cached data** deletes them all; they are fetched again when needed.

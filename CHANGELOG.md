@@ -13,7 +13,7 @@
 - Release builds target macOS 11 or later.
 
 ### Added
-- The pull request list and an opened pull request show what was fetched last time at once, with its age, and update in the background. Settings > Advanced can clear these copies.
+- The pull request list and an opened pull request show what was fetched last time at once, with its age, and update in the background. Files you opened in a pull request are kept too, so they open at once next time. Settings > Advanced can clear these copies.
 - Usage opens at once: the numbers are kept in Circles, so only what is new is read, in the background, and they keep the history Claude Code deletes. The page says how old the numbers are.
 - Pull requests: a sidebar page that lists the pull requests of your repositories, grouped by what needs your review, with search, sort and filters. Open one beside the list to read its summary and timeline and to see its changes file by file.
 - Usage: the button at the bottom of the sidebar, where Add project was, shows tokens and estimated cost of Claude Code over 24 hours to 90 days, by model and by day, and your plan limits. Add project is still in Create, the command palette and Cmd+Option+A.

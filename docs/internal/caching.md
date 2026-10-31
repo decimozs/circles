@@ -1,7 +1,7 @@
 # Caching: show what is known now, update it in the background
 
 Status: the Usage part (phases 1 and 2) is built. Phases 3 and 4 are built together: the `cache` table,
-the pull request list and detail through it, and Clear cached data. One difference: entries are keyed
+the pull request list and detail through it, and Clear cached data. Phase 5 (files and file text) is built, keyed by the commits they were read at, so they are never fetched again. One difference: entries are keyed
 by project and pull request, not by GitHub account, because the account is already chosen by the
 repository's owner. Decisions: usage history is kept after Claude Code
 deletes a transcript; the read at launch is on by default with no setting; the file text store is capped
