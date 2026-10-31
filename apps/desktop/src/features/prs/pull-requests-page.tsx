@@ -61,7 +61,7 @@ export function PullRequestsPage() {
           split ? "w-[26rem] shrink-0 border-r border-border" : "min-w-0 flex-1",
         )}
       >
-        <div className={cn("mx-auto flex flex-col gap-4 px-6 pt-12 pb-10", !split && "max-w-4xl")}>
+        <div className={cn("mx-auto flex flex-col gap-4 px-6 pt-4 pb-10", !split && "max-w-4xl")}>
           <h1 className="text-base font-semibold">Pull requests</h1>
           <PrToolbar
             query={query}
@@ -141,7 +141,7 @@ export function PullRequestsPage() {
         </div>
       </div>
       {split ? (
-        <div className="min-w-0 flex-1 pt-10">
+        <div className="min-w-0 flex-1">
           <DetailPane />
         </div>
       ) : null}

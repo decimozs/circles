@@ -146,6 +146,10 @@ describe("the pull request pane", () => {
       await screen.findByRole("heading", { name: /STH-1766 : Bump nine dependencies/ }),
     ).toBeInTheDocument();
     const tabs = screen.getByRole("tablist", { name: "Open pull requests" });
+    // The tabs sit in the top bar, above both columns, not inside the pane.
+    expect(tabs.closest("header")).not.toBeNull();
+    expect(screen.queryByRole("button", { name: "Merge" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Check out" })).not.toBeInTheDocument();
     expect(within(tabs).getByRole("tab", { name: /#42/ })).toHaveAttribute("aria-selected", "true");
     expect(screen.getAllByText("acme/backend").length).toBeGreaterThan(0);
     expect(screen.getByText(/develop/)).toBeInTheDocument();

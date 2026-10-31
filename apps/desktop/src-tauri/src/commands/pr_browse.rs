@@ -12,7 +12,6 @@ use crate::files::{looks_like_text, TEXT_LIMIT};
 use crate::github::browse::{browse_all, BrowseState, PrList, RepoRef, Whose};
 use crate::github::browse_detail::PrDetail;
 use crate::github::browse_files::PrFiles;
-use crate::github::pr::MergeMethod;
 use crate::ipc::IpcResult;
 use crate::review::changes::FilePair;
 use crate::state::AppState;
@@ -169,48 +168,4 @@ pub async fn pr_browse_file(
         binary: false,
         too_large: false,
     })
-}
-
-fn merge_method(method: &str) -> Result<MergeMethod, AppError> {
-    match method {
-        "merge" | "squash" | "rebase" => Ok(MergeMethod::parse(Some(method))),
-        other => Err(AppError::Invalid(format!("{other} is not a way to merge"))),
-    }
-}
-
-/// Merges a pull request. `method` is `merge`, `squash` or `rebase`; anything else is refused
-/// rather than guessed, because a merge cannot be taken back.
-#[tauri::command]
-pub async fn pr_browse_merge(
-    state: State<'_, AppState>,
-    project_id: String,
-    number: u32,
-    method: String,
-) -> IpcResult<()> {
-    let method = merge_method(&method)?;
-    let (folder, _) = project_folder(&state, &project_id).await?;
-    let gh = state.pr_service().await.gh.clone();
-    gh.pr_merge(&folder, number, method).await?;
-    Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn only_the_three_ways_to_merge_are_accepted() {
-        for ok in ["merge", "squash", "rebase"] {
-            assert!(merge_method(ok).is_ok(), "{ok}");
-        }
-        for bad in [
-            "",
-            "Merge",
-            "--admin",
-            "squash --delete-branch",
-            "fast-forward",
-        ] {
-            assert_eq!(merge_method(bad).unwrap_err().code(), "invalid", "{bad}");
-        }
-    }
 }

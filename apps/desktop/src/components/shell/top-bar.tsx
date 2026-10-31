@@ -6,6 +6,8 @@ import { IconButton } from "@/components/shell/icon-button";
 import { ChatHistory, ChatTabs } from "@/features/chat/chat-tabs";
 import { useComposer, useWorkspaceLinks } from "@/features/composers/api";
 import { useProjects } from "@/features/projects/api";
+import { PrTabs } from "@/features/prs/pr-tabs";
+import { usePrs } from "@/features/prs/store";
 import { OpenFileMenu, useSettingsRoute } from "@/features/settings/settings-page";
 import { useWorkspace } from "@/features/workspaces/api";
 import { StatusIndicator } from "@/features/workspaces/status";
@@ -26,6 +28,8 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
   const dockOpen = useUi((s) => s.dockOpen);
   const workspace = useWorkspace(match?.params.id).data;
   const onSettings = useMatch("/settings/*") !== null;
+  const onPrs = useMatch("/pull-requests") !== null;
+  const hasPrTabs = usePrs((s) => s.tabs.length > 0);
   const settingsRoute = useSettingsRoute();
   const project = useProjects().data?.find((p) => p.id === workspace?.project_id);
 
@@ -100,6 +104,11 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
             </IconButton>
           </div>
         </>
+      ) : null}
+      {onPrs && hasPrTabs ? (
+        <div className="pointer-events-auto min-w-0 flex-1 self-stretch">
+          <PrTabs />
+        </div>
       ) : null}
       {onSettings ? (
         // The settings file is opened from the top bar, at the right, whichever page is shown.

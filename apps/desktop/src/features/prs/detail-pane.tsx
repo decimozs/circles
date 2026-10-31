@@ -1,13 +1,12 @@
 import { Button } from "@circles/ui/components/button";
 import { cn } from "@circles/ui/utils";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { ExternalLinkIcon, GitPullRequestIcon, Loader2Icon, PlusIcon, XIcon } from "lucide-react";
+import { ExternalLinkIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { formatAge } from "@/lib/time";
 import { usePrDetail } from "./api";
 import { CodeTab } from "./code-tab";
 import { Person } from "./person";
-import { PrActions } from "./pr-actions";
 import { StateIcon } from "./pr-row";
 import { type PrTab, usePrs } from "./store";
 import { SummaryTab } from "./summary-tab";
@@ -20,56 +19,6 @@ const VIEWS: { id: View; label: string }[] = [
   { id: "timeline", label: "Timeline" },
   { id: "code", label: "Code" },
 ];
-
-/** The pull requests opened beside the list, as tabs. The plus goes back to the list alone. */
-function Tabs() {
-  const { tabs, selected, selectTab, closeTab } = usePrs();
-  return (
-    <div
-      role="tablist"
-      aria-label="Open pull requests"
-      className="flex items-center gap-1 border-b border-border px-2 pt-1.5"
-    >
-      {tabs.map((t) => (
-        <span
-          key={t.key}
-          className={cn(
-            "flex items-center rounded-t-md text-xs",
-            t.key === selected
-              ? "bg-muted text-foreground"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-        >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={t.key === selected}
-            onClick={() => selectTab(t.key)}
-            className="flex items-center gap-1.5 py-1.5 pr-1 pl-2.5 outline-none"
-          >
-            <GitPullRequestIcon className="size-3.5" />#{t.number}
-          </button>
-          <button
-            type="button"
-            aria-label={`Close #${t.number}`}
-            onClick={() => closeTab(t.key)}
-            className="mr-1 rounded p-0.5 hover:bg-background"
-          >
-            <XIcon className="size-3" />
-          </button>
-        </span>
-      ))}
-      <button
-        type="button"
-        aria-label="Open another pull request"
-        onClick={() => selectTab(null)}
-        className="ml-1 rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-      >
-        <PlusIcon className="size-3.5" />
-      </button>
-    </div>
-  );
-}
 
 function Detail({ tab }: { tab: PrTab }) {
   const [view, setView] = useState<View>("summary");
@@ -107,7 +56,6 @@ function Detail({ tab }: { tab: PrTab }) {
             <ExternalLinkIcon />
             Open on GitHub
           </Button>
-          <PrActions detail={detail} projectId={tab.projectId} />
         </div>
         <h2 className="flex items-start gap-2 text-lg leading-snug font-semibold">
           <StateIcon row={row} className="mt-1.5" />
@@ -161,7 +109,6 @@ export function DetailPane() {
   const tab = tabs.find((t) => t.key === selected);
   return (
     <div className="flex h-full min-w-0 flex-col">
-      <Tabs />
       {tab ? (
         <Detail key={tab.key} tab={tab} />
       ) : (
