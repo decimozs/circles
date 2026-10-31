@@ -65,6 +65,7 @@ export function ShellActions() {
   const queryClient = useQueryClient();
   const workspaceId = useMatch("/workspace/:id")?.params.id;
   const workspace = useWorkspace(workspaceId).data;
+  const onComposer = useMatch("/composer/:id/*") !== null;
 
   useEffect(() => {
     const ui = useUi.getState;
@@ -214,7 +215,8 @@ export function ShellActions() {
         title: "Toggle right sidebar",
         group: "App",
         shortcuts: [{ code: "KeyB", mod: true, alt: true }, { code: "BracketRight" }],
-        run: () => ui().toggleRight(),
+        // A Composer's page has a popover where a workspace has a pane.
+        run: () => (onComposer ? ui().setRunOpen(!ui().runOpen) : ui().toggleRight()),
       },
       {
         id: "app.zen",
@@ -325,7 +327,16 @@ export function ShellActions() {
       }
     }
     return register("shell", actions);
-  }, [navigate, queryClient, register, resolvedTheme, setTheme, workspace, workspaceId]);
+  }, [
+    navigate,
+    onComposer,
+    queryClient,
+    register,
+    resolvedTheme,
+    setTheme,
+    workspace,
+    workspaceId,
+  ]);
 
   return null;
 }

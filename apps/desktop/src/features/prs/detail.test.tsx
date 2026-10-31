@@ -251,4 +251,25 @@ describe("the pull request pane", () => {
     expect(await screen.findByRole("heading", { name: /Newer title/ })).toBeInTheDocument();
     expect(screen.queryByText("refreshing…")).not.toBeInTheDocument();
   });
+
+  it("puts the pane in a panel of its own beside the list, shut until a pull request is opened", async () => {
+    seed();
+    const { user } = renderApp("/pull-requests");
+    const list = await screen.findByRole("button", { name: /#42 STH-1766/ });
+    // The same panels as the sidebars: a list that takes what is left, and a pane that has a width
+    // of its own, which the user drags (jsdom has no layout, so the drag itself is not tested).
+    const pane = () => document.querySelector('[data-panel-id="pr-pane"]') as HTMLElement;
+    expect(document.querySelector('[data-panel-id="pr-list"]')).not.toBeNull();
+    expect(pane()).not.toBeNull();
+    await waitFor(() => expect(pane().dataset.collapsed).toBe("true"));
+    // The divider is there beside the sidebar's and the shell's.
+    expect(screen.getAllByRole("separator", { hidden: true })).toHaveLength(3);
+    await user.click(list);
+    await screen.findByRole("heading", { name: /STH-1766/ });
+    await waitFor(() => expect(pane().dataset.collapsed).toBe("false"));
+    expect(within(pane()).getByRole("heading", { name: /STH-1766/ })).toBeInTheDocument();
+    // Closing the last tab shuts it again.
+    await user.click(screen.getByRole("button", { name: "Close #42" }));
+    await waitFor(() => expect(pane().dataset.collapsed).toBe("true"));
+  });
 });

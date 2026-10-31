@@ -1,14 +1,11 @@
 import { useMatch } from "react-router";
 import { ChangesPanel } from "@/features/changes/changes-panel";
 import { ChecksPanel } from "@/features/checks/checks-panel";
-import { useComposer } from "@/features/composers/api";
-import { ComposerPanel } from "@/features/composers/composer-panel";
 import { useChanges } from "@/features/files/api";
 import { FileTree } from "@/features/files/file-tree";
 import { GraphPanel } from "@/features/graph/graph-panel";
 import { NextActionBar } from "@/features/pr/next-action";
 import { useWorkspace } from "@/features/workspaces/api";
-import { useChat } from "@/stores/chat";
 import { type RightTab, useReview } from "@/stores/review";
 
 const TABS: { id: RightTab; label: string }[] = [
@@ -17,14 +14,8 @@ const TABS: { id: RightTab; label: string }[] = [
   { id: "checks", label: "Checks" },
 ];
 
-/** Files, changes and checks of the workspace. */
+/** Files, changes and checks of the workspace. A Composer's run has no pane: see `RunPopover`. */
 export function RightPanel() {
-  const composerMatch = useMatch("/composer/:id/*");
-  const composer = useComposer(composerMatch?.params.id).data;
-  const activeRun = useChat((s) => (composer ? s.activeTab[composer.workspace_id] : undefined));
-  if (composerMatch) {
-    return composer ? <ComposerPanel composer={composer} runId={activeRun} /> : null;
-  }
   return <WorkspaceRightPanel />;
 }
 

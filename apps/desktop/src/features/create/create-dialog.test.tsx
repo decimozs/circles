@@ -102,7 +102,7 @@ describe("Create dialog", () => {
     seed();
     const { user, textarea } = await openDialog();
     await user.click(screen.getByRole("button", { name: /Opus/ }));
-    await user.click(await screen.findByRole("menuitemradio", { name: "Sonnet" }));
+    await user.click(await screen.findByRole("menuitemradio", { name: "Sonnet 5.5" }));
     // The menu stays open after picking a radio item, so model and effort are set in one go.
     await user.click(await screen.findByRole("menuitemradio", { name: "Max" }));
     await waitFor(() => expect(useCreatePrefs.getState().effort).toBe("max"));

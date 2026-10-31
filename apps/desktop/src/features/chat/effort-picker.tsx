@@ -1,7 +1,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from "@circles/ui/components/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@circles/ui/components/tooltip";
 import { cn } from "@circles/ui/utils";
-import { ChevronDownIcon, CircleHelpIcon } from "lucide-react";
+import { CircleHelpIcon } from "lucide-react";
 import { useState } from "react";
 import { DEFAULT_EFFORT, EFFORTS, effortLabel } from "@/lib/models";
 
@@ -23,10 +23,9 @@ export function EffortPicker({ value, onChange }: Props) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         aria-label="Effort"
-        className="flex h-7 items-center gap-1 rounded-md px-1.5 text-xs text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
+        className="mr-1.5 flex h-7 items-center gap-1 rounded-md px-1 text-xs text-muted-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60"
       >
         {value ? effortLabel(value) : "Effort"}
-        <ChevronDownIcon className="size-3" />
       </PopoverTrigger>
       <PopoverContent side="top" align="end" className="w-64 gap-3 p-3">
         <div className="flex items-center justify-between">

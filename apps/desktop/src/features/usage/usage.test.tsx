@@ -113,9 +113,18 @@ describe("the Usage dialog", () => {
     renderApp("/");
     await screen.findByRole("main");
     const usage = screen.getByRole("button", { name: "Usage" });
-    // It sits in the sidebar footer, between the other footer buttons, where Add project was.
-    const shortcuts = screen.getByRole("button", { name: "Keyboard shortcuts" });
-    expect(usage.parentElement).toBe(shortcuts.parentElement);
+    // The footer has Settings and Usage on the left, and Help alone on the right. The version
+    // that used to be there is gone.
+    const settings = screen.getByRole("button", { name: "Settings" });
+    const help = screen.getByRole("button", { name: "Keyboard shortcuts" });
+    expect(usage.parentElement).toBe(settings.parentElement);
+    expect(help.parentElement).not.toBe(usage.parentElement);
+    // Help is the last thing in the footer, on its own at the right.
+    expect(help.parentElement?.lastElementChild).toBe(help);
+    expect(usage.parentElement?.parentElement).toBe(help.parentElement);
+    expect(screen.queryByText("v0.1.0")).not.toBeInTheDocument();
+    // Settings comes first, then Usage.
+    expect([...(usage.parentElement?.children ?? [])]).toEqual([settings, usage]);
   });
 
   it("shows the cost, the totals, the cost by type and the models", async () => {

@@ -14,4 +14,9 @@ last_error: string | null,
 /**
  * A Claude Code process is running for this session right now.
  */
-running: boolean, created_at: number, updated_at: number, };
+running: boolean, created_at: number, updated_at: number, 
+/**
+ * When the turn running now began, in milliseconds. Unset when the chat is not working. It
+ * stays set while the chat waits for a permission.
+ */
+working_since: number | null, };

@@ -126,6 +126,10 @@ pub struct Session {
     pub created_at: i64,
     #[ts(type = "number")]
     pub updated_at: i64,
+    /// When the turn running now began, in milliseconds. Unset when the chat is not working. It
+    /// stays set while the chat waits for a permission.
+    #[ts(type = "number | null")]
+    pub working_since: Option<i64>,
 }
 
 #[derive(Debug, Clone, Serialize, TS, PartialEq)]
@@ -169,7 +173,7 @@ pub struct NewSession {
 
 const SESSION_COLUMNS: &str =
     "id, workspace_id, claude_session_id, title, status, model, effort, permission_mode, \
-     position, total_cost_usd, turns, last_error, created_at, updated_at";
+     position, total_cost_usd, turns, last_error, created_at, updated_at, working_since";
 
 fn session_from_row(row: &Row<'_>) -> rusqlite::Result<Session> {
     Ok(Session {
@@ -191,6 +195,7 @@ fn session_from_row(row: &Row<'_>) -> rusqlite::Result<Session> {
         running: false,
         created_at: row.get(12)?,
         updated_at: row.get(13)?,
+        working_since: row.get(14)?,
     })
 }
 
@@ -305,7 +310,10 @@ impl SessionStore {
     ) -> AppResult<()> {
         self.db.write(|c| {
             c.execute(
-                "UPDATE sessions SET status = ?1, last_error = ?2, updated_at = ?3 WHERE id = ?4",
+                "UPDATE sessions SET status = ?1, last_error = ?2, updated_at = ?3,
+                    working_since = CASE WHEN ?1 IN ('working', 'blocked')
+                        THEN COALESCE(working_since, ?3) ELSE NULL END
+                 WHERE id = ?4",
                 params![status.as_str(), error, now_ms(), id],
             )
         })?;
@@ -485,7 +493,8 @@ impl SessionStore {
                 rows.collect::<Result<_, _>>()?
             };
             c.execute(
-                "UPDATE sessions SET status = 'interrupted', last_error = 'Circles stopped while this chat was working.', updated_at = ?1
+                "UPDATE sessions SET status = 'interrupted', last_error = 'Circles stopped while this chat was working.', updated_at = ?1,
+                    working_since = NULL
                  WHERE status IN ('working', 'blocked')",
                 params![now_ms()],
             )?;
@@ -725,6 +734,45 @@ mod tests {
         );
         store.set_status(&s.id, SessionStatus::Idle, None).unwrap();
         assert_eq!(store.get(&s.id).unwrap().last_error, None);
+    }
+
+    #[test]
+    fn a_working_chat_remembers_when_its_turn_began_through_a_wait_and_forgets_it_when_it_stops() {
+        let (_tmp, store) = store();
+        let s = store.create("w1", NewSession::default()).unwrap();
+        assert_eq!(store.get(&s.id).unwrap().working_since, None);
+
+        store
+            .set_status(&s.id, SessionStatus::Working, None)
+            .unwrap();
+        let began = store
+            .get(&s.id)
+            .unwrap()
+            .working_since
+            .expect("set when work starts");
+        // Waiting for a permission, and going on, is one turn: the time does not start again.
+        std::thread::sleep(std::time::Duration::from_millis(5));
+        store
+            .set_status(&s.id, SessionStatus::Blocked, None)
+            .unwrap();
+        assert_eq!(store.get(&s.id).unwrap().working_since, Some(began));
+        store
+            .set_status(&s.id, SessionStatus::Working, None)
+            .unwrap();
+        assert_eq!(store.get(&s.id).unwrap().working_since, Some(began));
+
+        // Stopping clears it, and the next turn has its own start.
+        store.set_status(&s.id, SessionStatus::Idle, None).unwrap();
+        assert_eq!(store.get(&s.id).unwrap().working_since, None);
+        std::thread::sleep(std::time::Duration::from_millis(5));
+        store
+            .set_status(&s.id, SessionStatus::Working, None)
+            .unwrap();
+        assert!(store.get(&s.id).unwrap().working_since.unwrap() > began);
+
+        // A chat cut off by Circles stopping is not working any more either.
+        store.interrupt_stale().unwrap();
+        assert_eq!(store.get(&s.id).unwrap().working_since, None);
     }
 
     #[test]

@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { useChat } from "@/stores/chat";
 import { backend } from "@/test/backend";
 import {
-  approval,
   composer,
   project,
   prStatus,
@@ -13,6 +12,7 @@ import {
   workspace,
 } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp } from "@/test/render";
+import { openRunTab } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -25,9 +25,9 @@ function seed(extra?: () => void) {
   extra?.();
 }
 
-const open = async (tab: string) => {
+const open = async (tab: "Fleet" | "Approvals" | "Details") => {
   const app = renderApp("/composer/c1/run/r1");
-  await app.user.click(await screen.findByRole("tab", { name: tab }));
+  await openRunTab(app.user, tab);
   return app;
 };
 
@@ -216,95 +216,6 @@ describe("Fleet", () => {
     seed();
     await open("Fleet");
     expect(await screen.findByText(/has not started any workspace or agent/)).toBeInTheDocument();
-  });
-});
-
-describe("Approvals tab", () => {
-  it("has the waiting ones to answer and the answered ones listed, with a count on the tab", async () => {
-    seed(() => {
-      backend
-        .on("composer_approvals", (args: Record<string, unknown>) =>
-          args.onlyPending
-            ? [approval()]
-            : [
-                approval(),
-                approval({ id: "a2", tool: "merge_pr", status: "allowed" }),
-                approval({ id: "a3", tool: "create_pr", status: "denied" }),
-              ],
-        )
-        .on("approval_answer", null);
-    });
-    const app = renderApp("/composer/c1/run/r1");
-    const tab = await screen.findByRole("tab", { name: /Approvals/ });
-    await waitFor(() => expect(tab).toHaveTextContent("1"));
-    await app.user.click(tab);
-    // The chat shows the waiting approval too, above its input. This one is in the right pane.
-    const cards = await screen.findAllByRole("group", { name: "Approval for delete workspace" });
-    const card = cards[cards.length - 1] as HTMLElement;
-    const answered = screen.getByRole("list", { name: "Answered" });
-    expect(within(answered).getByText("merge pr")).toBeInTheDocument();
-    expect(within(answered).getByText("allowed")).toBeInTheDocument();
-    expect(within(answered).getByText("denied")).toBeInTheDocument();
-    await app.user.click(within(card).getByRole("button", { name: "Allow" }));
-    await waitFor(() =>
-      expect(backend.callsTo("approval_answer")[0]).toMatchObject({
-        id: "a1",
-        allow: true,
-        forRun: false,
-      }),
-    );
-  });
-
-  it("says when nothing ever asked", async () => {
-    seed();
-    await open("Approvals");
-    expect(await screen.findByText(/Nothing has asked for approval yet/)).toBeInTheDocument();
-  });
-});
-
-describe("Steps tab", () => {
-  const entry = (over: object) => ({
-    id: "e1",
-    at: Date.now() - 120_000,
-    composer_id: "c1",
-    session_id: "r1",
-    tool: "create_workspace",
-    tier: "write",
-    input: "{}",
-    outcome: "ok",
-    summary: "made one",
-    approval_id: null,
-    ...over,
-  });
-
-  it("lists the run's calls with their outcome, newest first", async () => {
-    seed(() => {
-      backend.on("audit_list", [
-        entry({
-          id: "e2",
-          tool: "delete_workspace",
-          tier: "destructive",
-          outcome: "denied",
-          summary: "A person declined it.",
-        }),
-        entry({}),
-      ]);
-    });
-    await open("Steps");
-    const list = await screen.findByRole("list", { name: "Steps" });
-    const rows = within(list).getAllByRole("listitem");
-    expect(rows[0]).toHaveTextContent("delete workspace");
-    expect(rows[0]).toHaveTextContent("denied");
-    expect(rows[0]).toHaveTextContent("A person declined it.");
-    expect(rows[1]).toHaveTextContent("create workspace");
-    expect(rows[1]).toHaveTextContent("2min");
-    expect(backend.callsTo("audit_list")[0]).toMatchObject({ composerId: "c1", sessionId: "r1" });
-  });
-
-  it("says when no tool was called", async () => {
-    seed();
-    await open("Steps");
-    expect(await screen.findByText(/No tool has been called yet/)).toBeInTheDocument();
   });
 });
 

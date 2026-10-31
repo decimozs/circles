@@ -104,6 +104,40 @@ describe("chat messages", () => {
     expect((content as HTMLElement).className).toContain("var(--dock-height");
   });
 
+  it("shows the model and the effort as a label, with no arrow beside them", async () => {
+    await pane(open([msg("user", "text", { text: "hello" })]));
+    await screen.findByText("hello");
+    const model = screen.getByLabelText("Model");
+    // The name carries its number, and the only picture beside it is the Claude mark, before it.
+    expect(model.parentElement).toHaveTextContent(/^(Fable|Opus|Sonnet|Haiku) \d\.\d/);
+    expect(model.parentElement?.querySelectorAll("svg")).toHaveLength(1);
+    expect(model.parentElement?.firstElementChild?.tagName.toLowerCase()).toBe("svg");
+    // The effort button has words and nothing else, and room before the send button.
+    const effort = screen.getByRole("button", { name: "Effort" });
+    expect(effort.querySelector("svg")).toBeNull();
+    expect(effort).toHaveClass("mr-1.5");
+    // The permission mode has no arrow either, and the last choice is called Full access.
+    const mode = screen.getByLabelText("Permission mode");
+    expect(mode).toHaveClass("appearance-none");
+    expect(mode.parentElement?.querySelector("svg")).toBeNull();
+    expect(within(mode).getByRole("option", { name: "Full access" })).toHaveValue("bypass");
+    expect(within(mode).queryByRole("option", { name: "Bypass" })).not.toBeInTheDocument();
+  });
+
+  it("keeps the highlight of a work block and of a tool call to the width of its words", async () => {
+    await pane(
+      open([
+        msg("user", "text", { text: "go" }),
+        msg("assistant", "tool_call", { id: "t", name: "Read", input: { file_path: "/x/a.ts" } }),
+        msg("user", "tool_result", { tool_use_id: "t", content: "ok" }),
+        msg("assistant", "text", { text: "Done." }),
+      ]),
+    );
+    const block = await screen.findByRole("button", { name: /tool call/ });
+    expect(block).toHaveClass("w-fit");
+    expect(block).not.toHaveClass("w-full");
+  });
+
   it("renders unknown tools generically", async () => {
     const { app } = await pane(
       open([

@@ -8,6 +8,8 @@
 - A workspace a Composer made but started no agent in showed a blank pane. It now says so and offers "Start a chat".
 
 ### Changed
+- A Composer's run has a panel you show or hide from a button at the top right, instead of a right pane. It stays open while you work, and shows the run's workspaces live, with a spinner and a time that counts up for each agent that works. Each workspace opens out to its editor, branch, pull request, next step and changes. What waits for your approval is answered in it, the fleet graph opens from it, and its repositories, integrations and Settings are in it. The Steps list is gone. The pane beside the list of pull requests can be dragged wider or narrower. Chat work blocks and tool calls highlight only the width of their words when you point at them.
+- The message box is a little taller, with more room above the text. The model (now with its number, such as Sonnet 5.5), the effort and the permission mode read as plain words with no arrow beside them, and the permission mode that never asks is called Full access (it was Bypass). The sidebar footer has Settings and Usage at the left and Help at the right; the version label is gone.
 - The message box floats over the chat with a blurred glass look, and "Scroll to end" is a pill above it.
 - The repository is a monorepo: the app is in `apps/desktop`, shared code in `packages/ui`, `packages/bindings` and `packages/config`.
 - Release builds target macOS 11 or later.

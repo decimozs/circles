@@ -18,7 +18,7 @@ import {
 import { Input } from "@circles/ui/components/input";
 import { Textarea } from "@circles/ui/components/textarea";
 import { cn } from "@circles/ui/utils";
-import { Loader2Icon, Maximize2Icon, SettingsIcon, Trash2Icon } from "lucide-react";
+import { Loader2Icon, Maximize2Icon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -37,15 +37,13 @@ import {
   MODES,
   modeAutonomy,
   TIER_LABEL,
-  useApprovals,
-  useAudit,
   useDeleteComposer,
   useFleet,
   useStopChild,
   useToolCatalog,
   useUpdateComposer,
 } from "./api";
-import { ApprovalCard, toolTitle } from "./approval-card";
+import { toolTitle } from "./approval-card";
 import {
   InstructionsField,
   IntegrationsField,
@@ -54,15 +52,6 @@ import {
 } from "./composer-fields";
 import { FleetGraph } from "./fleet-graph";
 import { TriggersEditor } from "./triggers-editor";
-
-type Tab = "fleet" | "approvals" | "steps" | "details";
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: "fleet", label: "Fleet" },
-  { id: "approvals", label: "Approvals" },
-  { id: "steps", label: "Steps" },
-  { id: "details", label: "Details" },
-];
 
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="px-4 py-6 text-center text-xs text-muted-foreground">{children}</p>;
@@ -78,7 +67,7 @@ export type FleetGroup = {
  * One group per workspace. A run records starting a workspace and starting an agent in it as two
  * separate things, so the same workspace would otherwise be listed twice.
  */
-function groupFleet(items: FleetItem[]): FleetGroup[] {
+export function groupFleet(items: FleetItem[]): FleetGroup[] {
   const groups = new Map<string, FleetGroup>();
   for (const item of items) {
     const key = item.workspace?.id ?? item.child.workspace_id ?? item.child.id;
@@ -91,7 +80,7 @@ function groupFleet(items: FleetItem[]): FleetGroup[] {
   return [...groups.values()];
 }
 
-type FleetTone = "working" | "waiting" | "idle";
+export type FleetTone = "working" | "waiting" | "idle";
 
 const FLEET_DOT: Record<FleetTone, string> = {
   working: "bg-success animate-pulse",
@@ -100,14 +89,22 @@ const FLEET_DOT: Record<FleetTone, string> = {
 };
 
 /** What a workspace is doing, from its agents: waiting on you first, then working, else idle. */
-function fleetTone(group: FleetGroup): FleetTone {
+export function fleetTone(group: FleetGroup): FleetTone {
   if (group.chats.some((c) => c.status === "blocked")) return "waiting";
   if (group.chats.some((c) => c.status === "working")) return "working";
   return "idle";
 }
 
 /** One workspace of the fleet: a card that opens it. Its state, branch and where the branch stands. */
-function FleetCard({ group, tone, name }: { group: FleetGroup; tone: FleetTone; name: string }) {
+export function FleetCard({
+  group,
+  tone,
+  name,
+}: {
+  group: FleetGroup;
+  tone: FleetTone;
+  name: string;
+}) {
   const navigate = useNavigate();
   const stop = useStopChild();
   const ws = group.workspace;
@@ -202,7 +199,7 @@ function FleetCard({ group, tone, name }: { group: FleetGroup; tone: FleetTone; 
 }
 
 /** The workspaces and agents this run started, as a tree under the Composer. */
-function FleetTab({ composer, runId }: { composer: Composer; runId?: string }) {
+export function FleetTab({ composer, runId }: { composer: Composer; runId?: string }) {
   const fleet = useFleet(composer.id, runId);
   const navigate = useNavigate();
   const [graph, setGraph] = useState(false);
@@ -282,42 +279,6 @@ function FleetTab({ composer, runId }: { composer: Composer; runId?: string }) {
   );
 }
 
-function ApprovalsTab({ composer }: { composer: Composer }) {
-  const all = useApprovals({ composerId: composer.id }).data ?? [];
-  const pending = all.filter((a) => a.status === "pending");
-  const done = all.filter((a) => a.status !== "pending").slice(0, 20);
-  if (all.length === 0) return <Empty>Nothing has asked for approval yet.</Empty>;
-  return (
-    <div className="flex flex-col gap-3 p-3">
-      {pending.map((a) => (
-        <ApprovalCard key={a.id} approval={a} />
-      ))}
-      {pending.length === 0 ? (
-        <p className="text-xs text-muted-foreground">Nothing is waiting for you.</p>
-      ) : null}
-      {done.length > 0 ? (
-        <ul aria-label="Answered" className="flex flex-col gap-1 text-xs">
-          {done.map((a) => (
-            <li key={a.id} className="flex items-center justify-between gap-2">
-              <span className="truncate">{toolTitle(a.tool)}</span>
-              <span
-                className={cn(
-                  "shrink-0 rounded px-1.5 py-0.5",
-                  a.status === "allowed"
-                    ? "bg-success/15 text-success"
-                    : "bg-muted text-muted-foreground",
-                )}
-              >
-                {a.status}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </div>
-  );
-}
-
 const OUTCOME: Record<string, string> = {
   ok: "bg-success/15 text-success",
   error: "bg-destructive/15 text-destructive",
@@ -346,19 +307,6 @@ export function AuditRow({ entry }: { entry: AuditEntry }) {
   );
 }
 
-/** Every tool call of this run, newest first. */
-function StepsTab({ composer, runId }: { composer: Composer; runId?: string }) {
-  const entries = useAudit({ composerId: composer.id, sessionId: runId }).data ?? [];
-  if (entries.length === 0) return <Empty>No tool has been called yet.</Empty>;
-  return (
-    <ul aria-label="Steps" className="flex flex-col divide-y divide-border">
-      {entries.map((e) => (
-        <AuditRow key={e.id} entry={e} />
-      ))}
-    </ul>
-  );
-}
-
 function Notes({ value, onChange }: { value: string; onChange: (notes: string) => void }) {
   return (
     <section aria-label="Notes" className="flex flex-col gap-1.5">
@@ -380,7 +328,7 @@ function Notes({ value, onChange }: { value: string; onChange: (notes: string) =
 }
 
 /** The repositories a Composer may work on: the ones picked, or all of them. */
-function RepositoriesSection({ composer }: { composer: Composer }) {
+export function RepositoriesSection({ composer }: { composer: Composer }) {
   const projects = useProjects().data ?? [];
   const picked = composer.projects;
   const all = picked === null;
@@ -430,7 +378,7 @@ function RepositoriesSection({ composer }: { composer: Composer }) {
 }
 
 /** The outside services a Composer can use: which ones it has on, and whether each one works. */
-function IntegrationsSection({ composer }: { composer: Composer }) {
+export function IntegrationsSection({ composer }: { composer: Composer }) {
   const jira = useJiraStatus().data;
   const used = composer.integrations.includes("jira");
   const state = !jira?.connected
@@ -643,7 +591,7 @@ const SETTINGS_SECTIONS: { id: SettingsSection; label: string }[] = [
 ];
 
 /** Everything that sets how a Composer behaves, in one dialog. The Details tab only shows facts. */
-function ComposerSettingsDialog({
+export function ComposerSettingsDialog({
   composer,
   open,
   onOpenChange,
@@ -803,67 +751,3 @@ function ComposerSettingsDialog({
 }
 
 /** The facts about a Composer: its name, the repositories it handles and its integrations. */
-function DetailsTab({ composer }: { composer: Composer }) {
-  const [settings, setSettings] = useState(false);
-  return (
-    <div className="flex h-full min-h-0 flex-col text-sm">
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-3">
-        <RepositoriesSection composer={composer} />
-        <IntegrationsSection composer={composer} />
-      </div>
-      <div className="shrink-0 border-t border-border p-3">
-        <Button
-          size="sm"
-          variant="outline"
-          aria-label="Composer settings"
-          onClick={() => setSettings(true)}
-        >
-          <SettingsIcon />
-          Settings
-        </Button>
-      </div>
-      <ComposerSettingsDialog composer={composer} open={settings} onOpenChange={setSettings} />
-    </div>
-  );
-}
-
-/** The right pane of a Composer: what it started, what waits for you, what it did, and its setup. */
-export function ComposerPanel({ composer, runId }: { composer: Composer; runId?: string }) {
-  const [tab, setTab] = useState<Tab>("fleet");
-  const pending = (useApprovals({ composerId: composer.id, onlyPending: true }).data ?? []).length;
-  return (
-    <div className="flex h-full min-h-0 flex-col bg-background">
-      <div
-        role="tablist"
-        aria-label="Composer"
-        className="pointer-events-auto relative z-30 flex h-10 shrink-0 items-center gap-1 overflow-x-auto border-b border-border px-3 [scrollbar-width:none]"
-      >
-        {TABS.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={tab === id}
-            onClick={() => setTab(id)}
-            className={
-              tab === id
-                ? "shrink-0 rounded-md bg-muted px-2 py-1 text-xs whitespace-nowrap text-foreground"
-                : "shrink-0 rounded-md px-2 py-1 text-xs whitespace-nowrap text-muted-foreground hover:text-foreground"
-            }
-          >
-            {label}
-            {id === "approvals" && pending > 0 ? (
-              <span className="ml-1 rounded-full bg-warning/20 px-1.5 text-warning">{pending}</span>
-            ) : null}
-          </button>
-        ))}
-      </div>
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {tab === "fleet" ? <FleetTab composer={composer} runId={runId} /> : null}
-        {tab === "approvals" ? <ApprovalsTab composer={composer} /> : null}
-        {tab === "steps" ? <StepsTab composer={composer} runId={runId} /> : null}
-        {tab === "details" ? <DetailsTab composer={composer} /> : null}
-      </div>
-    </div>
-  );
-}

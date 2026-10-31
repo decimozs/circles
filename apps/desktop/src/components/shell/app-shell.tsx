@@ -60,10 +60,9 @@ export function AppShell() {
   const zenNow = useUi((s) => s.zen);
   const onWorkspace = useMatch("/workspace/:id") !== null;
   const onSettings = useMatch("/settings/*") !== null;
-  const onComposer = useMatch("/composer/:id/*") !== null;
 
   const leftVisible = leftOpenNow && !zenNow;
-  const rightVisible = rightOpenNow && !zenNow && (onWorkspace || onComposer);
+  const rightVisible = rightOpenNow && !zenNow && onWorkspace;
 
   const resizing = useUserResizing();
   const left = usePanelSync({
@@ -75,7 +74,7 @@ export function AppShell() {
   });
   const right = usePanelSync({
     visible: rightVisible,
-    canShow: !zenNow && (onWorkspace || onComposer),
+    canShow: !zenNow && onWorkspace,
     setOpen: setRightOpen,
     setWidth: setRightWidth,
     remember: resizing.isResizing,
@@ -135,7 +134,7 @@ export function AppShell() {
           collapsedSize={0}
           minSize={RIGHT_PANEL.min}
           maxSize={RIGHT_PANEL.max}
-          defaultSize={rightOpen && !zen && (onWorkspace || onComposer) ? rightWidth : 0}
+          defaultSize={rightOpen && !zen && onWorkspace ? rightWidth : 0}
           groupResizeBehavior="preserve-pixel-size"
           onResize={right.onResize}
           className="border-l border-border"

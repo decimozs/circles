@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { backend } from "@/test/backend";
 import { approval, composer, project, runView, session, workspace } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp, settingsBackend } from "@/test/render";
+import { openRunTab } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -167,17 +168,19 @@ describe("accessibility of the Composer screens", () => {
     expect(await violations()).toEqual([]);
   });
 
-  it("a run with its right pane has none", async () => {
+  it("a run with its popover and dialogs has none", async () => {
     seed(() => {
       chatBackend([session({ id: "r1", workspace_id: "cw1", title: "Triage" })]);
       backend.on("composer_approvals", [approval()]);
     });
     const app = renderApp("/composer/c1/run/r1");
     await screen.findByLabelText("Message");
-    for (const tab of ["Fleet", "Approvals", "Steps", "Details"]) {
-      await app.user.click(await screen.findByRole("tab", { name: new RegExp(tab) }));
-      expect(await violations()).toEqual([]);
-    }
+    // The panel itself, with an approval waiting in it, then the fleet graph's dialog.
+    await app.user.click(await screen.findByRole("button", { name: "Run details" }));
+    await screen.findAllByRole("group", { name: /Approval for/ });
+    expect(await violations()).toEqual([]);
+    await openRunTab(app.user, "Fleet");
+    expect(await violations()).toEqual([]);
   });
 
   it("the Composer dialog has none", async () => {

@@ -209,7 +209,7 @@ export function ToolCallRow({ call, root }: { call: ToolCall; root?: string }) {
         type="button"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-muted-foreground hover:bg-muted/60"
+        className="flex w-fit max-w-full items-center gap-1.5 rounded-md px-1.5 py-1 text-left text-muted-foreground hover:bg-muted/60"
       >
         <ChevronRightIcon
           className={cn("size-3 shrink-0 transition-transform", open && "rotate-90")}

@@ -263,11 +263,11 @@ export const SETTINGS: SettingDef[] = [
         ["manual", "Ask for everything"],
         ["accept_edits", "Accept edits"],
         ["plan", "Plan only"],
-        ["bypass", "Bypass permissions"],
+        ["bypass", "Full access"],
       ),
       default: "manual",
     },
-    keywords: "approve allow bypass dangerous",
+    keywords: "approve allow bypass full access dangerous",
   },
   {
     id: "extra_args",

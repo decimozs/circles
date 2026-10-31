@@ -11,7 +11,7 @@ Press Cmd+/ in the app to see the list. Cmd means the Command key.
 | Cmd+/ | Show the shortcuts |
 | Cmd+[ and Cmd+] | Go back and go forward |
 | Cmd+B | Show or hide the left sidebar |
-| Cmd+Option+B | Show or hide the right sidebar |
+| Cmd+Option+B | Show or hide the right sidebar, or the run panel on a Composer page |
 | Cmd+. | Zen mode |
 | Cmd+Option+T | Switch the theme |
 | Cmd+Shift+D | Open or close the diff viewer |

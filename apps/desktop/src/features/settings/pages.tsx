@@ -564,7 +564,7 @@ export function Row({
   );
 }
 
-/** The rows of one page, with the warning that goes with bypassing permissions. */
+/** The rows of one page, with the warning that goes with full access. */
 export function SettingsGroupPage({ page, view }: { page: string; view: SettingsView }): ReactNode {
   const defs = SETTINGS.filter((d) => d.page === page);
   const bypass = view.settings.agents.permission_mode === "bypass";
@@ -578,8 +578,8 @@ export function SettingsGroupPage({ page, view }: { page: string; view: Settings
               role="alert"
               className="mb-2 rounded-md border border-warning/50 bg-warning/10 p-2 text-xs"
             >
-              Bypass lets the agent run any command and change any file without asking. Only use it
-              in workspaces you can throw away.
+              Full access lets the agent run any command and change any file without asking. Only
+              use it in workspaces you can throw away.
             </p>
           ) : null}
         </div>

@@ -26,7 +26,7 @@ A chat has a permission mode that decides what asks first:
 | Ask | Edits and commands each ask first. |
 | Accept edits | Edits go through, other things still ask. |
 | Plan | The agent plans and does not change anything. |
-| Bypass | Nothing asks. A warning is shown when you pick it. |
+| Full access | Nothing asks. A warning is shown when you pick it. |
 
 New chats start in the mode set in Settings > Agents > Permission mode. A request waits in the chat as a card until you allow or deny it. Allowed means the agent can do it as you.
 
