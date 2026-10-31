@@ -1,10 +1,13 @@
 import { cn } from "@circles/ui/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { GitPullRequestIcon, Loader2Icon } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import { describeError } from "@/features/chat/use-session";
 import { useProjects } from "@/features/projects/api";
 import { useWorkspaces } from "@/features/workspaces/api";
-import { prKeys, usePrList } from "./api";
+import { formatAge } from "@/lib/time";
+import { refreshPrList, useCacheSync, usePrList } from "./api";
 import { DetailPane } from "./detail-pane";
 import { PrRow } from "./pr-row";
 import { PrToolbar } from "./pr-toolbar";
@@ -44,6 +47,20 @@ export function PullRequestsPage() {
   // for the wrong one while those load.
   const ready = chosen !== undefined || (projectsQuery.isSuccess && workspacesQuery.isSuccess);
   const list = usePrList(scope, which, ready);
+  useCacheSync();
+  const [forcing, setForcing] = useState(false);
+  const refreshing = forcing || list.isFetching || list.data?.refreshing === true;
+  const fetchedAt = list.data?.fetched_at ?? null;
+  const refreshNow = async () => {
+    setForcing(true);
+    try {
+      await refreshPrList(queryClient, scope, which);
+    } catch (e) {
+      toast.error(describeError(e));
+    } finally {
+      setForcing(false);
+    }
+  };
   const showProject = scope === null;
 
   const groups = useMemo(() => {
@@ -75,9 +92,17 @@ export function PullRequestsPage() {
             projects={projects}
             scope={scope}
             onScope={setScope}
-            fetching={list.isFetching}
-            onRefresh={() => queryClient.invalidateQueries({ queryKey: prKeys.list(scope, which) })}
+            fetching={refreshing}
+            onRefresh={refreshNow}
           />
+          {fetchedAt !== null ? (
+            <p role="status" className="-mt-2 text-xs text-muted-foreground">
+              {Date.now() - fetchedAt < 60_000
+                ? "Updated just now"
+                : `Updated ${formatAge(fetchedAt)} ago`}
+              {refreshing ? " · refreshing…" : ""}
+            </p>
+          ) : null}
 
           {(list.data?.failures ?? []).map((f) => (
             <p

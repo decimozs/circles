@@ -8,6 +8,7 @@ import type { AuditEntry } from "@circles/bindings/AuditEntry";
 import type { BranchInfo } from "@circles/bindings/BranchInfo";
 import type { BranchState } from "@circles/bindings/BranchState";
 import type { BrowseState } from "@circles/bindings/BrowseState";
+import type { CacheInfo } from "@circles/bindings/CacheInfo";
 import type { ChangedFile } from "@circles/bindings/ChangedFile";
 import type { Check } from "@circles/bindings/Check";
 import type { Checkpoint } from "@circles/bindings/Checkpoint";
@@ -246,10 +247,12 @@ export const ipc = {
   prBrowseFiles: (projectId: string, repo: string, number: number) =>
     call<PrFiles>("pr_browse_files", { projectId, repo, number }),
   prBrowseFile: (request: PrFileRequest) => call<FilePair>("pr_browse_file", { request }),
-  prBrowseDetail: (projectId: string, number: number) =>
-    call<PrDetail>("pr_browse_detail", { projectId, number }),
-  prBrowseList: (projectId: string | null, which: BrowseState) =>
-    call<PrList>("pr_browse_list", { projectId, which }),
+  prBrowseDetail: (projectId: string, number: number, refresh = false) =>
+    call<PrDetail>("pr_browse_detail", { projectId, number, refresh }),
+  prBrowseList: (projectId: string | null, which: BrowseState, refresh = false) =>
+    call<PrList>("pr_browse_list", { projectId, which, refresh }),
+  cacheInfo: () => call<CacheInfo>("cache_info"),
+  cacheClear: () => call<null>("cache_clear"),
   usageRefresh: () => call<null>("usage_refresh"),
   usageRebuild: () => call<null>("usage_rebuild"),
   usageSummary: (sinceSecs: number | null, folder: string | null) =>

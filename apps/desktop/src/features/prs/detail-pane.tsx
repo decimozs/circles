@@ -64,6 +64,12 @@ function Detail({ tab }: { tab: PrTab }) {
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
           <Person name={row.author} avatar={row.author_avatar} className="text-foreground" />
           <span>updated {formatAge(Date.parse(row.updated_at))} ago</span>
+          {detail.refreshing || query.isFetching ? (
+            <span role="status" className="flex items-center gap-1">
+              <Loader2Icon className="size-3 animate-spin" />
+              refreshing…
+            </span>
+          ) : null}
           <span className="font-mono">
             {row.base_ref} <span aria-hidden>←</span>
             <span className="sr-only">from</span> {row.head_ref}

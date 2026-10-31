@@ -336,4 +336,15 @@ describe("default model", () => {
     await new Promise((r) => setTimeout(r, 50));
     expect(useCreatePrefs.getState().model).toBe("sonnet");
   });
+
+  it("shows how much is cached and clears it", async () => {
+    backend.on("cache_info", { entries: 12, bytes: 3 * 1024 * 1024 });
+    backend.on("cache_clear", null);
+    const app = open("/settings/advanced");
+    backend.on("cache_info", { entries: 12, bytes: 3 * 1024 * 1024 });
+    backend.on("cache_clear", null);
+    expect(await screen.findByText("12 kept, 3.0 MB")).toBeInTheDocument();
+    await app.user.click(screen.getByRole("button", { name: "Clear cached data" }));
+    await waitFor(() => expect(backend.callsTo("cache_clear")).toHaveLength(1));
+  });
 });

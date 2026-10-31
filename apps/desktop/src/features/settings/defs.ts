@@ -529,6 +529,16 @@ export const SETTINGS: SettingDef[] = [
     keywords: "diagnostics",
   },
   {
+    id: "clear_cache",
+    page: "advanced",
+    title: "Cached data",
+    description:
+      "Copies of pull requests and other answers from GitHub, kept so screens open at once. Clearing them is safe: they are fetched again.",
+    path: [],
+    control: { kind: "custom" },
+    keywords: "cache storage disk github pull requests",
+  },
+  {
     id: "diagnostics",
     page: "advanced",
     title: "Copy diagnostics",

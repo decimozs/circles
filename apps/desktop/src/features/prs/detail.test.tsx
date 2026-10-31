@@ -2,7 +2,7 @@ import type { PrDetail } from "@circles/bindings/PrDetail";
 import type { PrRow } from "@circles/bindings/PrRow";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { backend } from "@/test/backend";
+import { backend, emitBackendEvent } from "@/test/backend";
 import { project, workspace } from "@/test/fixtures";
 import { defaultBackend, renderApp } from "@/test/render";
 import { usePrs } from "./store";
@@ -37,7 +37,7 @@ function row(over: Partial<PrRow> = {}): PrRow {
   };
 }
 
-function detail(over: Partial<PrDetail> = {}): PrDetail {
+function detail(over: Partial<PrDetail> = {}, rest: Partial<PrDetail> = {}): PrDetail {
   return {
     row: row(),
     body: "## Summary\n\nOnly `requirements.txt` changes.",
@@ -86,7 +86,10 @@ function detail(over: Partial<PrDetail> = {}): PrDetail {
       { name: "lint", workflow: "CI", state: "passing", url: "https://github.com/x/2" },
       { name: "test", workflow: "CI", state: "failing", url: "https://github.com/x/3" },
     ],
+    fetched_at: Date.now() - 2 * 60_000,
+    refreshing: false,
     ...over,
+    ...rest,
   };
 }
 
@@ -229,5 +232,23 @@ describe("the pull request pane", () => {
     const { user } = renderApp("/pull-requests");
     await user.click(await screen.findByRole("button", { name: /#42 STH-1766/ }));
     expect(await screen.findByText("This branch has conflicts with its base.")).toBeInTheDocument();
+  });
+
+  it("shows a pull request that was kept at once and reads it again when the refresh is done", async () => {
+    let calls = 0;
+    seed();
+    backend.on("pr_browse_detail", () => {
+      calls += 1;
+      return calls === 1
+        ? detail({ row: row({ title: "Kept title" }) }, { refreshing: true })
+        : detail({ row: row({ title: "Newer title" }) });
+    });
+    const { user } = renderApp("/pull-requests");
+    await user.click(await screen.findByRole("button", { name: /#42 STH-1766/ }));
+    expect(await screen.findByRole("heading", { name: /Kept title/ })).toBeInTheDocument();
+    expect(screen.getByText("refreshing…")).toBeInTheDocument();
+    emitBackendEvent("cache:changed", "pr-detail");
+    expect(await screen.findByRole("heading", { name: /Newer title/ })).toBeInTheDocument();
+    expect(screen.queryByText("refreshing…")).not.toBeInTheDocument();
   });
 });

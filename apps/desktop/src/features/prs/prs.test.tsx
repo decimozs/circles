@@ -2,7 +2,7 @@ import type { PrList } from "@circles/bindings/PrList";
 import type { PrRow } from "@circles/bindings/PrRow";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { backend } from "@/test/backend";
+import { backend, emitBackendEvent } from "@/test/backend";
 import { project, workspace } from "@/test/fixtures";
 import { defaultBackend, renderApp } from "@/test/render";
 import { groupRows, matches, NO_FILTERS, parseQuery, sortRows } from "./query";
@@ -129,12 +129,12 @@ describe("searching the list", () => {
   });
 });
 
-function seed(list: PrList) {
+function seed(list: Pick<PrList, "rows" | "failures"> & Partial<PrList>) {
   defaultBackend();
   backend
     .on("project_list", [project(), project({ id: "p2", name: "portfolio" })])
     .on("workspace_list", [workspace({ last_opened_at: 5, project_id: "p2" })])
-    .on("pr_browse_list", list);
+    .on("pr_browse_list", { fetched_at: Date.now(), refreshing: false, ...list });
 }
 
 describe("the Pull requests page", () => {
@@ -181,7 +181,7 @@ describe("the Pull requests page", () => {
     expect(screen.getByLabelText("Checks failing: 1 of 3 passed")).toBeInTheDocument();
     // No project was ever chosen, so the one with the newest workspace is asked.
     const call = backend.calls.find((c) => c.command === "pr_browse_list");
-    expect(call?.args).toEqual({ projectId: "p2", which: "open" });
+    expect(call?.args).toEqual({ projectId: "p2", which: "open", refresh: false });
     expect(
       within(screen.getByRole("region", { name: "Pull requests" })).getByRole("button", {
         name: /portfolio/,
@@ -223,6 +223,7 @@ describe("the Pull requests page", () => {
           project_name: "old",
           message: "The GitHub CLI is not signed in.",
           fix: "gh auth login",
+          gone: false,
         },
       ],
     });
@@ -246,5 +247,96 @@ describe("the Pull requests page", () => {
     backend.fail("pr_browse_list", { code: "gh", message: "GitHub could not be reached" });
     renderApp("/pull-requests");
     expect(await screen.findByText(/GitHub could not be reached/)).toBeInTheDocument();
+  });
+
+  it("shows what was kept at once with its age, and again when the refresh is done", async () => {
+    let calls = 0;
+    defaultBackend();
+    backend
+      .on("project_list", [project(), project({ id: "p2", name: "portfolio" })])
+      .on("workspace_list", [workspace({ last_opened_at: 5, project_id: "p2" })])
+      .on("pr_browse_list", () => {
+        calls += 1;
+        return calls === 1
+          ? {
+              rows: [row({ number: 7, title: "Kept answer" })],
+              failures: [],
+              fetched_at: Date.now() - 4 * 60_000,
+              refreshing: true,
+            }
+          : {
+              rows: [
+                row({ number: 7, title: "Kept answer" }),
+                row({ number: 8, title: "New one" }),
+              ],
+              failures: [],
+              fetched_at: Date.now(),
+              refreshing: false,
+            };
+      });
+    renderApp("/pull-requests");
+    expect(await screen.findByRole("button", { name: "#7 Kept answer" })).toBeInTheDocument();
+    expect(screen.getByText(/Updated 4min ago/)).toBeInTheDocument();
+    expect(screen.getByText(/refreshing…/)).toBeInTheDocument();
+    expect(screen.queryByText("Asking GitHub…")).not.toBeInTheDocument();
+    emitBackendEvent("cache:changed", "pr-list");
+    expect(await screen.findByRole("button", { name: "#8 New one" })).toBeInTheDocument();
+    expect(await screen.findByText("Updated just now")).toBeInTheDocument();
+  });
+
+  it("asks GitHub straight away, not for what was kept, when refresh is pressed", async () => {
+    seed({ rows: [row()], failures: [] });
+    const { user } = renderApp("/pull-requests");
+    await screen.findByRole("button", { name: "#1 Add login" });
+    expect(backend.calls.find((c) => c.command === "pr_browse_list")?.args.refresh).toBe(false);
+    await user.click(screen.getByRole("button", { name: "Refresh" }));
+    await waitFor(() =>
+      expect(
+        backend.calls.some((c) => c.command === "pr_browse_list" && c.args.refresh === true),
+      ).toBe(true),
+    );
+  });
+
+  it("keeps the list on screen while another project is loaded", async () => {
+    let release: (value: PrList) => void = () => {};
+    defaultBackend();
+    backend
+      .on("project_list", [project(), project({ id: "p2", name: "portfolio" })])
+      .on("workspace_list", [workspace({ last_opened_at: 5, project_id: "p2" })])
+      .on("pr_browse_list", (args: Record<string, unknown>) =>
+        args.projectId === "p2"
+          ? {
+              rows: [row({ title: "First list" })],
+              failures: [],
+              fetched_at: Date.now(),
+              refreshing: false,
+            }
+          : new Promise<PrList>((resolve) => {
+              release = resolve;
+            }),
+      );
+    const { user } = renderApp("/pull-requests");
+    await screen.findByRole("button", { name: "#1 First list" });
+    await user.click(
+      within(screen.getByRole("region", { name: "Pull requests" })).getByRole("button", {
+        name: /portfolio/,
+      }),
+    );
+    await user.click(await screen.findByRole("menuitemradio", { name: "All projects" }));
+    await waitFor(() =>
+      expect(
+        backend.calls.some((c) => c.command === "pr_browse_list" && c.args.projectId === null),
+      ).toBe(true),
+    );
+    // No loading screen replaces what was shown.
+    expect(screen.getByRole("button", { name: "#1 First list" })).toBeInTheDocument();
+    expect(screen.queryByText("Asking GitHub…")).not.toBeInTheDocument();
+    release({
+      rows: [row({ title: "Everything" })],
+      failures: [],
+      fetched_at: Date.now(),
+      refreshing: false,
+    });
+    expect(await screen.findByRole("button", { name: "#1 Everything" })).toBeInTheDocument();
   });
 });
