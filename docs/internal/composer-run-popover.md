@@ -1,9 +1,10 @@
 # A run popover instead of the right pane for Composer chats
 
-Status: phases 1 to 3 are built (the toggled panel, the live Fleet section with its clock and the
-spinner on the button, and the approvals answered in the panel). **Steps were dropped** at the owner's request: no Steps tab, dialog or live
+Status: phases 1 to 3 and 5 are built (the toggled panel, the live Fleet section with its clock and the
+spinner on the button, the approvals answered in the panel, and each workspace opened out to its
+editor, branch, pull request, next step and changes). **Steps were dropped** at the owner's request: no Steps tab, dialog or live
 section, and the Details link became the repositories, integrations and a Settings button in the
-panel. The per-workspace branch and pull request rows, and child activity, are still planned.
+panel. Child activity is still planned.
 
 A Composer's page had a right pane with four tabs (Fleet, Approvals, Steps, Details). It is replaced
 by a small popover from the top bar, laid out like the T3 Code one in the reference screenshot:

@@ -2,8 +2,17 @@ import { act, renderHook, screen, waitFor, within } from "@testing-library/react
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useNow } from "@/hooks/use-now";
 import { useChat } from "@/stores/chat";
+import { useReview } from "@/stores/review";
 import { backend } from "@/test/backend";
-import { approval, composer, runView, session, workspace } from "@/test/fixtures";
+import {
+  approval,
+  composer,
+  prStatus,
+  readiness,
+  runView,
+  session,
+  workspace,
+} from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp } from "@/test/render";
 import { groupFleet } from "./composer-panel";
 import { liveRows, runningCount } from "./live";
@@ -263,5 +272,120 @@ describe("the badge on the button", () => {
     renderApp("/composer/c1/run/r1");
     const toggle = await screen.findByRole("button", { name: "Run details" });
     await waitFor(() => expect(toggle).toHaveTextContent("1"));
+  });
+});
+
+describe("what a workspace of the run holds, opened out of its row", () => {
+  beforeEach(() => localStorage.clear());
+
+  const file = (path: string, added: number, removed: number) => ({
+    path,
+    old_path: null,
+    status: "modified",
+    added,
+    removed,
+    binary: false,
+  });
+
+  function seedOne() {
+    seed([item("a", "Add dark mode", "working", { working_since: Date.now() - 5000 })]);
+    backend
+      .on(
+        "pr_readiness",
+        readiness({
+          pr: prStatus({ number: 9, title: "Add dark mode to the settings" }),
+          checks: { total: 3, passed: 2, failed: 1, pending: 0 },
+          next_action: "fix_checks",
+        }),
+      )
+      .on("changes_list", [file("src/a.ts", 10, 2), file("src/b.ts", 5, 0)])
+      .on("editor_list", [
+        { id: "vscode", name: "VS Code" },
+        { id: "cursor", name: "Cursor" },
+      ])
+      .on("editor_open", null);
+  }
+
+  it("asks for nothing about a workspace until its row is opened out", async () => {
+    seedOne();
+    const { panel } = await openPanel();
+    await within(panel).findByRole("button", { name: "Open Add dark mode" });
+    expect(backend.callsTo("pr_readiness")).toEqual([]);
+    expect(backend.callsTo("changes_list")).toEqual([]);
+  });
+
+  it("shows the editor, the branch, the pull request, the next step and the changes", async () => {
+    seedOne();
+    const { panel, user } = await openPanel();
+    await user.click(
+      await within(panel).findByRole("button", { name: "Show what Add dark mode holds" }),
+    );
+    const details = within(
+      await within(panel).findByRole("region", { name: "Add dark mode details" }),
+    );
+    expect(await details.findByText("me/abc12")).toBeInTheDocument();
+    expect(details.getByText("2 ahead")).toBeInTheDocument();
+    expect(details.getByText("Add dark mode to the settings")).toBeInTheDocument();
+    expect(details.getByLabelText("1 checks failing")).toBeInTheDocument();
+    // The pull request's number and what to do about it come from the same bar as the workspace.
+    expect(await details.findByRole("button", { name: "Open pull request 9" })).toBeInTheDocument();
+    expect(details.getByRole("button", { name: /Fix/ })).toBeInTheDocument();
+    expect(await details.findByText("+15")).toBeInTheDocument();
+    expect(details.getByText("-2")).toBeInTheDocument();
+    // And it can be put away again.
+    await user.click(within(panel).getByRole("button", { name: "Hide what Add dark mode holds" }));
+    expect(
+      within(panel).queryByRole("region", { name: "Add dark mode details" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("opens the workspace in the first editor found, or in the one chosen", async () => {
+    seedOne();
+    const { panel, user } = await openPanel();
+    await user.click(
+      await within(panel).findByRole("button", { name: "Show what Add dark mode holds" }),
+    );
+    await user.click(await within(panel).findByRole("button", { name: "Open in VS Code" }));
+    await waitFor(() =>
+      expect(backend.callsTo("editor_open")[0]).toMatchObject({
+        workspaceId: "w-a",
+        editor: "vscode",
+      }),
+    );
+    await user.click(within(panel).getByRole("button", { name: "Choose an editor" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Open in Cursor" }));
+    await waitFor(() =>
+      expect(backend.callsTo("editor_open")[1]).toMatchObject({
+        workspaceId: "w-a",
+        editor: "cursor",
+      }),
+    );
+  });
+
+  it("says when there is no editor, and when there is no pull request yet", async () => {
+    seed([item("a", "Add dark mode", "idle", { turns: 1 })]);
+    backend.on("pr_readiness", readiness({ pr: null, next_action: "none" }));
+    const { panel, user } = await openPanel();
+    await user.click(
+      await within(panel).findByRole("button", { name: "Show what Add dark mode holds" }),
+    );
+    expect(await within(panel).findByText(/No editor found/)).toBeInTheDocument();
+    expect(
+      within(panel).queryByRole("button", { name: /Open pull request/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("goes to the changes of the workspace from the Changes row", async () => {
+    seedOne();
+    useReview.setState({ rightTab: "files" });
+    const { panel, user } = await openPanel();
+    await user.click(
+      await within(panel).findByRole("button", { name: "Show what Add dark mode holds" }),
+    );
+    await user.click(await within(panel).findByRole("button", { name: /^Changes/ }));
+    await waitFor(() => expect(useReview.getState().rightTab).toBe("changes"));
+    await waitFor(() =>
+      expect(backend.callsTo("workspace_get").some((c) => c.id === "w-a")).toBe(true),
+    );
   });
 });

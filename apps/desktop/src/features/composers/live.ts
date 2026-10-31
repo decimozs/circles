@@ -1,3 +1,4 @@
+import type { Workspace } from "@circles/bindings/Workspace";
 import type { FleetGroup } from "./composer-panel";
 
 export type LiveState = "waiting" | "working" | "idle";
@@ -7,6 +8,8 @@ export type LiveRow = {
   key: string;
   name: string;
   workspaceId: string | null;
+  /** The workspace itself, for what is shown when the row is opened out. */
+  workspace: Workspace | null;
   state: LiveState;
   /** When the turn running now began, in milliseconds. Set for a working or waiting row. */
   since: number | null;
@@ -35,6 +38,7 @@ export function liveRows(groups: FleetGroup[]): LiveRow[] {
       key: group.key,
       name: ws?.title ?? ws?.city ?? "A removed workspace",
       workspaceId: ws?.id ?? null,
+      workspace: ws ?? null,
       state,
       since: starts.length > 0 ? Math.min(...starts) : null,
       lastActive: Math.max(ws?.updated_at ?? 0, ...group.chats.map((c) => c.updated_at)),

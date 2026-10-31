@@ -34,6 +34,7 @@ import {
 } from "./composer-panel";
 import { type LiveRow, liveRows, runningCount } from "./live";
 import { ApprovalsSection } from "./run-approvals";
+import { WorkspaceDetails } from "./run-workspace";
 
 /** What a row is doing, as a picture and, for people who do not see it, in words. */
 function Marker({ row }: { row: LiveRow }) {
@@ -74,6 +75,7 @@ function Marker({ row }: { row: LiveRow }) {
 
 function FleetRow({ row, now }: { row: LiveRow; now: number }) {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const time =
     row.state === "idle"
       ? row.lastActive > 0
@@ -82,21 +84,42 @@ function FleetRow({ row, now }: { row: LiveRow; now: number }) {
       : formatElapsed(now - (row.since ?? now));
   return (
     <li>
-      <button
-        type="button"
-        disabled={!row.workspaceId}
-        aria-label={`Open ${row.name}`}
-        onClick={() => row.workspaceId && navigate(`/workspace/${row.workspaceId}`)}
-        className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm outline-none hover:bg-muted/50 focus-visible:bg-muted/50 disabled:hover:bg-transparent"
-      >
-        <Marker row={row} />
-        <span
-          className={cn("min-w-0 flex-1 truncate", row.state === "idle" && "text-muted-foreground")}
+      <div className="flex items-center hover:bg-muted/50">
+        <button
+          type="button"
+          disabled={!row.workspaceId}
+          aria-label={`Open ${row.name}`}
+          onClick={() => row.workspaceId && navigate(`/workspace/${row.workspaceId}`)}
+          className="flex min-w-0 flex-1 items-center gap-2.5 py-2 pr-1 pl-3 text-left text-sm outline-none focus-visible:bg-muted/50"
         >
-          {row.name}
-        </span>
-        <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{time}</span>
-      </button>
+          <Marker row={row} />
+          <span
+            className={cn(
+              "min-w-0 flex-1 truncate",
+              row.state === "idle" && "text-muted-foreground",
+            )}
+          >
+            {row.name}
+          </span>
+          <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{time}</span>
+        </button>
+        {row.workspace ? (
+          <button
+            type="button"
+            aria-expanded={open}
+            aria-label={`${open ? "Hide" : "Show"} what ${row.name} holds`}
+            onClick={() => setOpen((v) => !v)}
+            className="p-2 text-muted-foreground outline-none hover:text-foreground focus-visible:bg-muted/50"
+          >
+            {open ? (
+              <ChevronDownIcon className="size-3.5" />
+            ) : (
+              <ChevronRightIcon className="size-3.5" />
+            )}
+          </button>
+        ) : null}
+      </div>
+      {open && row.workspace ? <WorkspaceDetails workspace={row.workspace} /> : null}
     </li>
   );
 }
