@@ -4,7 +4,7 @@ Run Claude Code agents in parallel, each in an isolated git worktree. Local-firs
 
 <img width="1337" height="864" alt="image" src="https://github.com/user-attachments/assets/48a38932-baa2-40fd-9a30-997aa046be3e" />
 
-Guide: [docs/README.md](docs/README.md)
+Guide: [apps/docs/content/docs/index.md](apps/docs/content/docs/index.md) (a website, see [docs/README.md](docs/README.md))
 
 ## Install
 Build the app with `scripts/release.sh` and open the `.dmg`, or
@@ -13,7 +13,7 @@ run it from source with `pnpm tauri dev`.
 The app is not signed yet, because there is no Apple Developer account. macOS will not open it with
 a double click the first time: right-click the app, choose **Open**, and confirm. If macOS says it is
 damaged, run `xattr -dr com.apple.quarantine /Applications/Circles.app` once. Details:
-[docs/troubleshooting.md](docs/troubleshooting.md). Everything else is in the [guide](docs/README.md).
+[apps/docs/content/docs/troubleshooting.md](apps/docs/content/docs/troubleshooting.md). Everything else is in the [guide](apps/docs/content/docs/index.md).
 
 On first launch Circles shows a setup checklist: `git`, Claude Code (installed and signed in),
 the GitHub CLI, notifications, the folders where your code lives, and the notice that agents run
@@ -33,7 +33,7 @@ packages/bindings    @circles/bindings: TypeScript types generated from Rust
 packages/config      @circles/config: shared tsconfig presets
 Cargo.toml           Rust workspace; the build output is target/ at the root
 pnpm-workspace.yaml  apps/* and packages/*
-scripts/  docs/      checks and release scripts, the user guide (docs/internal: plans and audits)
+scripts/  docs/      checks and release scripts, plans and audits (docs/internal)
 ```
 Commands are run from the repository root. See [docs/internal/phases/phase-20-monorepo.md](docs/internal/phases/phase-20-monorepo.md).
 

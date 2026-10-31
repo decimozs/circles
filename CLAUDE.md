@@ -4,7 +4,7 @@ A local desktop app that runs Claude Code agents in parallel, each in its own gi
 Composers that orchestrate them. Tauri 2 (Rust) and React 19, in a pnpm and Cargo monorepo.
 
 Layout: `apps/desktop` (the app), `packages/ui`, `packages/bindings` (generated, never edited by
-hand), `packages/config`. Docs: `docs/` is the user guide, `docs/internal/` holds the plans and audits, and `.github/JIRA.md` holds the Jira conventions.
+hand), `packages/config`, `apps/docs` (the user guide, a Fumadocs website: pages in `apps/docs/content/docs/`). `docs/internal/` holds the plans and audits, and `.github/JIRA.md` holds the Jira conventions.
 
 ## Hard rules
 
@@ -40,8 +40,8 @@ hand), `packages/config`. Docs: `docs/` is the user guide, `docs/internal/` hold
     `cargo clippy --workspace --all-targets -- -D warnings` and `cargo test --workspace`. Report what
     was run, with the result, and what was not run.
 11. **Docs match the change.** Before a PR, run `circles-update-docs`: any change a user can see
-    updates `docs/` and the `CHANGELOG.md` in the same PR, and the report says which pages were
-    checked.
+    updates the guide in `apps/docs/content/docs/` and the `CHANGELOG.md` in the same PR, runs
+    `pnpm --filter @circles/docs check`, and the report says which pages were checked.
 
 ## Bootstrap
 

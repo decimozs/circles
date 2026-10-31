@@ -30,7 +30,8 @@ One logical change per commit, each independently reviewable and revertible.
    - `apps/desktop/src-tauri` or `packages/bindings` touched: also `cargo fmt --all --check`,
      `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`.
    - Docs and skills only (`docs/**`, `.claude/**`, `.github/**`, `*.md`): no code checks, but
-     `pnpm lint` still runs because Biome covers JSON and YAML.
+     `pnpm lint` still runs because Biome covers JSON and YAML. Pages of the guide
+     (`apps/docs/content/**`) also run `pnpm --filter @circles/docs check`.
    Run them on the working tree before committing. A failing check is fixed first, not committed
    around. Quote the shortest decisive output when reporting.
 4. **Stay current without breaking the stack.** Refresh `main` with

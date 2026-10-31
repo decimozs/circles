@@ -1,6 +1,6 @@
 # A documentation website with Fumadocs
 
-Status: phase 1 (the spike) is built. The rest is planned.
+Status: phases 1 to 4 are built. Phase 5 (connect Vercel, add the address to the README) is for the owner.
 
 The user guide moves to a website built with [Fumadocs](https://www.fumadocs.dev/docs), in `apps/docs`.
 The website is where the guide lives and is read. On GitHub the repository's README gives the address of the

@@ -9,7 +9,8 @@ description: >-
 
 # circles-update-docs
 
-`docs/` is the user guide: it describes what the app does today, for a person using it. A change that
+The user guide is a website (Fumadocs, in `apps/docs`) whose pages are Markdown in
+`apps/docs/content/docs/`. It describes what the app does today, for a person using it. A change that
 alters what a user sees, can do, or must set up is not finished until the guide says so.
 
 ## 1. Read the change
@@ -38,22 +39,24 @@ already says. Say so in the report and name why. Still check that nothing the gu
 
 | Code area | Page |
 |---|---|
-| First run, setup checklist, install | `docs/getting-started.md` |
-| Projects, GitHub picker, learned conventions | `docs/projects.md` |
-| Workspaces, files, changes, graph, terminal, scripts | `docs/workspaces.md` |
-| Chats, permissions, checkpoints, side questions, titles | `docs/chats.md` |
-| Pull requests, checks, drafting, merging | `docs/pull-requests.md` |
-| Composers, cards, triggers | `docs/composers.md` |
-| Jira integration | `docs/jira.md` |
-| Settings pages, `settings.toml`, environment, accounts | `docs/settings.md` |
-| Shortcuts, sidebar order, command palette | `docs/shortcuts.md` |
-| An error the user can meet and how to get out of it | `docs/troubleshooting.md` |
+| First run, setup checklist, install | `apps/docs/content/docs/getting-started.md` |
+| Projects, GitHub picker, learned conventions | `apps/docs/content/docs/projects.md` |
+| Workspaces, files, changes, graph, terminal, scripts | `apps/docs/content/docs/workspaces.md` |
+| Chats, permissions, checkpoints, side questions, titles | `apps/docs/content/docs/chats.md` |
+| Pull requests, checks, drafting, merging | `apps/docs/content/docs/pull-requests.md` |
+| Composers, cards, triggers | `apps/docs/content/docs/composers.md` |
+| Jira integration | `apps/docs/content/docs/jira.md` |
+| Usage and plan limits | `apps/docs/content/docs/usage.md` |
+| Settings pages, `settings.toml`, environment, accounts | `apps/docs/content/docs/settings.md` |
+| Shortcuts, sidebar order, command palette | `apps/docs/content/docs/shortcuts.md` |
+| An error the user can meet and how to get out of it | `apps/docs/content/docs/troubleshooting.md` |
 | Plans, audits, design decisions | `docs/internal/` |
 | Jira and ticket conventions | `.github/JIRA.md` |
 | Rules for agents and contributors | `CLAUDE.md`, `CONTRIBUTING.md` |
 
-A new page is added to the reading order in `docs/README.md`. A removed page leaves no dead links:
-`rtk grep -rn "<old-name>" docs README.md CLAUDE.md CONTRIBUTING.md .claude .github`.
+A new page is added to the reading order in `apps/docs/content/docs/index.md` and to `meta.json`, which sets
+the order of the sidebar. A removed page leaves no dead links:
+`rtk grep -rn "<old-name>" apps/docs/content README.md CLAUDE.md CONTRIBUTING.md .claude .github`.
 
 ## 4. Edit
 
@@ -62,15 +65,20 @@ A new page is added to the reading order in `docs/README.md`. A removed page lea
   and menu items must match the UI text exactly; check the strings in `apps/desktop/src`.
 - Keep the page's existing tone, heading style and length. Edit the sentence that went stale; do not
   append a paragraph.
-- Delete text for anything removed. Search for the removed name across `docs/` and the root files.
+- Delete text for anything removed. Search for the removed name across `apps/docs/content/docs/` and the root files.
 - Add a `CHANGELOG.md` entry under `## Unreleased` in `### Added`, `### Changed` or `### Fixed`,
   one line, in the user's words. Skip it only for changes with no visible effect.
 - Plain words and no emoji, as in PRs.
+- A page needs `title` and `description` in its frontmatter. Link to another page as `./page.md` (or
+  `./page.md#heading`), the only form the site resolves; never `page.md` or `../`. A file outside the
+  guide is linked by its address on GitHub. Put anything with `<` or `{` (`<owner>/<name>`, `{ticket}`)
+  in backticks: outside code the site reads it as a tag and drops the text without an error.
 
 ## 5. Verify
 
-- Every `[text](path.md)` link in the touched pages resolves: `rtk grep -rno "](\([^)#]*\.md\)" docs`
-  and check the targets exist.
+- Run `pnpm --filter @circles/docs check`. It fails on a missing title, a `<` or `{` outside code, a link
+  that would be broken on the site, an anchor that does not exist and a page missing from the order. For a
+  new page or a big change also run `pnpm --filter @circles/docs build`.
 - Every setting key, command, shortcut and menu label you wrote exists in the code. Open the file.
 - Anything you could not confirm is written down as unconfirmed in the report; it is not guessed.
 
