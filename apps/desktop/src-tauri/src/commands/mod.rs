@@ -15,4 +15,5 @@ pub mod setup;
 pub mod side;
 pub mod smart;
 pub mod terminal;
+pub mod usage;
 pub mod workspace;

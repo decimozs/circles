@@ -35,6 +35,7 @@ mod terminal;
 #[cfg(test)]
 mod test_support;
 mod tools;
+mod usage;
 mod workspace;
 
 use std::sync::Arc;
@@ -349,6 +350,7 @@ pub fn run() {
             commands::composer::trigger_delete,
             commands::session::permission_reply,
             commands::session::claude_rate_limit,
+            commands::usage::usage_summary,
             commands::workspace::workspace_take_pending_prompt,
             commands::terminal::terminal_list,
             commands::terminal::terminal_create,
