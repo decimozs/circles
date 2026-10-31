@@ -1,4 +1,7 @@
-# Workspaces
+---
+title: "Workspaces"
+description: "What a workspace is, and its files, changes, graph, terminal and scripts."
+---
 
 A workspace is a copy of a project on its own branch, made with `git worktree`. Agents work in it, so your original folder and your other workspaces are never touched. A project can have as many workspaces as you like, and agents in different workspaces work at the same time.
 
@@ -16,7 +19,7 @@ Circles then:
 
 Circles keeps private notes for a workspace in `.context/`, which it adds to the worktree's local exclude, so it never touches the repository's `.gitignore`.
 
-The branch name follows the project's [branch naming rule](projects.md) when it has one. You can rename the branch from the workspace menu.
+The branch name follows the project's [branch naming rule](./projects.md) when it has one. You can rename the branch from the workspace menu.
 
 ## States
 
@@ -34,7 +37,7 @@ Next to the chat, the right pane has three tabs:
 
 - **All files:** a lazy file tree with search and a switch to show or hide ignored files. Opening a file shows it in a large dialog over the chat, read-only unless you choose to edit. The context menu copies the path, reveals the file in Finder, opens it in an editor or attaches it to the chat.
 - **Changes:** the changed files with `+` and `-` counts, grouped by folder if you like, for all changes against the base or only uncommitted ones. It updates as files change. Opening a file shows its diff (Cmd+Shift+D) side by side or in one column, with arrows to the neighbouring files.
-- **Checks:** where the branch stands, the pull request and its checks. See [Pull requests](pull-requests.md).
+- **Checks:** where the branch stands, the pull request and its checks. See [Pull requests](./pull-requests.md).
 
 Click the gutter of a diff or file to **comment on a line or a range**. Open comments are sent to the agent as structured context, and you can resolve or reopen them.
 

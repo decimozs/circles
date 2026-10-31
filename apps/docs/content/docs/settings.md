@@ -1,4 +1,7 @@
-# Settings
+---
+title: "Settings"
+description: "Where settings live, and what each settings page holds."
+---
 
 Open Settings with Cmd+, . Search them with Cmd+F inside the Settings page. Each setting has a title, a description and a control. A setting that you have changed from its default has a reset button.
 
@@ -34,9 +37,9 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Smart titles | Naming new chats, suggesting the next message and an example for a new Composer's first message. They use Claude Haiku through Claude Code, which spends a little of your Claude usage. |
 | Environment | Environment variables set for every agent and terminal, and for the calls Circles makes to Claude Code itself (titles, drafts, Improve, Learn and the Claude card). Values are hidden and never logged. |
 | Composers | Pause and stop, the daily cap of runs started on their own, notifications, the menu bar, open at login, keep awake, and cards. |
-| Integrations | The Jira connection. See [Jira](jira.md). |
+| Integrations | The Jira connection. See [Jira](./jira.md). |
 
-**Repositories:** one page for each project. See [Projects](projects.md).
+**Repositories:** one page for each project. See [Projects](./projects.md).
 
 **More**
 

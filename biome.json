@@ -11,6 +11,8 @@
       "!target",
       "!**/src-tauri/gen",
       "!**/dist",
+      "!**/.next",
+      "!**/.source",
       "!packages/bindings/src",
       "!packages/ui/src/components"
     ]

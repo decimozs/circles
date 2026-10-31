@@ -4,6 +4,11 @@ packages:
   - "packages/*"
 
 # Versions that must be the same in every app and package.
+# Dependencies whose install scripts may run. esbuild (pulled in by the docs site) does not need one:
+# it runs from its platform package.
+allowBuilds:
+  esbuild: false
+
 catalog:
   "@biomejs/biome": "^2.5.15"
   "@types/react": "^19.1.8"

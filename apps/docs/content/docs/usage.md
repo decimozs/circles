@@ -1,4 +1,7 @@
-# Usage
+---
+title: "Usage"
+description: "Tokens, estimated cost and plan limits of Claude Code on your Mac."
+---
 
 The **Usage** button at the bottom of the sidebar (the chart icon, beside the settings button at the left; the help button is alone at the right) shows how much Claude Code has been used on this Mac, and what that would cost.
 

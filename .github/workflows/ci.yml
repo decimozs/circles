@@ -21,6 +21,7 @@ jobs:
     outputs:
       frontend: ${{ steps.filter.outputs.frontend }}
       rust: ${{ steps.filter.outputs.rust }}
+      docs: ${{ steps.filter.outputs.docs }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -35,6 +36,13 @@ jobs:
               - 'pnpm-workspace.yaml'
               - 'biome.json'
               - 'scripts/check-contrast.mjs'
+              - '.github/**'
+            docs:
+              - 'apps/docs/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+              - 'biome.json'
               - '.github/**'
             rust:
               - 'apps/desktop/src-tauri/**'
@@ -87,6 +95,24 @@ jobs:
           path: apps/desktop/node_modules/.vite
           key: vitest-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
       - run: pnpm --filter @circles/desktop exec vitest run --shard=${{ matrix.shard }}/3 --pool=threads
+
+  # The guide's website. Its check reports what its build does not: a missing title, text that the
+  # build drops without a word, and links that would be broken. The build is the final test.
+  docs:
+    needs: changes
+    if: needs.changes.outputs.docs == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @circles/docs check
+      - run: pnpm --filter @circles/docs test
+      - run: pnpm --filter @circles/docs build
 
   # One name for the whole frontend, so a branch rule asks for "frontend" and keeps working
   # however the work is split.

@@ -1,4 +1,7 @@
-# Projects
+---
+title: "Projects"
+description: "Add repositories to Circles, pick them from GitHub, and see how Circles learns a repository's habits."
+---
 
 A project is a git repository you added to Circles. Circles never changes the original folder: agents work in workspaces made from it.
 
@@ -32,14 +35,14 @@ Removing a project takes it out of Circles and keeps the repository folder, with
 Each project has its own page under Settings, with:
 
 - **Base branch:** new workspaces branch from it and pull requests target it. Circles reads `origin/HEAD`, then falls back to `main` and `master`.
-- **Scripts:** setup, run and archive, and whether the run script can start in several workspaces at once. See [Workspaces](workspaces.md).
+- **Scripts:** setup, run and archive, and whether the run script can start in several workspaces at once. See [Workspaces](./workspaces.md).
 - **Files to copy:** ignored files, such as `.env`, copied into every new workspace.
 - **Merge method:** squash, merge commit or rebase.
 - **Instructions:** text added to the prompts Circles sends in this repository. There is one for everything, and ones for reviews, pull requests, fixing errors, conflicts, branch names and commits.
 
 The **Branch naming rule** (Settings > Git, and in a project's shared or local settings file) sets how a project's branches are named, for example `{type}/{ticket}-{slug}`. `{type}` is feat, fix, chore and so on, `{slug}` is lowercase words joined by dashes, and `{ticket}` is an issue key such as `PROJ-123`. Left empty, it is `{type}/{slug}`. Composers follow it. **Learn** (below) can fill it in for a project.
 
-Changes are saved either to **Only me** (this Mac) or to **Shared**, which writes `.circles/settings.toml` in the repository so everyone who clones it gets the same settings. See [Settings](settings.md).
+Changes are saved either to **Only me** (this Mac) or to **Shared**, which writes `.circles/settings.toml` in the repository so everyone who clones it gets the same settings. See [Settings](./settings.md).
 
 ## How Circles follows a repository's habits
 

@@ -1,4 +1,7 @@
-# Pull requests
+---
+title: "Pull requests"
+description: "Browse, read and draft pull requests, and see their checks and merge state."
+---
 
 Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in. It never stores a token. Pushing uses your existing git credentials.
 
@@ -49,7 +52,7 @@ The pull request number shows as a chip (`#123`) that opens it on GitHub. **Fix 
 
 ## Creating one
 
-**Create PR** opens a dialog with a title and a description. **Draft with Claude** writes both from the commits and the changes, with no tools and no chat. It reads the repository's pull request template and convention files and follows them: it fills in the template and keeps its headings, and follows what the files say about titles. See [Projects](projects.md). Preview the description as Markdown, edit it, and create. Lines that credit a tool, such as "Generated with" or a `Co-Authored-By: Claude` trailer, are removed from the draft. Circles pushes the branch, creates the pull request with `gh pr create` and remembers its number.
+**Create PR** opens a dialog with a title and a description. **Draft with Claude** writes both from the commits and the changes, with no tools and no chat. It reads the repository's pull request template and convention files and follows them: it fills in the template and keeps its headings, and follows what the files say about titles. See [Projects](./projects.md). Preview the description as Markdown, edit it, and create. Lines that credit a tool, such as "Generated with" or a `Co-Authored-By: Claude` trailer, are removed from the draft. Circles pushes the branch, creates the pull request with `gh pr create` and remembers its number.
 
 **Commit with Claude** groups your uncommitted changes into atomic commits: each is one logical change with a short message, and every file goes in exactly one commit. It follows the commit messages the repository's files describe. Claude only proposes the grouping, and Circles runs the git commands. You can also commit everything at once with a message you write.
 

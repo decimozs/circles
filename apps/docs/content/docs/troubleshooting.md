@@ -1,4 +1,7 @@
-# Troubleshooting
+---
+title: "Troubleshooting"
+description: "What to do when macOS will not open Circles, or something does not work."
+---
 
 **macOS will not open Circles ("cannot be opened", "unidentified developer" or "is damaged")**
 The app is not signed by an Apple Developer account yet. The first time: right-click the app in

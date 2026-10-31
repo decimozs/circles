@@ -1,4 +1,7 @@
-# Keyboard shortcuts
+---
+title: "Keyboard shortcuts"
+description: "The keyboard shortcuts of Circles."
+---
 
 Press Cmd+/ in the app to see the list. Cmd means the Command key.
 
