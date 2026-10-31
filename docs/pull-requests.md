@@ -13,7 +13,15 @@ Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in
 - **Sort and Filters:** sort by activity, age or size. Filters choose open, merged, closed or all, hide or show drafts, and filter by checks and review.
 - **If a repository cannot be asked** (for example `gh` is not signed in for it), its name and the fix are shown above the list, and the other repositories still show.
 
-Choosing a pull request opens it on GitHub.
+Choosing a pull request opens it beside the list, in a tab. Open several and switch between them with their tabs. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open.
+
+### In a tab
+
+- **Header:** the repository and number, the title, who opened it, when it last changed, the base branch and the branch it comes from, how many files it changes and its size, and **Open on GitHub**.
+- **Summary:** who reviews (who approved, who asked for changes, who was asked and has not answered), labels, the description as formatted text, the checks (open the list to see each one and its link) and the comments. A branch that cannot be merged because of conflicts says so.
+- **Timeline:** the opening, every commit, review and comment, and the merge, newest first. The button at the top reverses the order.
+
+Pictures inside a description or comment are not shown. Circles only loads avatars from GitHub, so open the pull request on GitHub to see them.
 
 ## The next step
 
