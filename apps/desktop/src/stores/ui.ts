@@ -3,6 +3,8 @@ import { persist } from "zustand/middleware";
 
 export const SIDEBAR = { default: 320, min: 220, max: 480 } as const;
 export const RIGHT_PANEL = { default: 490, min: 280, max: 800 } as const;
+/** The pane beside the list of pull requests, which opens one of them. */
+export const PR_PANE = { default: 640, min: 360, max: 1100 } as const;
 /** `share` is the part of the window height the terminal opens at, until the user drags it. */
 export const DOCK = { share: 0.3, min: 120, max: 800, collapsed: 0 } as const;
 
@@ -12,6 +14,8 @@ type UiState = {
   zen: boolean;
   leftWidth: number;
   rightWidth: number;
+  /** Width of the pull request pane the user dragged it to. */
+  prPaneWidth: number;
   /** The terminal dock under the right panel. */
   dockOpen: boolean;
   /** The height the user dragged the terminal to. Unset means the default share of the window. */
@@ -52,6 +56,7 @@ type UiState = {
   selectDockTab: (workspaceId: string, terminalId: string) => void;
   setShortcutsOpen: (open: boolean) => void;
   setUsageOpen: (open: boolean) => void;
+  setPrPaneWidth: (width: number) => void;
   setRunOpen: (open: boolean) => void;
   setAddProjectOpen: (open: boolean, tab?: "local" | "github" | "quick") => void;
   openCreate: (projectId?: string | null) => void;
@@ -70,6 +75,7 @@ export const useUi = create<UiState>()(
       zen: false,
       leftWidth: SIDEBAR.default,
       rightWidth: RIGHT_PANEL.default,
+      prPaneWidth: PR_PANE.default,
       dockOpen: false,
       dockHeight: null,
       bigTerminal: false,
@@ -92,6 +98,7 @@ export const useUi = create<UiState>()(
       toggleZen: () => set((s) => ({ zen: !s.zen })),
       setLeftWidth: (leftWidth) => set({ leftWidth }),
       setRightWidth: (rightWidth) => set({ rightWidth }),
+      setPrPaneWidth: (prPaneWidth) => set({ prPaneWidth }),
       // A terminal that is hidden is not maximised, and a maximised one is open.
       setDockOpen: (dockOpen) =>
         set((s) => ({ dockOpen, bigTerminal: dockOpen ? s.bigTerminal : false })),
@@ -151,6 +158,7 @@ export const useUi = create<UiState>()(
         zen: s.zen,
         leftWidth: s.leftWidth,
         rightWidth: s.rightWidth,
+        prPaneWidth: s.prPaneWidth,
         dockOpen: s.dockOpen,
         dockHeight: s.dockHeight,
       }),

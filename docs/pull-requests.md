@@ -14,7 +14,7 @@ Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in
 - **Opens at once:** Circles keeps a copy of what GitHub said, so the list and an opened pull request show immediately with **Updated 4 min ago** and are fetched again in the background. They change on screen when the new answer arrives. The refresh button asks GitHub right away. A repository you have not looked at before waits for GitHub the first time.
 - **If a repository cannot be asked** (for example `gh` is not signed in for it), its name and the fix are shown above the list, and the other repositories still show.
 
-Choosing a pull request opens it beside the list, in a tab. The tabs are in the top bar. Open several and switch between them. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open.
+Choosing a pull request opens it beside the list, in a tab. The tabs are in the top bar. Open several and switch between them. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open, and the line between them can be dragged to make the pane wider or narrower, as with the sidebars. Circles remembers the width.
 
 ### In a tab
 
