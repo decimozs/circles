@@ -345,20 +345,17 @@ export function Sidebar() {
       </ScrollArea>
 
       <div className="flex h-11 shrink-0 items-center justify-between border-t border-sidebar-border px-3">
-        <span className="rounded border border-dashed border-border px-1.5 py-0.5 font-mono text-2xs text-muted-foreground">
-          v0.1.0
-        </span>
         <div className="flex items-center gap-0.5">
-          <IconButton label="Usage" onClick={() => setUsageOpen(true)}>
-            <ChartColumnIcon />
-          </IconButton>
-          <IconButton label="Keyboard shortcuts" hint="⌘/" onClick={() => setShortcutsOpen(true)}>
-            <CircleHelpIcon />
-          </IconButton>
           <IconButton label="Settings" onClick={() => navigate("/settings/general")}>
             <SettingsIcon />
           </IconButton>
+          <IconButton label="Usage" onClick={() => setUsageOpen(true)}>
+            <ChartColumnIcon />
+          </IconButton>
         </div>
+        <IconButton label="Keyboard shortcuts" hint="⌘/" onClick={() => setShortcutsOpen(true)}>
+          <CircleHelpIcon />
+        </IconButton>
       </div>
     </div>
   );
