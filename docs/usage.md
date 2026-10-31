@@ -8,7 +8,9 @@ Circles reads Claude Code's own history: the files it keeps under `~/.claude` an
 
 - It covers every Claude Code conversation on this Mac, not only chats started in Circles.
 - Only token counts, model names and dates are read. The text of your conversations is not stored or sent anywhere.
-- The first time takes a few seconds on a long history. After that only what has changed is read.
+- Circles keeps what it read in its own database, so the page opens at once with the last numbers and says how old they are (**Updated 3 min ago**). A few seconds after Circles starts, and whenever you open the page or press refresh, it reads only what is new in the background and the numbers update on their own.
+- The very first time reads the whole history, which can take several seconds on a long one. The page shows how far it is and the numbers so far.
+- Claude Code deletes old conversations after a while (30 days unless you changed it). Circles keeps the usage numbers it already read, so a 90 day range still covers 90 days. Only numbers, dates and model names are kept, never the text.
 
 ## Cost is an estimate
 
@@ -28,6 +30,7 @@ If Circles has no price for a model, its tokens are counted and its cost is left
 
 ## If it looks wrong
 
+- **Start again:** **Rebuild history**, at the bottom of the page, forgets everything kept and reads Claude Code's history again. Usage of conversations Claude Code has already deleted cannot come back, so it asks first.
 - **Nothing found:** the page lists the folders it looked in. Claude Code keeps no history until it has run once.
 - **Some lines skipped:** Claude Code's history format is not fixed, so a line Circles cannot read is skipped and counted at the bottom of the page.
 - **A price looks off:** prices are list prices at the time of writing and change. Treat the dollar figure as a guide.
