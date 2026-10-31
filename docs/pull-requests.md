@@ -13,7 +13,7 @@ Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in
 - **Sort and Filters:** sort by activity, age or size. Filters choose open, merged, closed or all, hide or show drafts, and filter by checks and review.
 - **If a repository cannot be asked** (for example `gh` is not signed in for it), its name and the fix are shown above the list, and the other repositories still show.
 
-Choosing a pull request opens it beside the list, in a tab. Open several and switch between them with their tabs. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open.
+Choosing a pull request opens it beside the list, in a tab. The tabs are in the top bar. Open several and switch between them. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open.
 
 ### In a tab
 
@@ -22,11 +22,6 @@ Choosing a pull request opens it beside the list, in a tab. Open several and swi
 - **Timeline:** the opening, every commit, review and comment, and the merge, newest first. The button at the top reverses the order.
 
 - **Code:** the files the pull request changes, each with its status (added, modified, deleted, renamed), its size and a **Viewed** box. Open a file to see it before and after in a diff editor, side by side or in one column. Two files can be open at once. Marking a file as viewed puts it away and counts it, and Circles remembers that until the branch gets a new commit. A binary file or one that is too large says so; open the pull request on GitHub to see it.
-
-### Merge and Check out
-
-- **Merge** asks first. Choose a merge commit, squash or rebase (a merge commit is offered first). A pull request that is a draft, is not open, or has conflicts cannot be merged from here. If checks are failing or unfinished, a reviewer asked for changes, or it is not approved, the dialog says so and asks you to tick **Merge anyway**. GitHub's own branch rules still apply and can refuse the merge. Circles never merges a pull request on its own.
-- **Check out** makes a workspace on the pull request's branch in the same project and opens it. The copy button beside it copies `gh pr checkout <number>` for use in a terminal.
 
 Circles reads the files from your own copy of the repository when it already has the commits, and from GitHub when not. It does not fetch into your repository.
 
