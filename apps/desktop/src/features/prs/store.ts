@@ -24,6 +24,9 @@ type PrsState = {
   openTab: (row: PrRow) => void;
   closeTab: (key: string) => void;
   selectTab: (key: string | null) => void;
+  /** Files marked as viewed, by pull request and tip of its branch, so a new push starts again. */
+  viewed: Record<string, string[]>;
+  setViewed: (pr: string, path: string, viewed: boolean) => void;
   /** The project whose pull requests show, `null` for all of them, and unset until the person
    * chooses, when the project they worked in last is used. */
   scope: string | null | undefined;
@@ -68,6 +71,12 @@ export const usePrs = create<PrsState>()(
           return { tabs, selected: s.selected === key ? next : s.selected };
         }),
       selectTab: (selected) => set({ selected }),
+      viewed: {},
+      setViewed: (pr, path, viewed) =>
+        set((s) => {
+          const now = (s.viewed[pr] ?? []).filter((p) => p !== path);
+          return { viewed: { ...s.viewed, [pr]: viewed ? [...now, path] : now } };
+        }),
       scope: undefined,
       which: "open",
       sort: "updated",
@@ -83,7 +92,13 @@ export const usePrs = create<PrsState>()(
       name: "circles-prs",
       version: 1,
       // What was typed in the box is not worth bringing back.
-      partialize: ({ scope, which, sort, filters }) => ({ scope, which, sort, filters }),
+      partialize: ({ scope, which, sort, filters, viewed }) => ({
+        scope,
+        which,
+        sort,
+        filters,
+        viewed,
+      }),
     },
   ),
 );

@@ -44,6 +44,8 @@ import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
 import type { PrDetail } from "@circles/bindings/PrDetail";
 import type { PrDraft } from "@circles/bindings/PrDraft";
 import type { PrDraftSeed } from "@circles/bindings/PrDraftSeed";
+import type { PrFileRequest } from "@circles/bindings/PrFileRequest";
+import type { PrFiles } from "@circles/bindings/PrFiles";
 import type { PrList } from "@circles/bindings/PrList";
 import type { Project } from "@circles/bindings/Project";
 import type { PrStatus } from "@circles/bindings/PrStatus";
@@ -241,6 +243,9 @@ export const ipc = {
   permissionReply: (sessionId: string, requestId: string, decision: PermissionDecision) =>
     call<null>("permission_reply", { sessionId, requestId, decision }),
   claudeRateLimit: () => call<RateLimit | null>("claude_rate_limit"),
+  prBrowseFiles: (projectId: string, repo: string, number: number) =>
+    call<PrFiles>("pr_browse_files", { projectId, repo, number }),
+  prBrowseFile: (request: PrFileRequest) => call<FilePair>("pr_browse_file", { request }),
   prBrowseDetail: (projectId: string, number: number) =>
     call<PrDetail>("pr_browse_detail", { projectId, number }),
   prBrowseList: (projectId: string | null, which: BrowseState) =>

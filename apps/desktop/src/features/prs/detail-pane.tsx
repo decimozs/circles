@@ -5,17 +5,19 @@ import { ExternalLinkIcon, GitPullRequestIcon, Loader2Icon, PlusIcon, XIcon } fr
 import { useState } from "react";
 import { formatAge } from "@/lib/time";
 import { usePrDetail } from "./api";
+import { CodeTab } from "./code-tab";
 import { Person } from "./person";
 import { StateIcon } from "./pr-row";
 import { type PrTab, usePrs } from "./store";
 import { SummaryTab } from "./summary-tab";
 import { TimelineTab } from "./timeline-tab";
 
-type View = "summary" | "timeline";
+type View = "summary" | "timeline" | "code";
 
 const VIEWS: { id: View; label: string }[] = [
   { id: "summary", label: "Summary" },
   { id: "timeline", label: "Timeline" },
+  { id: "code", label: "Code" },
 ];
 
 /** The pull requests opened beside the list, as tabs. The plus goes back to the list alone. */
@@ -143,7 +145,9 @@ function Detail({ tab }: { tab: PrTab }) {
         ))}
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto">
-        {view === "summary" ? <SummaryTab detail={detail} /> : <TimelineTab detail={detail} />}
+        {view === "summary" ? <SummaryTab detail={detail} /> : null}
+        {view === "timeline" ? <TimelineTab detail={detail} /> : null}
+        {view === "code" ? <CodeTab tab={tab} /> : null}
       </div>
     </div>
   );
