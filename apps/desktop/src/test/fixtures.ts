@@ -148,6 +148,7 @@ export function session(overrides: Partial<Session> = {}): Session {
     running: false,
     created_at: NOW,
     updated_at: NOW,
+    working_since: null,
     ...overrides,
   };
 }

@@ -21,6 +21,7 @@ function session(overrides: Partial<Session> = {}): Session {
     running: false,
     created_at: 1,
     updated_at: 1,
+    working_since: null,
     ...overrides,
   };
 }
