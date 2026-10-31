@@ -244,8 +244,8 @@ export const ipc = {
   permissionReply: (sessionId: string, requestId: string, decision: PermissionDecision) =>
     call<null>("permission_reply", { sessionId, requestId, decision }),
   claudeRateLimit: () => call<RateLimit | null>("claude_rate_limit"),
-  prBrowseFiles: (projectId: string, repo: string, number: number) =>
-    call<PrFiles>("pr_browse_files", { projectId, repo, number }),
+  prBrowseFiles: (projectId: string, repo: string, number: number, headSha: string | null) =>
+    call<PrFiles>("pr_browse_files", { projectId, repo, number, headSha }),
   prBrowseFile: (request: PrFileRequest) => call<FilePair>("pr_browse_file", { request }),
   prBrowseDetail: (projectId: string, number: number, refresh = false) =>
     call<PrDetail>("pr_browse_detail", { projectId, number, refresh }),

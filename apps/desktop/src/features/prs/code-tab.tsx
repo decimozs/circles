@@ -100,8 +100,8 @@ function FileDiff({
 }
 
 /** The files a pull request changes. Open one to see it in a diff editor. */
-export function CodeTab({ tab }: { tab: PrTab }) {
-  const query = usePrFiles(tab.projectId, tab.repo, tab.number);
+export function CodeTab({ tab, headSha }: { tab: PrTab; headSha: string }) {
+  const query = usePrFiles(tab.projectId, tab.repo, tab.number, headSha);
   const viewedByPr = usePrs((s) => s.viewed);
   const setViewed = usePrs((s) => s.setViewed);
   const [open, setOpen] = useState<string[]>([]);

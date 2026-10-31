@@ -103,7 +103,7 @@ function Detail({ tab }: { tab: PrTab }) {
       <div className="min-h-0 flex-1 overflow-y-auto">
         {view === "summary" ? <SummaryTab detail={detail} /> : null}
         {view === "timeline" ? <TimelineTab detail={detail} /> : null}
-        {view === "code" ? <CodeTab tab={tab} /> : null}
+        {view === "code" ? <CodeTab tab={tab} headSha={detail.head_sha} /> : null}
       </div>
     </div>
   );

@@ -79,7 +79,7 @@ const row = {
   title: "Bump deps",
   url: "https://github.com/acme/backend/pull/42",
   author: "ana",
-  author_avatar: "",
+  author_avatar: "https://github.com/ana.png?size=64",
   head_ref: "fix/x",
   base_ref: "develop",
   state: "open",
@@ -150,7 +150,13 @@ describe("the Code tab of a pull request", () => {
     expect(screen.getByText("Deleted")).toBeInTheDocument();
     expect(screen.getByText("+3")).toBeInTheDocument();
     const call = backend.calls.find((c) => c.command === "pr_browse_files");
-    expect(call?.args).toEqual({ projectId: "p1", repo: "acme/backend", number: 42 });
+    // The tip of the branch is passed, so what was kept for it can be used without asking GitHub.
+    expect(call?.args).toEqual({
+      projectId: "p1",
+      repo: "acme/backend",
+      number: 42,
+      headSha: HEAD,
+    });
     // Nothing is read until a file is opened.
     expect(backend.calls.some((c) => c.command === "pr_browse_file")).toBe(false);
   });

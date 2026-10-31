@@ -76,11 +76,12 @@ export function usePrDetail(projectId: string, number: number) {
 }
 
 /** The files a pull request changes. */
-export function usePrFiles(projectId: string, repo: string, number: number) {
+export function usePrFiles(projectId: string, repo: string, number: number, headSha: string) {
   return useQuery({
-    queryKey: prKeys.files(projectId, number),
-    queryFn: () => ipc.prBrowseFiles(projectId, repo, number),
-    staleTime: 30_000,
+    // A new tip of the branch is a new set of files.
+    queryKey: [...prKeys.files(projectId, number), headSha],
+    queryFn: () => ipc.prBrowseFiles(projectId, repo, number, headSha),
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 
