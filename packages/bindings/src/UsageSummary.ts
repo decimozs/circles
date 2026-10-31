@@ -19,4 +19,17 @@ folders: Array<string>,
 /**
  * Transcript lines that looked like usage but could not be read.
  */
-skipped_lines: number, };
+skipped_lines: number, 
+/**
+ * When what is shown was last brought up to date, in milliseconds. Unset before the first
+ * time.
+ */
+refreshed_at: number | null, 
+/**
+ * A refresh is running now.
+ */
+refreshing: boolean, 
+/**
+ * How far it is: files done of files to look at.
+ */
+files_done: number, files_total: number, };

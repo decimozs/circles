@@ -168,6 +168,14 @@ pub fn run() {
                 commands::settings::apply_login_item(app.handle(), wanted.start_at_login);
                 composer::triggers::Scheduler::spawn(app.handle().clone());
             }
+            // The usage history is brought up to date a little after the app is up, so the Usage
+            // page is current by the time it is opened.
+            let usage = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+                let state = usage.state::<AppState>();
+                commands::usage::refresh(&usage, &state).await;
+            });
             // Old checkpoints are cleared in the background, a little after the app is up.
             let cleaner = app.handle().clone();
             tauri::async_runtime::spawn(async move {
@@ -351,6 +359,8 @@ pub fn run() {
             commands::session::permission_reply,
             commands::session::claude_rate_limit,
             commands::usage::usage_summary,
+            commands::usage::usage_refresh,
+            commands::usage::usage_rebuild,
             commands::pr_browse::pr_browse_list,
             commands::pr_browse::pr_browse_detail,
             commands::pr_browse::pr_browse_files,

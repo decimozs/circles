@@ -6,6 +6,7 @@
 
 pub mod prices;
 pub mod scan;
+pub mod store;
 
 use std::collections::{BTreeMap, HashSet};
 
@@ -74,6 +75,15 @@ pub struct UsageSummary {
     pub folders: Vec<String>,
     /// Transcript lines that looked like usage but could not be read.
     pub skipped_lines: u32,
+    /// When what is shown was last brought up to date, in milliseconds. Unset before the first
+    /// time.
+    #[ts(type = "number | null")]
+    pub refreshed_at: Option<i64>,
+    /// A refresh is running now.
+    pub refreshing: bool,
+    /// How far it is: files done of files to look at.
+    pub files_done: u32,
+    pub files_total: u32,
 }
 
 /// Adds up `records` that are at or after `since` (unix seconds) and, when `sessions` is given,
@@ -242,25 +252,33 @@ mod tests {
         assert!(!s.by_model[0].priced);
     }
 
-    /// Reads the real transcripts on this Mac:
+    /// Reads the real transcripts on this Mac into a temporary database:
     /// `cargo test --lib -- --ignored --nocapture real_transcripts`
     #[test]
     #[ignore = "reads the real Claude Code transcripts of this Mac"]
     fn real_transcripts_add_up() {
-        let home = dirs::home_dir();
-        let dirs = scan::config_dirs(home.as_deref(), None);
+        let tmp = tempfile::tempdir().unwrap();
+        let db = std::sync::Arc::new(crate::db::Db::open(&tmp.path().join("t.db")).unwrap());
+        let store = store::UsageStore::new(db);
+        let dirs = scan::config_dirs(dirs::home_dir().as_deref(), None);
         let started = std::time::Instant::now();
-        let scanned = scan::scan(&dirs);
+        let stats = store.refresh(&dirs, &mut |_, _| {}).unwrap();
         let first = started.elapsed();
-        let summary = summarize(&scanned.records, None, None);
         let again = std::time::Instant::now();
-        let _ = scan::scan(&dirs);
+        let second = store.refresh(&dirs, &mut |_, _| {}).unwrap();
+        let second_took = again.elapsed();
+        let read = std::time::Instant::now();
+        let records = store.records(None, None).unwrap();
+        let summary = summarize(&records, None, None);
         println!(
-            "folders {dirs:?}\nfirst scan {first:?}, second {:?}\nmessages {} sessions {} skipped {}\ncost ${:.2} processed {} savings ${:.2}",
-            again.elapsed(),
+            "folders {dirs:?}\nfirst refresh {first:?} ({} files, {} messages), second {second_took:?} ({} read), reading it back {:?}\nmessages {} sessions {} skipped {}\ncost ${:.2} processed {} savings ${:.2}",
+            stats.files,
+            stats.messages,
+            second.read,
+            read.elapsed(),
             summary.messages,
             summary.sessions,
-            scanned.skipped,
+            store.skipped().unwrap(),
             summary.totals.cost_usd,
             summary.totals.processed,
             summary.totals.cache_savings_usd
@@ -272,5 +290,6 @@ mod tests {
             );
         }
         assert!(summary.messages > 0);
+        assert_eq!(second.messages, 0);
     }
 }

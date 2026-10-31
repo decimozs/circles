@@ -5,12 +5,9 @@
 //! contract, so a line that does not look as expected is counted and skipped, never fatal. Only
 //! numbers, ids and the model are kept: the text of a conversation is not stored.
 
-use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
-use std::sync::{Mutex, OnceLock};
-use std::time::SystemTime;
 
 use serde_json::Value;
 
@@ -31,13 +28,6 @@ pub struct Record {
     pub cache_read: u64,
     pub cache_write_5m: u64,
     pub cache_write_1h: u64,
-}
-
-/// Records read from one transcript, and how many lines were skipped.
-#[derive(Debug, Default, Clone)]
-pub struct Scanned {
-    pub records: Vec<Record>,
-    pub skipped: u32,
 }
 
 /// The folders that hold Claude Code's data: `CLAUDE_CONFIG_DIR` when it is set, and every
@@ -174,75 +164,40 @@ pub fn parse_timestamp(text: &str) -> Option<i64> {
     Some(days * 86_400 + h * 3_600 + min * 60 + s)
 }
 
-fn read_file(path: &Path) -> Scanned {
-    let mut out = Scanned::default();
-    let Ok(file) = File::open(path) else {
-        return out;
+/// What was read from a transcript from some point on.
+#[derive(Debug, Default, Clone)]
+pub struct Read {
+    pub records: Vec<Record>,
+    pub skipped: u32,
+    /// Where to start next time: the end of the last complete line. A line still being written has
+    /// no end yet, so it is left for the next read.
+    pub offset: u64,
+}
+
+/// Reads the complete lines of `path` from byte `from`.
+pub fn read_from(path: &Path, from: u64) -> std::io::Result<Read> {
+    let mut file = File::open(path)?;
+    file.seek(SeekFrom::Start(from))?;
+    let mut reader = BufReader::new(file);
+    let mut out = Read {
+        offset: from,
+        ..Read::default()
     };
-    for line in BufReader::new(file).lines() {
-        let Ok(line) = line else {
-            out.skipped += 1;
-            continue;
-        };
-        match parse_line(&line) {
+    let mut line = Vec::new();
+    loop {
+        line.clear();
+        let n = reader.read_until(b'\n', &mut line)?;
+        if n == 0 || line.last() != Some(&b'\n') {
+            break;
+        }
+        out.offset += n as u64;
+        match parse_line(&String::from_utf8_lossy(&line)) {
             Ok(Some(record)) => out.records.push(record),
             Ok(None) => {}
             Err(()) => out.skipped += 1,
         }
     }
-    out
-}
-
-type Cache = HashMap<PathBuf, (u64, SystemTime, Scanned)>;
-
-fn cache() -> &'static Mutex<Cache> {
-    static CACHE: OnceLock<Mutex<Cache>> = OnceLock::new();
-    CACHE.get_or_init(Default::default)
-}
-
-/// All records under the given folders. A transcript that has not changed since the last call is
-/// not read again, so opening the dialog twice costs one read of the files that grew.
-pub fn scan(dirs: &[PathBuf]) -> Scanned {
-    let mut all: HashMap<String, Record> = HashMap::new();
-    let mut skipped = 0;
-    let mut seen: Vec<PathBuf> = Vec::new();
-    for dir in dirs {
-        for path in transcripts(dir) {
-            let (len, modified) = std::fs::metadata(&path)
-                .map(|m| (m.len(), m.modified().unwrap_or(SystemTime::UNIX_EPOCH)))
-                .unwrap_or((0, SystemTime::UNIX_EPOCH));
-            let cached = cache()
-                .lock()
-                .ok()
-                .and_then(|c| c.get(&path).cloned())
-                .filter(|(l, m, _)| *l == len && *m == modified)
-                .map(|(_, _, scanned)| scanned);
-            let scanned = match cached {
-                Some(scanned) => scanned,
-                None => {
-                    let scanned = read_file(&path);
-                    if let Ok(mut c) = cache().lock() {
-                        c.insert(path.clone(), (len, modified, scanned.clone()));
-                    }
-                    scanned
-                }
-            };
-            skipped += scanned.skipped;
-            for record in scanned.records {
-                // The same message can be in more than one transcript when a conversation is
-                // resumed or branched. It is one answer, so it is counted once.
-                all.insert(record.id.clone(), record);
-            }
-            seen.push(path);
-        }
-    }
-    if let Ok(mut c) = cache().lock() {
-        c.retain(|path, _| seen.contains(path));
-    }
-    Scanned {
-        records: all.into_values().collect(),
-        skipped,
-    }
+    Ok(out)
 }
 
 #[cfg(test)]
@@ -315,29 +270,34 @@ mod tests {
     }
 
     #[test]
-    fn a_message_written_several_times_is_counted_once_with_its_last_copy() {
+    fn only_complete_lines_are_read_and_reading_goes_on_from_where_it_stopped() {
         let tmp = tempfile::tempdir().unwrap();
-        let dir = tmp.path().join("cfg");
-        let project = dir.join("projects").join("p");
-        std::fs::create_dir_all(&project).unwrap();
-        let early = assistant("m1", "2026-10-08T00:00:00Z", "")
-            .replace("\"output_tokens\":107", "\"output_tokens\":5");
-        let late = assistant("m1", "2026-10-08T00:00:01Z", "");
-        let other = assistant("m2", "2026-10-09T00:00:00Z", "");
+        let path = tmp.path().join("t.jsonl");
+        let first = assistant("m1", "2026-10-08T00:00:00Z", "");
+        let second = assistant("m2", "2026-10-08T00:00:01Z", "");
+        // The second line is still being written: it has no end yet.
+        std::fs::write(&path, format!("{first}\n{{\"type\":\"user\"}}\n{second}")).unwrap();
+        let one = read_from(&path, 0).unwrap();
+        assert_eq!(one.records.len(), 1);
+        assert_eq!(one.records[0].id, "m1");
+        assert_eq!(
+            one.offset as usize,
+            first.len() + 1 + "{\"type\":\"user\"}".len() + 1
+        );
+
+        // It is finished and a broken line follows. Reading from the offset gives only the new.
         std::fs::write(
-            project.join("a.jsonl"),
-            format!("{early}\n{{\"type\":\"user\"}}\n{late}\n{other}\nnot json but has \"usage\" and \"assistant\"\n"),
+            &path,
+            format!("{first}\n{{\"type\":\"user\"}}\n{second}\nnot json but has \"usage\" and \"assistant\"\n"),
         )
         .unwrap();
-        // A resumed conversation repeats an earlier message in another file.
-        std::fs::write(project.join("b.jsonl"), format!("{late}\n")).unwrap();
-
-        let scanned = scan(&[dir]);
-        assert_eq!(scanned.skipped, 1);
-        let mut records = scanned.records;
-        records.sort_by(|a, b| a.id.cmp(&b.id));
-        assert_eq!(records.len(), 2);
-        assert_eq!(records[0].output, 107);
+        let two = read_from(&path, one.offset).unwrap();
+        assert_eq!((two.records.len(), two.skipped), (1, 1));
+        assert_eq!(two.records[0].id, "m2");
+        assert_eq!(two.offset, std::fs::metadata(&path).unwrap().len());
+        // Nothing more to read.
+        let none = read_from(&path, two.offset).unwrap();
+        assert!(none.records.is_empty() && none.skipped == 0);
     }
 
     #[test]
