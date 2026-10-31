@@ -8,6 +8,7 @@
 - A workspace a Composer made but started no agent in showed a blank pane. It now says so and offers "Start a chat".
 
 ### Changed
+- The message box floats over the chat with a blurred glass look, and "Scroll to end" is a pill above it.
 - The repository is a monorepo: the app is in `apps/desktop`, shared code in `packages/ui`, `packages/bindings` and `packages/config`.
 - Release builds target macOS 11 or later.
 

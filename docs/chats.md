@@ -4,6 +4,8 @@ A chat is a conversation with one Claude Code agent inside a workspace. A worksp
 
 ## The message box
 
+The box floats over the bottom of the conversation. Messages scroll under it and show through, blurred, and the last message can always be scrolled clear of it. When you have scrolled up, **Scroll to end** appears above the box and takes you back to the newest message. If your Mac is set to reduce transparency, the box is solid.
+
 - **Send** with Enter or Cmd+Enter. Settings > General chooses which one sends and which one breaks the line.
 - **`@`** mentions a file. Circles searches the workspace as you type.
 - **`/`** starts a slash command: your project's and your own `.claude/commands`, your skills, and built-ins such as `/add-dir`.
