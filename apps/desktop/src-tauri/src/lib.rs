@@ -2,6 +2,7 @@
 // warnings are silenced until then. Remove this once the APIs are wired up.
 #![allow(dead_code)]
 
+mod cache;
 mod chat;
 mod checkpoint;
 mod commands;
@@ -182,6 +183,13 @@ pub fn run() {
                 tokio::time::sleep(std::time::Duration::from_secs(20)).await;
                 let state = cleaner.state::<AppState>();
                 let days = checkpoint::keep_days_from_settings(&state.paths.settings_file);
+                match cache::CacheStore::new(state.db.clone())
+                    .prune(cache::MAX_BYTES, cache::MAX_AGE_MS)
+                {
+                    Ok(0) => {}
+                    Ok(n) => tracing::info!(entries = n, "removed old cached answers"),
+                    Err(e) => tracing::warn!(error = %e, "cannot remove old cached answers"),
+                }
                 match state.checkpoints().await.prune_older_than(days).await {
                     Ok(0) => {}
                     Ok(n) => tracing::info!(checkpoints = n, "removed old checkpoints"),
@@ -361,6 +369,8 @@ pub fn run() {
             commands::usage::usage_summary,
             commands::usage::usage_refresh,
             commands::usage::usage_rebuild,
+            commands::cache::cache_info,
+            commands::cache::cache_clear,
             commands::pr_browse::pr_browse_list,
             commands::pr_browse::pr_browse_detail,
             commands::pr_browse::pr_browse_files,

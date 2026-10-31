@@ -8,7 +8,7 @@ use ts_rs::TS;
 use super::browse::{to_row, PrRow, RawRow, Whose, LIST_FIELDS};
 use super::{avatar_url, bad_output, Gh, GhError, DEFAULT_TIMEOUT};
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrReview {
     pub author: String,
@@ -19,7 +19,7 @@ pub struct PrReview {
     pub submitted_at: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrComment {
     pub author: String,
@@ -29,7 +29,7 @@ pub struct PrComment {
     pub url: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrCommit {
     pub sha: String,
@@ -40,7 +40,7 @@ pub struct PrCommit {
     pub authored_at: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrCheckRun {
     pub name: String,
@@ -51,7 +51,7 @@ pub struct PrCheckRun {
     pub url: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrDetail {
     pub row: PrRow,
@@ -69,6 +69,13 @@ pub struct PrDetail {
     pub comments: Vec<PrComment>,
     pub commits: Vec<PrCommit>,
     pub check_runs: Vec<PrCheckRun>,
+    /// When this was fetched from GitHub, in milliseconds.
+    #[serde(default)]
+    #[ts(type = "number | null")]
+    pub fetched_at: Option<i64>,
+    /// It is being fetched again in the background.
+    #[serde(default)]
+    pub refreshing: bool,
 }
 
 #[derive(Deserialize)]
@@ -250,6 +257,8 @@ pub fn parse_detail(json: &str, whose: &Whose) -> Result<PrDetail, GhError> {
             })
             .collect(),
         check_runs: extra.rollup.iter().filter_map(check_run).collect(),
+        fetched_at: None,
+        refreshing: false,
     })
 }
 
@@ -394,5 +403,13 @@ mod tests {
         );
         assert_eq!(d.row.number, 27);
         assert!(!d.commits.is_empty() && !d.body.is_empty());
+        // What GitHub really said survives being kept and read back.
+        let tmp = tempfile::tempdir().unwrap();
+        let db = std::sync::Arc::new(crate::db::Db::open(&tmp.path().join("t.db")).unwrap());
+        let cache = crate::cache::CacheStore::new(db);
+        cache.put("pr-detail:p:27", &d).unwrap();
+        let back = cache.get::<PrDetail>("pr-detail:p:27").unwrap().unwrap();
+        assert_eq!(back.value, d);
+        println!("kept {} bytes", cache.info().unwrap().1);
     }
 }

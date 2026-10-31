@@ -9,14 +9,14 @@ use tokio::sync::Semaphore;
 use tokio::task::JoinSet;
 use ts_rs::TS;
 
-use super::{avatar_url, bad_output, Gh, GhError, DEFAULT_TIMEOUT};
+use super::{avatar_url, bad_output, Gh, GhError, GhErrorKind, DEFAULT_TIMEOUT};
 
 /// How many repositories are asked at once.
 const AT_ONCE: usize = 4;
 
 pub(super) const LIST_FIELDS: &str = "number,title,author,url,createdAt,updatedAt,additions,deletions,changedFiles,isDraft,state,labels,reviewDecision,reviewRequests,statusCheckRollup,headRefName,baseRefName";
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrLabel {
     pub name: String,
@@ -25,7 +25,7 @@ pub struct PrLabel {
 }
 
 /// How the checks of a pull request stand.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrChecks {
     /// `passing`, `failing`, `pending` or `none`.
@@ -35,7 +35,7 @@ pub struct PrChecks {
 }
 
 /// One pull request in the list.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct PrRow {
     pub project_id: String,
@@ -80,7 +80,7 @@ pub enum BrowseState {
 }
 
 impl BrowseState {
-    fn flag(self) -> &'static str {
+    pub(crate) fn flag(self) -> &'static str {
         match self {
             BrowseState::Open => "open",
             BrowseState::Merged => "merged",
@@ -315,6 +315,8 @@ pub struct BrowseFailure {
     pub message: String,
     /// The command that fixes it, when there is one, such as `gh auth login`.
     pub fix: Option<String>,
+    /// GitHub said the repository is not there or not allowed, so nothing kept for it may stay.
+    pub gone: bool,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, TS)]
@@ -323,6 +325,11 @@ pub struct PrList {
     /// Most recently updated first.
     pub rows: Vec<PrRow>,
     pub failures: Vec<BrowseFailure>,
+    /// When the oldest part of this was fetched from GitHub, in milliseconds.
+    #[ts(type = "number | null")]
+    pub fetched_at: Option<i64>,
+    /// Something shown here is being fetched again in the background.
+    pub refreshing: bool,
 }
 
 /// The pull requests of several repositories, a few at a time. One that fails is reported and the
@@ -353,6 +360,10 @@ pub async fn browse_all(gh: &Gh, repos: Vec<RepoRef>, state: BrowseState, limit:
             Err(e) => list.failures.push(BrowseFailure {
                 project_id: repo.project_id,
                 project_name: repo.project_name,
+                gone: matches!(
+                    e.kind,
+                    GhErrorKind::NotFound | GhErrorKind::NotAuthenticated
+                ),
                 message: e.message,
                 fix: e.fix,
             }),

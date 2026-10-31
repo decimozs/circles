@@ -7,4 +7,8 @@ export type BrowseFailure = { project_id: string, project_name: string, message:
 /**
  * The command that fixes it, when there is one, such as `gh auth login`.
  */
-fix: string | null, };
+fix: string | null, 
+/**
+ * GitHub said the repository is not there or not allowed, so nothing kept for it may stay.
+ */
+gone: boolean, };

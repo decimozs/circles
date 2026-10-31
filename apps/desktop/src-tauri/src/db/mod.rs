@@ -67,6 +67,7 @@ const MIGRATIONS: &[(&str, &str)] = &[
         "0015_usage_history",
         include_str!("migrations/0015_usage_history.sql"),
     ),
+    ("0016_cache", include_str!("migrations/0016_cache.sql")),
 ];
 
 pub struct Db {

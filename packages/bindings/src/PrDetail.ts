@@ -18,4 +18,12 @@ mergeable: string,
  * GitHub's word for whether it can be merged now, lower case: `clean`, `blocked`, `behind`,
  * `dirty`, `unstable`, `draft`, `has_hooks` or `unknown`.
  */
-merge_state: string, head_sha: string, merged_by: string | null, merged_at: string | null, reviews: Array<PrReview>, comments: Array<PrComment>, commits: Array<PrCommit>, check_runs: Array<PrCheckRun>, };
+merge_state: string, head_sha: string, merged_by: string | null, merged_at: string | null, reviews: Array<PrReview>, comments: Array<PrComment>, commits: Array<PrCommit>, check_runs: Array<PrCheckRun>, 
+/**
+ * When this was fetched from GitHub, in milliseconds.
+ */
+fetched_at: number | null, 
+/**
+ * It is being fetched again in the background.
+ */
+refreshing: boolean, };

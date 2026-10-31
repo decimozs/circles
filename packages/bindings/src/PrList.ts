@@ -6,4 +6,12 @@ export type PrList = {
 /**
  * Most recently updated first.
  */
-rows: Array<PrRow>, failures: Array<BrowseFailure>, };
+rows: Array<PrRow>, failures: Array<BrowseFailure>, 
+/**
+ * When the oldest part of this was fetched from GitHub, in milliseconds.
+ */
+fetched_at: number | null, 
+/**
+ * Something shown here is being fetched again in the background.
+ */
+refreshing: boolean, };
