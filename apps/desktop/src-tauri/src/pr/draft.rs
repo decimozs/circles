@@ -100,7 +100,14 @@ pub async fn run_once_with(
         .spawn()
         .map_err(|e| AppError::Internal(format!("cannot start Claude Code: {e}")))?;
     if let Some(mut stdin) = child.stdin.take() {
-        stdin.write_all(prompt.as_bytes()).await?;
+        // A program that fails at once, such as one with a bad key, never reads the prompt, and
+        // writing to it then fails with a broken pipe. That is not what went wrong: what it said
+        // is, and it is read below.
+        if let Err(e) = stdin.write_all(prompt.as_bytes()).await {
+            if e.kind() != std::io::ErrorKind::BrokenPipe {
+                return Err(e.into());
+            }
+        }
         // Dropping closes the pipe, which tells Claude Code the prompt is complete.
     }
     let output = tokio::time::timeout(TIMEOUT, child.wait_with_output())
@@ -212,6 +219,22 @@ mod tests {
         let log = std::fs::read_to_string(tmp.path().join("log")).unwrap();
         assert!(log.contains("--tools"), "{log}");
         assert!(log.contains("--setting-sources project,local"), "{log}");
+    }
+
+    #[tokio::test]
+    async fn a_run_that_fails_before_reading_its_prompt_still_says_why() {
+        let tmp = tempfile::tempdir().unwrap();
+        // It exits at once without reading a byte, and the prompt is far larger than a pipe holds,
+        // so writing it cannot succeed: this used to report "Broken pipe" instead of the message.
+        let env = fake(
+            tmp.path(),
+            "#!/bin/sh\necho 'Invalid API key' >&2\nexit 1\n",
+        );
+        let big = "x".repeat(4 * 1024 * 1024);
+        for _ in 0..5 {
+            let err = run_once(&env, tmp.path(), &big, "haiku").await.unwrap_err();
+            assert!(err.to_string().contains("Invalid API key"), "{err}");
+        }
     }
 
     #[tokio::test]
