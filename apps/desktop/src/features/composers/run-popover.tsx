@@ -26,19 +26,14 @@ import { useChat } from "@/stores/chat";
 import { useUi } from "@/stores/ui";
 import { useApprovals, useFleet } from "./api";
 import {
-  ComposerPanel,
   ComposerSettingsDialog,
+  FleetTab,
   groupFleet,
   IntegrationsSection,
   RepositoriesSection,
-  type Tab,
 } from "./composer-panel";
 import { type LiveRow, liveRows, runningCount } from "./live";
-
-const MORE: { tab: Tab; label: string; hint: string }[] = [
-  { tab: "fleet", label: "Fleet graph", hint: "Every workspace and agent, drawn as a graph" },
-  { tab: "approvals", label: "Approvals", hint: "What waits for you, and what was answered" },
-];
+import { ApprovalsSection } from "./run-approvals";
 
 /** What a row is doing, as a picture and, for people who do not see it, in words. */
 function Marker({ row }: { row: LiveRow }) {
@@ -169,15 +164,14 @@ function FleetSection({ rows, now }: { rows: LiveRow[]; now: number }) {
 function RunContent({
   composer,
   runId,
-  onMore,
+  onGraph,
 }: {
   composer: Composer;
   runId?: string;
-  onMore: (tab: Tab) => void;
+  onGraph: () => void;
 }) {
   const machine = useMachineName();
   const fleet = useFleet(composer.id, runId);
-  const pending = (useApprovals({ composerId: composer.id, onlyPending: true }).data ?? []).length;
   const rows = liveRows(groupFleet(fleet.data ?? []));
   // The clock ticks only while something goes on.
   const now = useNow(runningCount(rows) > 0);
@@ -189,26 +183,18 @@ function RunContent({
         <span className="min-w-0 truncate text-foreground">{machine}</span>
       </p>
       <FleetSection rows={rows} now={now} />
-      <ul aria-label="More" className="flex flex-col border-t border-border py-1">
-        {MORE.map(({ tab, label, hint }) => (
-          <li key={tab}>
-            <button
-              type="button"
-              title={hint}
-              onClick={() => onMore(tab)}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted/50 focus-visible:bg-muted/50"
-            >
-              <span className="min-w-0 flex-1">{label}</span>
-              {tab === "approvals" && pending > 0 ? (
-                <span className="rounded-full bg-warning/20 px-1.5 text-xs text-warning">
-                  {pending}
-                </span>
-              ) : null}
-              <ChevronRightIcon className="size-3.5 text-muted-foreground" />
-            </button>
-          </li>
-        ))}
-      </ul>
+      <ApprovalsSection composer={composer} />
+      <div className="border-t border-border py-1">
+        <button
+          type="button"
+          title="Every workspace and agent of this run, drawn as a graph"
+          onClick={onGraph}
+          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted/50 focus-visible:bg-muted/50"
+        >
+          <span className="min-w-0 flex-1">Fleet graph</span>
+          <ChevronRightIcon className="size-3.5 text-muted-foreground" />
+        </button>
+      </div>
       <div className="flex flex-col gap-4 border-t border-border p-3">
         <RepositoriesSection composer={composer} />
         <IntegrationsSection composer={composer} />
@@ -238,7 +224,7 @@ export function RunPopover({ composer }: { composer: Composer }) {
   const pending = (useApprovals({ composerId: composer.id, onlyPending: true }).data ?? []).length;
   const fleet = useFleet(composer.id, runId);
   const going = runningCount(liveRows(groupFleet(fleet.data ?? [])));
-  const [dialog, setDialog] = useState<Tab | null>(null);
+  const [graph, setGraph] = useState(false);
 
   return (
     <>
@@ -291,22 +277,20 @@ export function RunPopover({ composer }: { composer: Composer }) {
           <RunContent
             composer={composer}
             runId={runId}
-            onMore={(tab) => {
+            onGraph={() => {
               setOpen(false);
-              setDialog(tab);
+              setGraph(true);
             }}
           />
         </PopoverContent>
       </Popover>
-      <Dialog open={dialog !== null} onOpenChange={(next) => (next ? null : setDialog(null))}>
+      <Dialog open={graph} onOpenChange={setGraph}>
         <DialogContent className="flex h-[80vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
-          <DialogTitle className="sr-only">{composer.name}: this run</DialogTitle>
+          <DialogTitle className="sr-only">{composer.name}: fleet</DialogTitle>
           <DialogDescription className="sr-only">
-            The fleet graph and the approvals of this run.
+            The workspaces and agents of this run, with their state and the graph.
           </DialogDescription>
-          {dialog ? (
-            <ComposerPanel key={dialog} composer={composer} runId={runId} initialTab={dialog} />
-          ) : null}
+          {graph ? <FleetTab composer={composer} runId={runId} /> : null}
         </DialogContent>
       </Dialog>
     </>

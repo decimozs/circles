@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useNow } from "@/hooks/use-now";
 import { useChat } from "@/stores/chat";
 import { backend } from "@/test/backend";
-import { composer, runView, session, workspace } from "@/test/fixtures";
+import { approval, composer, runView, session, workspace } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp } from "@/test/render";
 import { groupFleet } from "./composer-panel";
 import { liveRows, runningCount } from "./live";
@@ -178,7 +178,7 @@ describe("the Fleet section of the run panel", () => {
     const toggle = screen.getByRole("button", { name: "Run details" });
     expect(within(toggle).queryByRole("status", { name: /running/ })).not.toBeInTheDocument();
     expect(within(panel).queryByText(/Steps/)).not.toBeInTheDocument();
-    for (const name of ["Fleet graph", "Approvals"]) {
+    for (const name of ["Fleet graph"]) {
       expect(
         within(panel).getByRole("button", { name: new RegExp(`^${name}`) }),
       ).toBeInTheDocument();
@@ -188,5 +188,80 @@ describe("the Fleet section of the run panel", () => {
     expect(within(panel).getByRole("region", { name: "Repositories" })).toBeInTheDocument();
     expect(within(panel).getByRole("region", { name: "Integrations" })).toBeInTheDocument();
     expect(within(panel).getByRole("button", { name: "Composer settings" })).toBeInTheDocument();
+  });
+
+  it("still has no Details or Approvals link: the panel has what they held", async () => {
+    seed([]);
+    const { panel } = await openPanel();
+    await within(panel).findByRole("region", { name: "Fleet" });
+    expect(within(panel).queryByRole("button", { name: /^Approvals/ })).not.toBeInTheDocument();
+  });
+});
+
+describe("the Approvals section of the run panel", () => {
+  beforeEach(() => localStorage.clear());
+
+  const approvals = (args: Record<string, unknown>) =>
+    args.onlyPending
+      ? [approval()]
+      : [
+          approval(),
+          approval({ id: "a2", tool: "merge_pr", status: "allowed" }),
+          approval({ id: "a3", tool: "create_pr", status: "denied" }),
+        ];
+
+  it("has what waits for you to answer in place, and the answered ones folded away", async () => {
+    seed([]);
+    backend.on("composer_approvals", approvals).on("approval_answer", null);
+    const { panel, user } = await openPanel();
+    const section = within(await within(panel).findByRole("region", { name: "Approvals" }));
+    expect(section.getByRole("status")).toHaveTextContent("· 1 waiting");
+    // The same card as in the chat, so the answer is one click, not a trip to a dialog.
+    const card = section.getByRole("group", { name: "Approval for delete workspace" });
+    expect(section.queryByRole("list", { name: "Answered" })).not.toBeInTheDocument();
+    await user.click(section.getByRole("button", { name: /Answered 2/ }));
+    const answered = within(section.getByRole("list", { name: "Answered" }));
+    expect(answered.getByText("merge pr")).toBeInTheDocument();
+    expect(answered.getByText("allowed")).toBeInTheDocument();
+    expect(answered.getByText("denied")).toBeInTheDocument();
+    await user.click(within(card).getByRole("button", { name: "Allow" }));
+    await waitFor(() =>
+      expect(backend.callsTo("approval_answer")[0]).toMatchObject({
+        id: "a1",
+        allow: true,
+        forRun: false,
+      }),
+    );
+  });
+
+  it("says nothing waits when everything was answered", async () => {
+    seed([]);
+    backend.on("composer_approvals", (args: Record<string, unknown>) =>
+      args.onlyPending ? [] : [approval({ id: "a2", status: "allowed" })],
+    );
+    const { panel } = await openPanel();
+    const section = within(await within(panel).findByRole("region", { name: "Approvals" }));
+    expect(section.getByRole("status")).toHaveTextContent("· nothing waiting");
+    expect(section.queryByRole("group", { name: /Approval for/ })).not.toBeInTheDocument();
+  });
+
+  it("is not there for a run that never asked, and the badge counts what waits", async () => {
+    seed([]);
+    backend.on("composer_approvals", []);
+    const { panel } = await openPanel();
+    await within(panel).findByRole("region", { name: "Fleet" });
+    expect(within(panel).queryByRole("region", { name: "Approvals" })).not.toBeInTheDocument();
+  });
+});
+
+describe("the badge on the button", () => {
+  it("counts what waits for you, with the panel closed", async () => {
+    seed([]);
+    backend.on("composer_approvals", (args: Record<string, unknown>) =>
+      args.onlyPending ? [approval()] : [approval()],
+    );
+    renderApp("/composer/c1/run/r1");
+    const toggle = await screen.findByRole("button", { name: "Run details" });
+    await waitFor(() => expect(toggle).toHaveTextContent("1"));
   });
 });

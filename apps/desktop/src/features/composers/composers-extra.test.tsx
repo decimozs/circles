@@ -175,15 +175,12 @@ describe("accessibility of the Composer screens", () => {
     });
     const app = renderApp("/composer/c1/run/r1");
     await screen.findByLabelText("Message");
-    // The popover itself, then each of the four dialogs the pane's tabs became.
+    // The panel itself, with an approval waiting in it, then the fleet graph's dialog.
     await app.user.click(await screen.findByRole("button", { name: "Run details" }));
+    await screen.findAllByRole("group", { name: /Approval for/ });
     expect(await violations()).toEqual([]);
     await openRunTab(app.user, "Fleet");
     expect(await violations()).toEqual([]);
-    for (const tab of ["Approvals"]) {
-      await app.user.click(await screen.findByRole("tab", { name: new RegExp(tab) }));
-      expect(await violations()).toEqual([]);
-    }
   });
 
   it("the Composer dialog has none", async () => {

@@ -37,14 +37,13 @@ import {
   MODES,
   modeAutonomy,
   TIER_LABEL,
-  useApprovals,
   useDeleteComposer,
   useFleet,
   useStopChild,
   useToolCatalog,
   useUpdateComposer,
 } from "./api";
-import { ApprovalCard, toolTitle } from "./approval-card";
+import { toolTitle } from "./approval-card";
 import {
   InstructionsField,
   IntegrationsField,
@@ -53,13 +52,6 @@ import {
 } from "./composer-fields";
 import { FleetGraph } from "./fleet-graph";
 import { TriggersEditor } from "./triggers-editor";
-
-export type Tab = "fleet" | "approvals";
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: "fleet", label: "Fleet" },
-  { id: "approvals", label: "Approvals" },
-];
 
 function Empty({ children }: { children: React.ReactNode }) {
   return <p className="px-4 py-6 text-center text-xs text-muted-foreground">{children}</p>;
@@ -207,7 +199,7 @@ export function FleetCard({
 }
 
 /** The workspaces and agents this run started, as a tree under the Composer. */
-function FleetTab({ composer, runId }: { composer: Composer; runId?: string }) {
+export function FleetTab({ composer, runId }: { composer: Composer; runId?: string }) {
   const fleet = useFleet(composer.id, runId);
   const navigate = useNavigate();
   const [graph, setGraph] = useState(false);
@@ -283,42 +275,6 @@ function FleetTab({ composer, runId }: { composer: Composer; runId?: string }) {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
-}
-
-function ApprovalsTab({ composer }: { composer: Composer }) {
-  const all = useApprovals({ composerId: composer.id }).data ?? [];
-  const pending = all.filter((a) => a.status === "pending");
-  const done = all.filter((a) => a.status !== "pending").slice(0, 20);
-  if (all.length === 0) return <Empty>Nothing has asked for approval yet.</Empty>;
-  return (
-    <div className="flex flex-col gap-3 p-3">
-      {pending.map((a) => (
-        <ApprovalCard key={a.id} approval={a} />
-      ))}
-      {pending.length === 0 ? (
-        <p className="text-xs text-muted-foreground">Nothing is waiting for you.</p>
-      ) : null}
-      {done.length > 0 ? (
-        <ul aria-label="Answered" className="flex flex-col gap-1 text-xs">
-          {done.map((a) => (
-            <li key={a.id} className="flex items-center justify-between gap-2">
-              <span className="truncate">{toolTitle(a.tool)}</span>
-              <span
-                className={cn(
-                  "shrink-0 rounded px-1.5 py-0.5",
-                  a.status === "allowed"
-                    ? "bg-success/15 text-success"
-                    : "bg-muted text-muted-foreground",
-                )}
-              >
-                {a.status}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
     </div>
   );
 }
@@ -795,50 +751,3 @@ export function ComposerSettingsDialog({
 }
 
 /** The facts about a Composer: its name, the repositories it handles and its integrations. */
-/** The right pane of a Composer: what it started, what waits for you, what it did, and its setup. */
-export function ComposerPanel({
-  composer,
-  runId,
-  initialTab = "fleet",
-}: {
-  composer: Composer;
-  runId?: string;
-  /** The tab it opens on. */
-  initialTab?: Tab;
-}) {
-  const [tab, setTab] = useState<Tab>(initialTab);
-  const pending = (useApprovals({ composerId: composer.id, onlyPending: true }).data ?? []).length;
-  return (
-    <div className="flex h-full min-h-0 flex-col bg-background">
-      <div
-        role="tablist"
-        aria-label="Composer"
-        className="pointer-events-auto relative z-30 flex h-10 shrink-0 items-center gap-1 overflow-x-auto border-b border-border px-3 [scrollbar-width:none]"
-      >
-        {TABS.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={tab === id}
-            onClick={() => setTab(id)}
-            className={
-              tab === id
-                ? "shrink-0 rounded-md bg-muted px-2 py-1 text-xs whitespace-nowrap text-foreground"
-                : "shrink-0 rounded-md px-2 py-1 text-xs whitespace-nowrap text-muted-foreground hover:text-foreground"
-            }
-          >
-            {label}
-            {id === "approvals" && pending > 0 ? (
-              <span className="ml-1 rounded-full bg-warning/20 px-1.5 text-warning">{pending}</span>
-            ) : null}
-          </button>
-        ))}
-      </div>
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {tab === "fleet" ? <FleetTab composer={composer} runId={runId} /> : null}
-        {tab === "approvals" ? <ApprovalsTab composer={composer} /> : null}
-      </div>
-    </div>
-  );
-}

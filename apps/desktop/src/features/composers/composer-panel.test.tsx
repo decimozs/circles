@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { useChat } from "@/stores/chat";
 import { backend } from "@/test/backend";
 import {
-  approval,
   composer,
   project,
   prStatus,
@@ -26,7 +25,7 @@ function seed(extra?: () => void) {
   extra?.();
 }
 
-const open = async (tab: string) => {
+const open = async (tab: "Fleet" | "Approvals" | "Details") => {
   const app = renderApp("/composer/c1/run/r1");
   await openRunTab(app.user, tab);
   return app;
@@ -217,50 +216,6 @@ describe("Fleet", () => {
     seed();
     await open("Fleet");
     expect(await screen.findByText(/has not started any workspace or agent/)).toBeInTheDocument();
-  });
-});
-
-describe("Approvals tab", () => {
-  it("has the waiting ones to answer and the answered ones listed, with a count on the tab", async () => {
-    seed(() => {
-      backend
-        .on("composer_approvals", (args: Record<string, unknown>) =>
-          args.onlyPending
-            ? [approval()]
-            : [
-                approval(),
-                approval({ id: "a2", tool: "merge_pr", status: "allowed" }),
-                approval({ id: "a3", tool: "create_pr", status: "denied" }),
-              ],
-        )
-        .on("approval_answer", null);
-    });
-    const app = renderApp("/composer/c1/run/r1");
-    // The button at the top and the entry in the popover both count what waits.
-    const toggle = await screen.findByRole("button", { name: "Run details" });
-    await waitFor(() => expect(toggle).toHaveTextContent("1"));
-    await openRunTab(app.user, "Approvals");
-    // The chat shows the waiting approval too, above its input. This one is in the dialog.
-    const cards = await screen.findAllByRole("group", { name: "Approval for delete workspace" });
-    const card = cards[cards.length - 1] as HTMLElement;
-    const answered = screen.getByRole("list", { name: "Answered" });
-    expect(within(answered).getByText("merge pr")).toBeInTheDocument();
-    expect(within(answered).getByText("allowed")).toBeInTheDocument();
-    expect(within(answered).getByText("denied")).toBeInTheDocument();
-    await app.user.click(within(card).getByRole("button", { name: "Allow" }));
-    await waitFor(() =>
-      expect(backend.callsTo("approval_answer")[0]).toMatchObject({
-        id: "a1",
-        allow: true,
-        forRun: false,
-      }),
-    );
-  });
-
-  it("says when nothing ever asked", async () => {
-    seed();
-    await open("Approvals");
-    expect(await screen.findByText(/Nothing has asked for approval yet/)).toBeInTheDocument();
   });
 });
 
