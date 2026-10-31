@@ -2,7 +2,7 @@
 
 A **Pull requests** item in the sidebar, below Composer, opens a page that lists the pull requests
 of the repositories you work in. Opening one shows it in a right pane with Summary, Timeline and
-Code, like the T3 Code screens this is modelled on. Status: plan, nothing built.
+Code, like the T3 Code screens this is modelled on. Status: built in phases 1 to 7. Not built: the commit filter in the Code tab, read-only review threads in the diff, writing comments and reviews (phase 9). Open tabs live in the page, not in the route, so there is one route, `/pull-requests`. Phases 3 and 4 were built together, as were 5 and 6.
 
 ## What it is
 
