@@ -124,6 +124,20 @@ describe("chat messages", () => {
     expect(within(mode).queryByRole("option", { name: "Bypass" })).not.toBeInTheDocument();
   });
 
+  it("keeps the highlight of a work block and of a tool call to the width of its words", async () => {
+    await pane(
+      open([
+        msg("user", "text", { text: "go" }),
+        msg("assistant", "tool_call", { id: "t", name: "Read", input: { file_path: "/x/a.ts" } }),
+        msg("user", "tool_result", { tool_use_id: "t", content: "ok" }),
+        msg("assistant", "text", { text: "Done." }),
+      ]),
+    );
+    const block = await screen.findByRole("button", { name: /tool call/ });
+    expect(block).toHaveClass("w-fit");
+    expect(block).not.toHaveClass("w-full");
+  });
+
   it("renders unknown tools generically", async () => {
     const { app } = await pane(
       open([
