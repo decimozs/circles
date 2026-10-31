@@ -1,12 +1,15 @@
 import { Dialog, DialogContent, DialogTitle } from "@circles/ui/components/dialog";
 import { cn } from "@circles/ui/utils";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon, RefreshCwIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { IconButton } from "@/components/shell/icon-button";
 import { describeError } from "@/features/chat/use-session";
+import { ipc } from "@/lib/ipc";
+import { formatAge } from "@/lib/time";
 import { useUi } from "@/stores/ui";
-import { useUsage } from "./api";
+import { useUsage, useUsageSync } from "./api";
 import { folderName, RANGES, type RangeId } from "./format";
 import { LimitsView } from "./limits-view";
 import { StatsView } from "./stats-view";
@@ -65,18 +68,57 @@ function Segmented<T extends string>({
   );
 }
 
-/** Tokens and what they would cost, from Claude Code's own history on this Mac. */
+/** When the numbers were last brought up to date, and what the background read is doing. */
+function StatusLine({
+  refreshedAt,
+  refreshing,
+  done,
+  total,
+}: {
+  refreshedAt: number | null;
+  refreshing: boolean;
+  done: number;
+  total: number;
+}) {
+  const age =
+    refreshedAt === null
+      ? "Not read yet"
+      : Date.now() - refreshedAt < 60_000
+        ? "Updated just now"
+        : `Updated ${formatAge(refreshedAt)} ago`;
+  return (
+    <span role="status" className="flex items-center gap-1.5">
+      {refreshing ? <Loader2Icon className="size-3 animate-spin" /> : null}
+      {age}
+      {refreshing ? (
+        <span>{total > 0 ? ` · reading ${done} of ${total} files` : " · reading…"}</span>
+      ) : null}
+    </span>
+  );
+}
+
+/** Tokens and what they would cost, from Claude Code's own history on this Mac. What was read is
+ * kept, so this opens at once and brings itself up to date in the background. */
 export function UsageDialog() {
   const open = useUi((s) => s.usageOpen);
   const setOpen = useUi((s) => s.setUsageOpen);
-  const queryClient = useQueryClient();
   const [range, setRange] = useState<RangeId>(savedRange);
   const [view, setView] = useState<View>("cost");
   const [folder, setFolder] = useState<string | null>(null);
+  const [confirmRebuild, setConfirmRebuild] = useState(false);
   const usage = useUsage(range, folder, open);
-  // The folders to choose from come from the unfiltered answer.
-  const all = useUsage(range, null, open);
-  const folders = all.data?.folders ?? [];
+  useUsageSync();
+  // Opening the dialog starts a read of what is new. It shows what is kept in the meantime.
+  useEffect(() => {
+    if (open) ipc.usageRefresh().catch(() => {});
+  }, [open]);
+  const rebuild = useMutation({
+    mutationFn: ipc.usageRebuild,
+    onSuccess: () => setConfirmRebuild(false),
+    onError: (e) => toast.error(describeError(e)),
+  });
+  const data = usage.data;
+  const folders = data?.folders ?? [];
 
   const pickRange = (id: RangeId) => {
     setRange(id);
@@ -88,7 +130,13 @@ export function UsageDialog() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) setConfirmRebuild(false);
+      }}
+    >
       <DialogContent
         showCloseButton
         className="flex max-h-[88vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-5xl"
@@ -118,11 +166,8 @@ export function UsageDialog() {
               <Segmented label="Range" options={RANGES} value={range} onChange={pickRange} />
             ) : null}
             <Segmented label="View" options={VIEWS} value={view} onChange={setView} />
-            <IconButton
-              label="Refresh"
-              onClick={() => queryClient.invalidateQueries({ queryKey: ["usage"] })}
-            >
-              <RefreshCwIcon className={cn(usage.isFetching && "animate-spin")} />
+            <IconButton label="Refresh" onClick={() => ipc.usageRefresh().catch(() => {})}>
+              <RefreshCwIcon className={cn(data?.refreshing && "animate-spin")} />
             </IconButton>
           </div>
         </header>
@@ -136,25 +181,78 @@ export function UsageDialog() {
               className="flex items-center gap-2 px-6 py-8 text-sm text-muted-foreground"
             >
               <Loader2Icon className="size-4 animate-spin" />
-              Reading Claude Code's history. The first time takes a few seconds.
+              Loading…
             </p>
           ) : usage.isError ? (
             <p role="alert" className="px-6 py-8 text-sm text-destructive">
               {describeError(usage.error)}
             </p>
-          ) : usage.data.messages === 0 ? (
+          ) : data && data.messages === 0 && (data.refreshing || data.refreshed_at === null) ? (
+            <p
+              role="status"
+              className="flex items-center gap-2 px-6 py-8 text-sm text-muted-foreground"
+            >
+              <Loader2Icon className="size-4 animate-spin" />
+              Reading Claude Code's history for the first time
+              {data.files_total > 0 ? `: ${data.files_done} of ${data.files_total} files` : "…"}
+            </p>
+          ) : data && data.messages === 0 ? (
             <div className="flex flex-col gap-1 px-6 py-8 text-sm">
               <p>No Claude Code usage found in this range.</p>
               <p className="text-muted-foreground">
-                {usage.data.folders.length > 0
-                  ? `Looked in ${usage.data.folders.map(folderName).join(", ")}.`
+                {data.folders.length > 0
+                  ? `Looked in ${data.folders.map(folderName).join(", ")}.`
                   : "No Claude folder with history was found on this Mac."}
               </p>
             </div>
-          ) : (
-            <StatsView metric={view} range={range} summary={usage.data} />
-          )}
+          ) : data ? (
+            <StatsView metric={view} range={range} summary={data} />
+          ) : null}
         </div>
+
+        {view !== "limits" && data ? (
+          <footer className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-border px-6 py-2 text-xs text-muted-foreground">
+            <StatusLine
+              refreshedAt={data.refreshed_at}
+              refreshing={data.refreshing}
+              done={data.files_done}
+              total={data.files_total}
+            />
+            <span className="ml-auto flex items-center gap-2">
+              {confirmRebuild ? (
+                <>
+                  <span>
+                    Forget everything kept and read again? Usage of conversations Claude Code has
+                    deleted cannot come back.
+                  </span>
+                  <button
+                    type="button"
+                    className="text-destructive hover:underline"
+                    disabled={rebuild.isPending}
+                    onClick={() => rebuild.mutate()}
+                  >
+                    Rebuild
+                  </button>
+                  <button
+                    type="button"
+                    className="hover:text-foreground"
+                    onClick={() => setConfirmRebuild(false)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="hover:text-foreground"
+                  onClick={() => setConfirmRebuild(true)}
+                >
+                  Rebuild history
+                </button>
+              )}
+            </span>
+          </footer>
+        ) : null}
       </DialogContent>
     </Dialog>
   );

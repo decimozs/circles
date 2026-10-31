@@ -250,6 +250,8 @@ export const ipc = {
     call<PrDetail>("pr_browse_detail", { projectId, number }),
   prBrowseList: (projectId: string | null, which: BrowseState) =>
     call<PrList>("pr_browse_list", { projectId, which }),
+  usageRefresh: () => call<null>("usage_refresh"),
+  usageRebuild: () => call<null>("usage_rebuild"),
   usageSummary: (sinceSecs: number | null, folder: string | null) =>
     call<UsageSummary>("usage_summary", { sinceSecs, folder }),
 

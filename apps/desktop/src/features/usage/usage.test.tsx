@@ -1,7 +1,7 @@
 import type { UsageSummary } from "@circles/bindings/UsageSummary";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { backend } from "@/test/backend";
+import { backend, emitBackendEvent } from "@/test/backend";
 import { defaultBackend, renderApp } from "@/test/render";
 import {
   compact,
@@ -48,6 +48,10 @@ function summary(over: Partial<UsageSummary> = {}): UsageSummary {
     ],
     folders: ["/Users/me/.claude", "/Users/me/.claude-work"],
     skipped_lines: 0,
+    refreshed_at: Date.now() - 3 * 60_000,
+    refreshing: false,
+    files_done: 0,
+    files_total: 0,
     ...over,
   };
 }
@@ -61,6 +65,7 @@ async function openUsage() {
 
 beforeEach(() => {
   defaultBackend();
+  backend.on("usage_refresh", null).on("usage_rebuild", null);
   localStorage.clear();
 });
 
@@ -201,5 +206,98 @@ describe("the Usage dialog", () => {
     backend.fail("usage_summary", { code: "internal", message: "usage scan stopped" });
     const { dialog } = await openUsage();
     expect(await within(dialog).findByRole("alert")).toHaveTextContent("usage scan stopped");
+  });
+
+  it("opens with what is kept, says how old it is, and asks for a refresh in the background", async () => {
+    backend.on("usage_summary", summary());
+    const { dialog } = await openUsage();
+    const page = within(dialog);
+    // The numbers are there at once, with their age; nothing says it is loading.
+    expect(await page.findByText("$461.90", { selector: "p" })).toBeInTheDocument();
+    expect(page.getByText("Updated 3min ago")).toBeInTheDocument();
+    expect(page.queryByText(/Reading/)).not.toBeInTheDocument();
+    expect(backend.calls.some((c) => c.command === "usage_refresh")).toBe(true);
+  });
+
+  it("shows the kept numbers while a refresh runs, and reads again when it adds something", async () => {
+    let calls = 0;
+    backend.on("usage_summary", () => {
+      calls += 1;
+      return calls === 1
+        ? summary({ refreshing: true, files_done: 4, files_total: 9 })
+        : summary({
+            refreshing: false,
+            totals: { ...summary().totals, cost_usd: 470.5 },
+          });
+    });
+    const { dialog } = await openUsage();
+    const page = within(dialog);
+    expect(await page.findByText("$461.90", { selector: "p" })).toBeInTheDocument();
+    expect(page.getByText(/reading 4 of 9 files/)).toBeInTheDocument();
+    emitBackendEvent("usage:changed", null);
+    expect(await page.findByText("$470.50", { selector: "p" })).toBeInTheDocument();
+    expect(page.queryByText(/reading 4 of 9 files/)).not.toBeInTheDocument();
+  });
+
+  it("keeps the numbers on screen while another range is read", async () => {
+    let release: (value: UsageSummary) => void = () => {};
+    backend.on("usage_summary", (args: Record<string, unknown>) => {
+      // The first answer is at once; the one for the range chosen later waits.
+      if (backend.calls.filter((c) => c.command === "usage_summary").length <= 1) return summary();
+      void args;
+      return new Promise<UsageSummary>((resolve) => {
+        release = resolve;
+      });
+    });
+    const { dialog, user } = await openUsage();
+    const page = within(dialog);
+    await page.findByText("$461.90", { selector: "p" });
+    await user.click(page.getByRole("button", { name: "7 days" }));
+    await waitFor(() =>
+      expect(backend.calls.filter((c) => c.command === "usage_summary").length).toBeGreaterThan(1),
+    );
+    // No loading screen replaces what was shown.
+    expect(page.getByText("$461.90", { selector: "p" })).toBeInTheDocument();
+    expect(page.queryByText("Loading…")).not.toBeInTheDocument();
+    release(summary({ totals: { ...summary().totals, cost_usd: 12.34 } }));
+    expect(await page.findByText("$12.34", { selector: "p" })).toBeInTheDocument();
+  });
+
+  it("shows progress, not an empty page, the first time the history is read", async () => {
+    backend.on(
+      "usage_summary",
+      summary({
+        messages: 0,
+        sessions: 0,
+        refreshed_at: null,
+        refreshing: true,
+        files_done: 312,
+        files_total: 971,
+      }),
+    );
+    const { dialog } = await openUsage();
+    expect(
+      await within(dialog).findByText(
+        /Reading Claude Code's history for the first time: 312 of 971 files/,
+      ),
+    ).toBeInTheDocument();
+    expect(within(dialog).queryByText(/No Claude Code usage found/)).not.toBeInTheDocument();
+  });
+
+  it("asks before it forgets what was kept, and rebuilds when told to", async () => {
+    backend.on("usage_summary", summary());
+    const { dialog, user } = await openUsage();
+    const page = within(dialog);
+    await page.findByText("$461.90", { selector: "p" });
+    await user.click(page.getByRole("button", { name: "Rebuild history" }));
+    expect(page.getByText(/cannot come back/)).toBeInTheDocument();
+    expect(backend.calls.some((c) => c.command === "usage_rebuild")).toBe(false);
+    await user.click(page.getByRole("button", { name: "Cancel" }));
+    expect(page.getByRole("button", { name: "Rebuild history" })).toBeInTheDocument();
+    await user.click(page.getByRole("button", { name: "Rebuild history" }));
+    await user.click(page.getByRole("button", { name: "Rebuild" }));
+    await waitFor(() =>
+      expect(backend.calls.some((c) => c.command === "usage_rebuild")).toBe(true),
+    );
   });
 });
