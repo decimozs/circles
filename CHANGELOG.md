@@ -13,6 +13,7 @@
 - Release builds target macOS 11 or later.
 
 ### Added
+- Usage: the button at the bottom of the sidebar, where Add project was, shows tokens and estimated cost of Claude Code over 24 hours to 90 days, by model and by day, and your plan limits. Add project is still in Create, the command palette and Cmd+Option+A.
 - Branch naming rule per project (Settings, Git, `branch_pattern`, for example `{ticket}-{slug}`): Composers name branches by it, and `list_projects` shows it to them.
 - Project skills: agents in every workspace are told about `.claude/skills`, `.agents/skills`, `.agent/skills`, `AGENTS.md` and `CLAUDE.md`, and a Composer no longer reads your user level instructions.
 - Cards from agents: a Composer (and, if switched on, any chat) can show a small checklist, form or plan in the chat and read your answer.
