@@ -138,6 +138,24 @@ pub async fn project_learn_conventions(
 
 /// Repositories of the signed in GitHub account and its organizations, for the project picker.
 #[tauri::command]
-pub async fn github_list_repos(state: State<'_, AppState>) -> IpcResult<GhRepos> {
-    state.project_service().await.github_repos().await
+pub async fn github_list_repos(
+    app: tauri::AppHandle,
+    state: State<'_, AppState>,
+) -> IpcResult<GhRepos> {
+    // Listing takes a second or two and changes rarely, so what was kept is shown at once and
+    // asked again in the background when it is ten minutes old.
+    let service = state.project_service().await;
+    let cache = crate::cache::CacheStore::new(state.db.clone());
+    crate::cache::swr::serve(
+        &app,
+        &cache,
+        crate::commands::account::REPOS_KEY,
+        10 * 60 * 1000,
+        "github-repos",
+        move || {
+            let service = service.clone();
+            async move { service.github_repos().await }
+        },
+    )
+    .await
 }

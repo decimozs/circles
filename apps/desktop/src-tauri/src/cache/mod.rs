@@ -2,6 +2,8 @@
 //! about a pull request. The next time one is asked for it is shown at once and fetched again in
 //! the background. Everything in it can be deleted: it is only ever a copy.
 
+pub mod swr;
+
 use std::sync::Arc;
 
 use rusqlite::params;

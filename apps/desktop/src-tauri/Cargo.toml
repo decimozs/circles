@@ -52,3 +52,4 @@ tauri-plugin-notification = "2"
 
 [dev-dependencies]
 tempfile = "3.27.0"
+tauri = { version = "2", features = ["test"] }

@@ -8,12 +8,13 @@ use serde::Serialize;
 use tauri::State;
 use ts_rs::TS;
 
+use crate::cache::{swr, CacheStore};
 use crate::commands::settings::check_claude;
 use crate::error::AppError;
 use crate::ipc::IpcResult;
 use crate::state::AppState;
 
-#[derive(Debug, Clone, Serialize, TS, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize, TS, PartialEq, Eq)]
 #[ts(export)]
 pub struct GithubLogin {
     pub login: String,
@@ -21,7 +22,7 @@ pub struct GithubLogin {
     pub active: bool,
 }
 
-#[derive(Debug, Clone, Serialize, TS, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize, TS, PartialEq, Eq)]
 #[ts(export)]
 pub struct GithubAccounts {
     /// The GitHub CLI (`gh`) is installed.
@@ -32,8 +33,7 @@ pub struct GithubAccounts {
     pub fix: Option<String>,
 }
 
-async fn github_accounts_now(state: &AppState) -> GithubAccounts {
-    let env = state.env.get().await;
+async fn github_accounts_now(env: std::sync::Arc<crate::env::ResolvedEnv>) -> GithubAccounts {
     if env.which("gh").is_none() {
         return GithubAccounts {
             installed: false,
@@ -53,9 +53,55 @@ async fn github_accounts_now(state: &AppState) -> GithubAccounts {
     }
 }
 
+/// Where the accounts are kept, and how long before they are asked again in the background. A
+/// person who signs in or out in a terminal sees it here a couple of minutes later at most, or at
+/// once with the refresh.
+const ACCOUNTS_KEY: &str = "github-accounts";
+const ACCOUNTS_MAX_AGE_MS: i64 = 2 * 60 * 1000;
+/// The repository picker belongs to the active account, so it goes when that changes.
+pub(crate) const REPOS_KEY: &str = "github-repos";
+
+/// The account `gh` uses now, from what was kept, asked again in the background when it is old.
+/// A change of the active account drops the kept repositories, which were the old one's.
 #[tauri::command]
-pub async fn github_accounts(state: State<'_, AppState>) -> IpcResult<GithubAccounts> {
-    Ok(github_accounts_now(&state).await)
+pub async fn github_accounts(
+    app: tauri::AppHandle,
+    state: State<'_, AppState>,
+) -> IpcResult<GithubAccounts> {
+    let env = state.env.get().await;
+    let cache = CacheStore::new(state.db.clone());
+    let kept = cache.clone();
+    swr::serve(
+        &app,
+        &cache,
+        ACCOUNTS_KEY,
+        ACCOUNTS_MAX_AGE_MS,
+        "github-accounts",
+        move || {
+            let (env, kept) = (env.clone(), kept.clone());
+            async move {
+                let fresh = github_accounts_now(env).await;
+                let before = kept
+                    .get::<GithubAccounts>(ACCOUNTS_KEY)
+                    .ok()
+                    .flatten()
+                    .map(|e| active_login(&e.value));
+                if before.is_some_and(|b| b != active_login(&fresh)) {
+                    let _ = kept.delete(REPOS_KEY);
+                }
+                Ok(fresh)
+            }
+        },
+    )
+    .await
+}
+
+fn active_login(accounts: &GithubAccounts) -> Option<String> {
+    accounts
+        .accounts
+        .iter()
+        .find(|a| a.active)
+        .map(|a| a.login.clone())
 }
 
 /// Makes another signed in account the one the GitHub CLI uses. It is the CLI's own setting, so
@@ -69,7 +115,11 @@ pub async fn github_switch_account(
     crate::github::switch_account(&env, &login)
         .await
         .map_err(AppError::from)?;
-    Ok(github_accounts_now(&state).await)
+    let accounts = github_accounts_now(env).await;
+    let cache = CacheStore::new(state.db.clone());
+    let _ = cache.put(ACCOUNTS_KEY, &accounts);
+    let _ = cache.delete(REPOS_KEY);
+    Ok(accounts)
 }
 
 #[derive(Debug, Clone, Serialize, TS, PartialEq, Eq)]

@@ -1,13 +1,12 @@
 //! Browsing the pull requests of the repositories you have added.
 
-use std::collections::HashSet;
 use std::path::PathBuf;
-use std::sync::{Mutex, OnceLock};
 
 use serde::Deserialize;
 use tauri::{AppHandle, Emitter, State};
 use ts_rs::TS;
 
+use crate::cache::swr::Flight;
 use crate::cache::{CacheStore, Entry};
 use crate::error::AppError;
 use crate::files::{looks_like_text, TEXT_LIMIT};
@@ -72,32 +71,6 @@ fn list_key(project_id: &str, which: BrowseState) -> String {
 
 fn detail_key(project_id: &str, number: u32) -> String {
     format!("pr-detail:{project_id}:{number}")
-}
-
-/// Keys being fetched in the background right now, so the same one is not fetched twice at once.
-fn in_flight() -> &'static Mutex<HashSet<String>> {
-    static SET: OnceLock<Mutex<HashSet<String>>> = OnceLock::new();
-    SET.get_or_init(Default::default)
-}
-
-struct Flight(String);
-
-impl Flight {
-    fn start(key: &str) -> Option<Self> {
-        in_flight()
-            .lock()
-            .ok()?
-            .insert(key.to_string())
-            .then(|| Flight(key.to_string()))
-    }
-}
-
-impl Drop for Flight {
-    fn drop(&mut self) {
-        if let Ok(mut set) = in_flight().lock() {
-            set.remove(&self.0);
-        }
-    }
 }
 
 /// An answer that GitHub says is gone or not allowed must not stay readable from here.
