@@ -3,13 +3,13 @@ import type { Session } from "@circles/bindings/Session";
 import { Button } from "@circles/ui/components/button";
 import { cn } from "@circles/ui/utils";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUpIcon, ChevronsUpDownIcon, PaperclipIcon, SquareIcon, XIcon } from "lucide-react";
+import { ArrowUpIcon, PaperclipIcon, SquareIcon, XIcon } from "lucide-react";
 import { type ClipboardEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ClaudeIcon } from "@/components/claude-icon";
 import { useSettingsView } from "@/features/settings/api";
 import { ipc } from "@/lib/ipc";
-import { MODELS } from "@/lib/models";
+import { MODELS, modelLabel } from "@/lib/models";
 import { type QueuedMessage, useChat } from "@/stores/chat";
 import { useSlashCommands } from "./api";
 import { EffortPicker } from "./effort-picker";
@@ -22,7 +22,7 @@ const selectClass =
   "h-7 rounded-md border border-transparent bg-transparent px-1.5 text-xs text-muted-foreground hover:bg-muted focus-visible:border-ring focus-visible:outline-none";
 
 /** Text style shared by the box and the layer behind it, so the badges line up with the words. */
-const TEXT = "block whitespace-pre-wrap break-words px-3 py-2.5 text-sm leading-normal";
+const TEXT = "block whitespace-pre-wrap break-words px-4 pt-4 pb-3 text-sm leading-normal";
 
 export type Segment = { text: string; start: number; kind?: "mention" | "command" };
 
@@ -341,7 +341,7 @@ export function Composer({
         ) : null}
 
         {attachments.length > 0 ? (
-          <div className="flex flex-wrap gap-1 px-3 pt-2">
+          <div className="flex flex-wrap gap-1 px-4 pt-3">
             {attachments.map((a) => (
               <span
                 key={a.path}
@@ -409,7 +409,7 @@ export function Composer({
             onPaste={onPaste}
             className={cn(
               TEXT,
-              "relative max-h-60 min-h-14 w-full resize-none bg-transparent outline-none placeholder:text-muted-foreground disabled:opacity-50",
+              "relative max-h-60 min-h-20 w-full resize-none bg-transparent outline-none placeholder:text-muted-foreground disabled:opacity-50",
             )}
             onScroll={(e) => {
               if (marks.current) marks.current.scrollTop = e.currentTarget.scrollTop;
@@ -417,7 +417,7 @@ export function Composer({
           />
         </div>
 
-        <div className="flex items-center gap-1 px-2 pb-2">
+        <div className="flex items-center gap-1 px-3 pb-3">
           <input
             ref={files}
             type="file"
@@ -449,7 +449,7 @@ export function Composer({
                 }
                 className={cn(
                   selectClass,
-                  "appearance-none pr-6",
+                  "appearance-none",
                   mode.value === "bypass" && "text-destructive",
                 )}
                 value={mode.value}
@@ -458,19 +458,21 @@ export function Composer({
                 <option value="manual">Ask</option>
                 <option value="accept_edits">Accept edits</option>
                 <option value="plan">Plan</option>
-                <option value="bypass">Bypass</option>
+                <option value="bypass">Full access</option>
               </select>
-              {/* Drawn here, not by the select, so only the words take the warning colour. */}
-              <ChevronsUpDownIcon className="pointer-events-none absolute right-1.5 size-3.5 text-muted-foreground" />
             </div>
           ) : null}
-          <div className="ml-auto flex items-center gap-1">
-            <div className="relative flex items-center">
-              <ClaudeIcon className="pointer-events-none absolute -left-4" />
+          <div className="ml-auto flex items-center">
+            {/* The words are drawn here and the select lies over them, unseen, to take the click. It
+                has no arrow, and the Claude mark sits right beside the name. */}
+            <div className="relative flex h-7 items-center gap-1 rounded-md px-1.5 text-xs hover:bg-muted focus-within:ring-2 focus-within:ring-ring/60">
+              <ClaudeIcon className="pointer-events-none" />
+              <span className="pointer-events-none whitespace-nowrap text-foreground">
+                {session.model ? modelLabel(session.model) : "Model"}
+              </span>
               <select
                 aria-label="Model"
-                className={selectClass}
-                style={{ paddingLeft: 30 }}
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
                 value={session.model ?? ""}
                 onChange={(e) => onChangeOptions({ model: e.target.value })}
               >
