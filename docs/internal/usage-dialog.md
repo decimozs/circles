@@ -2,7 +2,7 @@
 
 Replace the "Add project" button in the sidebar footer with a **Usage** button that opens a Usage
 dialog: cost, tokens and limits for Claude Code, in the layout of the reference screenshot.
-Status: plan, nothing built.
+Status: built in phases 1 to 3 (phases 2 and 3 together). The "Only chats run in Circles" switch is not built, and the scan cache lives in memory, not on disk, so the first scan after a restart reads the history again.
 
 ## Sidebar change
 

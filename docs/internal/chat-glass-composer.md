@@ -1,8 +1,7 @@
 # Chat with a glass message box: plan
 
 The message box floats over the conversation and blurs what scrolls under it, as in the reference
-screenshot. Today the box sits below the list in a column, so the list ends above it. Status: plan,
-nothing built.
+screenshot. Today the box sits below the list in a column, so the list ends above it. Status: built. Not seen in the running app: the blur, contrast and scrolling speed.
 
 ## Target (from the screenshot)
 
