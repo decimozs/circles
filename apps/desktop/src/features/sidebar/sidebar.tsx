@@ -17,6 +17,7 @@ import {
   ChevronRightIcon,
   CircleHelpIcon,
   FolderPlusIcon,
+  GitPullRequestIcon,
   HomeIcon,
   PinIcon,
   PlusIcon,
@@ -193,6 +194,7 @@ export function Sidebar() {
   const composers = useComposers().data ?? [];
   const waiting = (useApprovals({ onlyPending: true }).data ?? []).length;
   const onComposers = useMatch("/composers");
+  const onPrs = useMatch("/pull-requests");
 
   const pinned = live.filter((w) => w.pinned);
   const unpinned = live.filter((w) => !w.pinned);
@@ -277,6 +279,14 @@ export function Sidebar() {
               {waiting}
             </span>
           ) : null}
+        </NavLink>
+        <NavLink
+          to="/pull-requests"
+          end
+          className={cn(NAV_ITEM, onPrs && "bg-sidebar-accent text-sidebar-accent-foreground")}
+        >
+          <GitPullRequestIcon className="size-4 text-muted-foreground" />
+          Pull requests
         </NavLink>
       </nav>
 

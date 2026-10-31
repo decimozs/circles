@@ -7,6 +7,7 @@ import type { AttachSnapshot } from "@circles/bindings/AttachSnapshot";
 import type { AuditEntry } from "@circles/bindings/AuditEntry";
 import type { BranchInfo } from "@circles/bindings/BranchInfo";
 import type { BranchState } from "@circles/bindings/BranchState";
+import type { BrowseState } from "@circles/bindings/BrowseState";
 import type { ChangedFile } from "@circles/bindings/ChangedFile";
 import type { Check } from "@circles/bindings/Check";
 import type { Checkpoint } from "@circles/bindings/Checkpoint";
@@ -42,6 +43,7 @@ import type { PendingPrompt } from "@circles/bindings/PendingPrompt";
 import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
 import type { PrDraft } from "@circles/bindings/PrDraft";
 import type { PrDraftSeed } from "@circles/bindings/PrDraftSeed";
+import type { PrList } from "@circles/bindings/PrList";
 import type { Project } from "@circles/bindings/Project";
 import type { PrStatus } from "@circles/bindings/PrStatus";
 import type { PullRequest } from "@circles/bindings/PullRequest";
@@ -238,6 +240,8 @@ export const ipc = {
   permissionReply: (sessionId: string, requestId: string, decision: PermissionDecision) =>
     call<null>("permission_reply", { sessionId, requestId, decision }),
   claudeRateLimit: () => call<RateLimit | null>("claude_rate_limit"),
+  prBrowseList: (projectId: string | null, which: BrowseState) =>
+    call<PrList>("pr_browse_list", { projectId, which }),
   usageSummary: (sinceSecs: number | null, folder: string | null) =>
     call<UsageSummary>("usage_summary", { sinceSecs, folder }),
 
