@@ -69,6 +69,7 @@ import type { Terminal } from "@circles/bindings/Terminal";
 import type { Trigger } from "@circles/bindings/Trigger";
 import type { TriggerInput } from "@circles/bindings/TriggerInput";
 import type { UndoableRevert } from "@circles/bindings/UndoableRevert";
+import type { UsageSummary } from "@circles/bindings/UsageSummary";
 import type { Workspace } from "@circles/bindings/Workspace";
 import type { WorkspaceEvent } from "@circles/bindings/WorkspaceEvent";
 import type { WorkspaceLink } from "@circles/bindings/WorkspaceLink";
@@ -237,6 +238,8 @@ export const ipc = {
   permissionReply: (sessionId: string, requestId: string, decision: PermissionDecision) =>
     call<null>("permission_reply", { sessionId, requestId, decision }),
   claudeRateLimit: () => call<RateLimit | null>("claude_rate_limit"),
+  usageSummary: (sinceSecs: number | null, folder: string | null) =>
+    call<UsageSummary>("usage_summary", { sinceSecs, folder }),
 
   fsList: (workspaceId: string, path = "", showIgnored = false) =>
     call<FsEntry[]>("fs_list", { workspaceId, path, showIgnored }),

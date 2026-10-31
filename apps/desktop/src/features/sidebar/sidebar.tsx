@@ -12,6 +12,7 @@ import { ScrollArea } from "@circles/ui/components/scroll-area";
 import { cn } from "@circles/ui/utils";
 import {
   BotIcon,
+  ChartColumnIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   CircleHelpIcon,
@@ -180,6 +181,7 @@ export function Sidebar() {
   const onHome = useMatch("/");
   const setShortcutsOpen = useUi((s) => s.setShortcutsOpen);
   const setAddProjectOpen = useUi((s) => s.setAddProjectOpen);
+  const setUsageOpen = useUi((s) => s.setUsageOpen);
   const openCreate = useUi((s) => s.openCreate);
   const setPaletteOpen = useUi((s) => s.setPaletteOpen);
   const machineName = useMachineName();
@@ -337,8 +339,8 @@ export function Sidebar() {
           v0.1.0
         </span>
         <div className="flex items-center gap-0.5">
-          <IconButton label="Add project" hint="⌘⌥A" onClick={() => setAddProjectOpen(true)}>
-            <FolderPlusIcon />
+          <IconButton label="Usage" onClick={() => setUsageOpen(true)}>
+            <ChartColumnIcon />
           </IconButton>
           <IconButton label="Keyboard shortcuts" hint="⌘/" onClick={() => setShortcutsOpen(true)}>
             <CircleHelpIcon />

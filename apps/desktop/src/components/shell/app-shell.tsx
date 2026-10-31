@@ -24,6 +24,7 @@ import { SettingsNav } from "@/features/settings/settings-nav";
 import { Sidebar } from "@/features/sidebar/sidebar";
 import { useTerminalSync } from "@/features/terminal/api";
 import { QuitDialog } from "@/features/terminal/quit-dialog";
+import { UsageDialog } from "@/features/usage/usage-dialog";
 import { useWorkspaceStateSync } from "@/features/workspaces/api";
 import { CreateSectionDialog } from "@/features/workspaces/create-section-dialog";
 import { useGlobalShortcuts } from "@/hooks/use-global-shortcuts";
@@ -82,6 +83,7 @@ export function AppShell() {
     <div className="h-full w-full overflow-clip bg-background text-foreground">
       <ShellActions />
       <ShortcutsDialog />
+      <UsageDialog />
       <AddProjectDialog />
       <CreateDialog />
       <Palette />
