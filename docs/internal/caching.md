@@ -1,7 +1,7 @@
 # Caching: show what is known now, update it in the background
 
 Status: the Usage part (phases 1 and 2) is built. Phases 3 and 4 are built together: the `cache` table,
-the pull request list and detail through it, and Clear cached data. Phase 5 (files and file text) is built, keyed by the commits they were read at, so they are never fetched again. One difference: entries are keyed
+the pull request list and detail through it, and Clear cached data. Phase 6 (the repository picker and the GitHub accounts card) is built through a shared `serve` helper, and phase 7 is decided: not built. Phase 5 (files and file text) is built, keyed by the commits they were read at, so they are never fetched again. One difference: entries are keyed
 by project and pull request, not by GitHub account, because the account is already chosen by the
 repository's owner. Decisions: usage history is kept after Claude Code
 deletes a transcript; the read at launch is on by default with no setting; the file text store is capped
@@ -99,7 +99,7 @@ Measured where I could, with `gh` and `claude` on this Mac:
 | GitHub repository picker in Add project (`gh repo list` plus organisations) | 1.4 s plus 0.5 s each time the dialog opens | Rarely | Keep for 10 minutes, show at once, refresh in the background. |
 | GitHub accounts card in Settings (`gh auth status`) | 1.5 s on every visit | Rarely, and after a switch (already refreshed) | Same, with the existing refresh after Switch account. |
 | Claude account card (`claude auth status`) | 0.17 s | Rarely | Not worth it. |
-| Workspace pull request status, checks, review threads, deployments (`gh` per workspace) | Not measured | Often | Measure first. If they are slow and shown on open, they are the next candidates. |
+| Workspace pull request status, checks, review threads, deployments (`gh` per workspace) | Measured: status 0.8 s, checks 1.75 s, review threads 0.5 s, deployments 0.5 s | Often | Not built. They already poll while the panel is open and React Query keeps what they found, so the wait is only the first time per workspace after launch. Revisit if that first wait becomes a complaint. |
 | Git graph, branch states, changes, diff | Local `git`, fast | Often | No. A cache would only risk showing wrong state. |
 | Sidebar lists (projects, workspaces, composers) | Database reads, milliseconds | Often | No. |
 

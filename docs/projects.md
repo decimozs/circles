@@ -13,6 +13,7 @@ Choose a repository that is already on your Mac, or paste its path. Any folder i
 ### GitHub
 
 - The picker lists the repositories of the account `gh` is signed in as, then those of each organization that account belongs to, up to 100 per owner, newest push first. With more than one owner the list is grouped under an owner header.
+- The list opens at once with what was found last time and is asked from GitHub again in the background when it is ten minutes old, so a repository created a moment ago may show up a moment later. Changing the active account clears it.
 - It says which account it uses ("Signed in as ..."). `gh` has one active account even when several are signed in. If the active account owns no repositories and belongs to no organization, the list says "No repositories found for `<account>`". Switch with `gh auth switch --user <login>`.
 - The search box matches the owner, name and description across every owner. A repository outside the first 100 of its owner is cloned by typing `owner/name` (or a URL) in the box above the list.
 - An organization that cannot be listed, for example one that needs SSO, is named in a note under the list, and the rest still show.
