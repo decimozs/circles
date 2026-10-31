@@ -5,6 +5,7 @@ import { AuditPage } from "@/features/composers/audit-page";
 import { ComposerPage } from "@/features/composers/composer-page";
 import { ComposersHome } from "@/features/composers/composers-home";
 import { HomePage } from "@/features/home/home-page";
+import { PullRequestsPage } from "@/features/prs/pull-requests-page";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DesignGallery } from "@/routes/design";
 import { DebugPage, NotFoundPage, WorkspacePage } from "@/routes/pages";
@@ -23,6 +24,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <HomePage /> },
           { path: "workspace/:id", element: <WorkspacePage /> },
           { path: "composers", element: <ComposersHome /> },
+          { path: "pull-requests", element: <PullRequestsPage /> },
           { path: "composers/audit", element: <AuditPage /> },
           { path: "composer/:id", element: <ComposerPage /> },
           { path: "composer/:id/run/:runId", element: <ComposerPage /> },

@@ -311,7 +311,7 @@ export function Composer({
         </ul>
       ) : null}
 
-      <div className="relative rounded-xl border border-input bg-card focus-within:border-ring">
+      <div className="glass-panel relative rounded-2xl border shadow-lg focus-within:border-ring">
         {suggestions.length > 0 ? (
           <div
             role="listbox"

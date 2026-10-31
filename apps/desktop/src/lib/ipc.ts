@@ -7,6 +7,8 @@ import type { AttachSnapshot } from "@circles/bindings/AttachSnapshot";
 import type { AuditEntry } from "@circles/bindings/AuditEntry";
 import type { BranchInfo } from "@circles/bindings/BranchInfo";
 import type { BranchState } from "@circles/bindings/BranchState";
+import type { BrowseState } from "@circles/bindings/BrowseState";
+import type { CacheInfo } from "@circles/bindings/CacheInfo";
 import type { ChangedFile } from "@circles/bindings/ChangedFile";
 import type { Check } from "@circles/bindings/Check";
 import type { Checkpoint } from "@circles/bindings/Checkpoint";
@@ -40,8 +42,12 @@ import type { Message } from "@circles/bindings/Message";
 import type { NewComment } from "@circles/bindings/NewComment";
 import type { PendingPrompt } from "@circles/bindings/PendingPrompt";
 import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
+import type { PrDetail } from "@circles/bindings/PrDetail";
 import type { PrDraft } from "@circles/bindings/PrDraft";
 import type { PrDraftSeed } from "@circles/bindings/PrDraftSeed";
+import type { PrFileRequest } from "@circles/bindings/PrFileRequest";
+import type { PrFiles } from "@circles/bindings/PrFiles";
+import type { PrList } from "@circles/bindings/PrList";
 import type { Project } from "@circles/bindings/Project";
 import type { PrStatus } from "@circles/bindings/PrStatus";
 import type { PullRequest } from "@circles/bindings/PullRequest";
@@ -69,6 +75,7 @@ import type { Terminal } from "@circles/bindings/Terminal";
 import type { Trigger } from "@circles/bindings/Trigger";
 import type { TriggerInput } from "@circles/bindings/TriggerInput";
 import type { UndoableRevert } from "@circles/bindings/UndoableRevert";
+import type { UsageSummary } from "@circles/bindings/UsageSummary";
 import type { Workspace } from "@circles/bindings/Workspace";
 import type { WorkspaceEvent } from "@circles/bindings/WorkspaceEvent";
 import type { WorkspaceLink } from "@circles/bindings/WorkspaceLink";
@@ -237,6 +244,19 @@ export const ipc = {
   permissionReply: (sessionId: string, requestId: string, decision: PermissionDecision) =>
     call<null>("permission_reply", { sessionId, requestId, decision }),
   claudeRateLimit: () => call<RateLimit | null>("claude_rate_limit"),
+  prBrowseFiles: (projectId: string, repo: string, number: number, headSha: string | null) =>
+    call<PrFiles>("pr_browse_files", { projectId, repo, number, headSha }),
+  prBrowseFile: (request: PrFileRequest) => call<FilePair>("pr_browse_file", { request }),
+  prBrowseDetail: (projectId: string, number: number, refresh = false) =>
+    call<PrDetail>("pr_browse_detail", { projectId, number, refresh }),
+  prBrowseList: (projectId: string | null, which: BrowseState, refresh = false) =>
+    call<PrList>("pr_browse_list", { projectId, which, refresh }),
+  cacheInfo: () => call<CacheInfo>("cache_info"),
+  cacheClear: () => call<null>("cache_clear"),
+  usageRefresh: () => call<null>("usage_refresh"),
+  usageRebuild: () => call<null>("usage_rebuild"),
+  usageSummary: (sinceSecs: number | null, folder: string | null) =>
+    call<UsageSummary>("usage_summary", { sinceSecs, folder }),
 
   fsList: (workspaceId: string, path = "", showIgnored = false) =>
     call<FsEntry[]>("fs_list", { workspaceId, path, showIgnored }),

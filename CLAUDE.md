@@ -39,6 +39,9 @@ hand), `packages/config`. Docs: `docs/` is the user guide, `docs/internal/` hold
     `apps/desktop/src-tauri` or `packages/bindings` changed, `cargo fmt --all --check`,
     `cargo clippy --workspace --all-targets -- -D warnings` and `cargo test --workspace`. Report what
     was run, with the result, and what was not run.
+11. **Docs match the change.** Before a PR, run `circles-update-docs`: any change a user can see
+    updates `docs/` and the `CHANGELOG.md` in the same PR, and the report says which pages were
+    checked.
 
 ## Bootstrap
 

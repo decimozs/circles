@@ -85,3 +85,21 @@
     transform: translate(-20%, -14%) scale(1.1);
   }
 }
+
+/* A panel that lets what is behind it show through, blurred. Used by the message box, which floats
+   over the conversation. */
+@layer components {
+  .glass-panel {
+    background-color: color-mix(in oklab, var(--card) 62%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    backdrop-filter: blur(24px) saturate(1.5);
+    border-color: color-mix(in oklab, var(--foreground) 12%, transparent);
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .glass-panel {
+      background-color: var(--card);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+}

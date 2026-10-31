@@ -1,6 +1,9 @@
 //! GitHub through the `gh` CLI. No OAuth and no tokens of our own: `gh` owns authentication.
 
 use std::path::{Path, PathBuf};
+pub mod browse;
+pub mod browse_detail;
+pub mod browse_files;
 pub mod pr;
 
 use std::process::Stdio;
@@ -123,7 +126,7 @@ pub fn classify(stderr: &str) -> GhError {
     }
 }
 
-#[derive(Debug, Clone, Serialize, TS, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize, TS, PartialEq, Eq)]
 #[ts(export)]
 pub struct GhRepo {
     pub name_with_owner: String,
@@ -137,7 +140,7 @@ pub struct GhRepo {
 
 /// The repositories to pick from: the signed in account's own, then those of each organization it
 /// belongs to.
-#[derive(Debug, Clone, Serialize, TS, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize, TS, PartialEq, Eq)]
 #[ts(export)]
 pub struct GhRepos {
     /// The account `gh` is signed in as.

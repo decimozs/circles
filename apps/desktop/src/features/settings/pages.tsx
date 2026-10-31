@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@circles/ui/components/dialog";
 import { Input } from "@circles/ui/components/input";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode, useState } from "react";
@@ -324,6 +324,47 @@ function PathsRow({ def, highlight }: { def: SettingDef; highlight?: string }) {
   );
 }
 
+function CacheRow({ def, highlight }: { def: SettingDef; highlight?: string }) {
+  const info = useQuery({ queryKey: ["cache-info"], queryFn: ipc.cacheInfo });
+  const queryClient = useQueryClient();
+  const [busy, setBusy] = useState(false);
+  const bytes = info.data?.bytes ?? 0;
+  const size =
+    bytes < 1024 * 1024
+      ? `${Math.ceil(bytes / 1024)} KB`
+      : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  return (
+    <SettingRow title={def.title} description={def.description} highlight={highlight}>
+      <div className="flex items-center gap-3">
+        <span className="text-xs text-muted-foreground">
+          {info.data ? `${info.data.entries} kept, ${size}` : ""}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={busy || info.data?.entries === 0}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await ipc.cacheClear();
+              // What was on screen came from the copies, so it is read again.
+              await queryClient.invalidateQueries();
+              toast("Cached data cleared");
+            } catch (e) {
+              toast.error(message(e));
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {busy ? <Loader2Icon className="animate-spin" /> : null}
+          Clear cached data
+        </Button>
+      </div>
+    </SettingRow>
+  );
+}
+
 function ExportRow({ def, highlight }: { def: SettingDef; highlight?: string }) {
   const [busy, setBusy] = useState(false);
   return (
@@ -493,6 +534,8 @@ export function CustomRow({
       return <PathsRow def={def} highlight={highlight} />;
     case "export_logs":
       return <ExportRow def={def} highlight={highlight} />;
+    case "clear_cache":
+      return <CacheRow def={def} highlight={highlight} />;
     case "diagnostics":
       return <DiagnosticsRow def={def} highlight={highlight} />;
     case "setup_again":

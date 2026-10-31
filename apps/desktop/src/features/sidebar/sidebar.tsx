@@ -12,10 +12,12 @@ import { ScrollArea } from "@circles/ui/components/scroll-area";
 import { cn } from "@circles/ui/utils";
 import {
   BotIcon,
+  ChartColumnIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   CircleHelpIcon,
   FolderPlusIcon,
+  GitPullRequestIcon,
   HomeIcon,
   PinIcon,
   PlusIcon,
@@ -180,6 +182,7 @@ export function Sidebar() {
   const onHome = useMatch("/");
   const setShortcutsOpen = useUi((s) => s.setShortcutsOpen);
   const setAddProjectOpen = useUi((s) => s.setAddProjectOpen);
+  const setUsageOpen = useUi((s) => s.setUsageOpen);
   const openCreate = useUi((s) => s.openCreate);
   const setPaletteOpen = useUi((s) => s.setPaletteOpen);
   const machineName = useMachineName();
@@ -191,6 +194,7 @@ export function Sidebar() {
   const composers = useComposers().data ?? [];
   const waiting = (useApprovals({ onlyPending: true }).data ?? []).length;
   const onComposers = useMatch("/composers");
+  const onPrs = useMatch("/pull-requests");
 
   const pinned = live.filter((w) => w.pinned);
   const unpinned = live.filter((w) => !w.pinned);
@@ -276,6 +280,14 @@ export function Sidebar() {
             </span>
           ) : null}
         </NavLink>
+        <NavLink
+          to="/pull-requests"
+          end
+          className={cn(NAV_ITEM, onPrs && "bg-sidebar-accent text-sidebar-accent-foreground")}
+        >
+          <GitPullRequestIcon className="size-4 text-muted-foreground" />
+          Pull requests
+        </NavLink>
       </nav>
 
       <div className="my-2 border-t border-sidebar-border" />
@@ -337,8 +349,8 @@ export function Sidebar() {
           v0.1.0
         </span>
         <div className="flex items-center gap-0.5">
-          <IconButton label="Add project" hint="⌘⌥A" onClick={() => setAddProjectOpen(true)}>
-            <FolderPlusIcon />
+          <IconButton label="Usage" onClick={() => setUsageOpen(true)}>
+            <ChartColumnIcon />
           </IconButton>
           <IconButton label="Keyboard shortcuts" hint="⌘/" onClick={() => setShortcutsOpen(true)}>
             <CircleHelpIcon />

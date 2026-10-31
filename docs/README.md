@@ -12,8 +12,9 @@ Circles is a Mac app that runs Claude Code agents in parallel. Each agent works 
 6. [Composers](composers.md): a manager agent that starts and follows other agents for you.
 7. [Jira](jira.md): letting chats and Composers read and work with Jira.
 8. [Settings](settings.md): where settings live, and what each page holds.
-9. [Keyboard shortcuts](shortcuts.md).
-10. [Troubleshooting](troubleshooting.md).
+9. [Usage](usage.md): tokens and estimated cost of Claude Code, and your plan limits.
+10. [Keyboard shortcuts](shortcuts.md).
+11. [Troubleshooting](troubleshooting.md).
 
 ## Words used in this guide
 

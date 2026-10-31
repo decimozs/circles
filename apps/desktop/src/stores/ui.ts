@@ -21,6 +21,8 @@ type UiState = {
   /** Selected terminal tab for each workspace. */
   dockTab: Record<string, string>;
   shortcutsOpen: boolean;
+  /** The Usage dialog. */
+  usageOpen: boolean;
   addProjectOpen: boolean;
   /** Tab the Add project dialog opens on. */
   addProjectTab: "local" | "github" | "quick";
@@ -47,6 +49,7 @@ type UiState = {
   toggleBigTerminal: () => void;
   selectDockTab: (workspaceId: string, terminalId: string) => void;
   setShortcutsOpen: (open: boolean) => void;
+  setUsageOpen: (open: boolean) => void;
   setAddProjectOpen: (open: boolean, tab?: "local" | "github" | "quick") => void;
   openCreate: (projectId?: string | null) => void;
   setCreateOpen: (open: boolean) => void;
@@ -69,6 +72,7 @@ export const useUi = create<UiState>()(
       bigTerminal: false,
       dockTab: {},
       shortcutsOpen: false,
+      usageOpen: false,
       addProjectOpen: false,
       addProjectTab: "local",
       createOpen: false,
@@ -97,6 +101,7 @@ export const useUi = create<UiState>()(
       selectDockTab: (workspaceId, terminalId) =>
         set((s) => ({ dockTab: { ...s.dockTab, [workspaceId]: terminalId } })),
       setShortcutsOpen: (shortcutsOpen) => set({ shortcutsOpen }),
+      setUsageOpen: (usageOpen) => set({ usageOpen }),
       setAddProjectOpen: (addProjectOpen, tab) =>
         set((s) => ({ addProjectOpen, addProjectTab: tab ?? s.addProjectTab })),
       openCreate: (projectId = null) => set({ createOpen: true, createProjectId: projectId }),

@@ -21,7 +21,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Page | What it holds |
 |---|---|
 | General | The send key (Enter or Cmd+Enter), what a message sent while the agent works does (steer or queue), notifications and the completion sound, full disk access, and whether long pasted text becomes an attachment. |
-| Accounts | A card for the GitHub account the GitHub CLI uses, with a **Switch account** menu when several are signed in, and a card for the Claude account Claude Code is signed in with, with its plan. Each says what to run when it is not signed in. Circles never holds either login. |
+| Accounts | A card for the GitHub account the GitHub CLI uses, with a **Switch account** menu when several are signed in (what it shows is kept and checked again in the background every couple of minutes, and when you come back to the window), and a card for the Claude account Claude Code is signed in with, with its plan. Each says what to run when it is not signed in. Circles never holds either login. |
 | Appearance | Theme (light, dark or system), font size and density. |
 | Default models | The model and effort a new chat starts with, and whether new chats start in plan mode. |
 | Git | The branch prefix, the branch naming rule, the merge strategy, and the commit author git will use. |
@@ -43,7 +43,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Page | What it holds |
 |---|---|
 | Experimental | Switches for features that are not finished. |
-| Advanced | Data folders, log level, how long checkpoints are kept, export logs, copy diagnostics, the first-run setup screen, and **Reset app data**, which deletes chats, workspace records and terminal history and keeps your settings and repositories. |
+| Advanced | Data folders, log level, how long checkpoints are kept, **Clear cached data** (the copies of pull requests kept so the page opens at once), export logs, copy diagnostics, the first-run setup screen, and **Reset app data**, which deletes chats, workspace records and terminal history and keeps your settings and repositories. |
 
 ## A repository's settings file
 

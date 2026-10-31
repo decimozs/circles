@@ -2,6 +2,7 @@
 // warnings are silenced until then. Remove this once the APIs are wired up.
 #![allow(dead_code)]
 
+mod cache;
 mod chat;
 mod checkpoint;
 mod commands;
@@ -35,6 +36,7 @@ mod terminal;
 #[cfg(test)]
 mod test_support;
 mod tools;
+mod usage;
 mod workspace;
 
 use std::sync::Arc;
@@ -167,12 +169,27 @@ pub fn run() {
                 commands::settings::apply_login_item(app.handle(), wanted.start_at_login);
                 composer::triggers::Scheduler::spawn(app.handle().clone());
             }
+            // The usage history is brought up to date a little after the app is up, so the Usage
+            // page is current by the time it is opened.
+            let usage = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+                let state = usage.state::<AppState>();
+                commands::usage::refresh(&usage, &state).await;
+            });
             // Old checkpoints are cleared in the background, a little after the app is up.
             let cleaner = app.handle().clone();
             tauri::async_runtime::spawn(async move {
                 tokio::time::sleep(std::time::Duration::from_secs(20)).await;
                 let state = cleaner.state::<AppState>();
                 let days = checkpoint::keep_days_from_settings(&state.paths.settings_file);
+                match cache::CacheStore::new(state.db.clone())
+                    .prune(cache::MAX_BYTES, cache::MAX_AGE_MS)
+                {
+                    Ok(0) => {}
+                    Ok(n) => tracing::info!(entries = n, "removed old cached answers"),
+                    Err(e) => tracing::warn!(error = %e, "cannot remove old cached answers"),
+                }
                 match state.checkpoints().await.prune_older_than(days).await {
                     Ok(0) => {}
                     Ok(n) => tracing::info!(checkpoints = n, "removed old checkpoints"),
@@ -349,6 +366,15 @@ pub fn run() {
             commands::composer::trigger_delete,
             commands::session::permission_reply,
             commands::session::claude_rate_limit,
+            commands::usage::usage_summary,
+            commands::usage::usage_refresh,
+            commands::usage::usage_rebuild,
+            commands::cache::cache_info,
+            commands::cache::cache_clear,
+            commands::pr_browse::pr_browse_list,
+            commands::pr_browse::pr_browse_detail,
+            commands::pr_browse::pr_browse_files,
+            commands::pr_browse::pr_browse_file,
             commands::workspace::workspace_take_pending_prompt,
             commands::terminal::terminal_list,
             commands::terminal::terminal_create,
