@@ -43,7 +43,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Page | What it holds |
 |---|---|
 | Experimental | Switches for features that are not finished. |
-| Advanced | Data folders, log level, how long checkpoints are kept, export logs, copy diagnostics, the first-run setup screen, and **Reset app data**, which deletes chats, workspace records and terminal history and keeps your settings and repositories. |
+| Advanced | Data folders, log level, how long checkpoints are kept, **Clear cached data** (the copies of pull requests kept so the page opens at once), export logs, copy diagnostics, the first-run setup screen, and **Reset app data**, which deletes chats, workspace records and terminal history and keeps your settings and repositories. |
 
 ## A repository's settings file
 

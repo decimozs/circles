@@ -11,6 +11,7 @@ Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in
 - **Each row:** state (open, draft, merged, closed), number, title, checks, review state, author, branch, size (`+added -removed`) and when it last changed.
 - **Search:** plain words match the title, branch, author and repository. `#123` finds a number. `label:bug`, `author:ana`, `repo:backend`, `branch:feat/`, `is:draft`, `is:mine`, `review:approved` and `checks:failing` narrow it. Put quotes around a value with spaces: `label:"good first issue"`.
 - **Sort and Filters:** sort by activity, age or size. Filters choose open, merged, closed or all, hide or show drafts, and filter by checks and review.
+- **Opens at once:** Circles keeps a copy of what GitHub said, so the list and an opened pull request show immediately with **Updated 4 min ago** and are fetched again in the background. They change on screen when the new answer arrives. The refresh button asks GitHub right away. A repository you have not looked at before waits for GitHub the first time.
 - **If a repository cannot be asked** (for example `gh` is not signed in for it), its name and the fix are shown above the list, and the other repositories still show.
 
 Choosing a pull request opens it beside the list, in a tab. The tabs are in the top bar. Open several and switch between them. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open.
@@ -24,6 +25,8 @@ Choosing a pull request opens it beside the list, in a tab. The tabs are in the 
 - **Code:** the files the pull request changes, each with its status (added, modified, deleted, renamed), its size and a **Viewed** box. Open a file to see it before and after in a diff editor, side by side or in one column. Two files can be open at once. Marking a file as viewed puts it away and counts it, and Circles remembers that until the branch gets a new commit. A binary file or one that is too large says so; open the pull request on GitHub to see it.
 
 Circles reads the files from your own copy of the repository when it already has the commits, and from GitHub when not. It does not fetch into your repository.
+
+The copies are kept in Circles' own data folder, as the rest of your workspace records are. A copy goes after 90 days unused, and when GitHub says a repository is not there or not allowed. **Settings > Advanced > Clear cached data** deletes them all; they are fetched again when needed.
 
 Pictures inside a description or comment are not shown. Circles only loads avatars from GitHub, so open the pull request on GitHub to see them.
 
