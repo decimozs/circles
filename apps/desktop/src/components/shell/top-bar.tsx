@@ -5,6 +5,7 @@ import { ComposerOrb } from "@/components/composer-orb";
 import { IconButton } from "@/components/shell/icon-button";
 import { ChatHistory, ChatTabs } from "@/features/chat/chat-tabs";
 import { useComposer, useWorkspaceLinks } from "@/features/composers/api";
+import { RunPopover } from "@/features/composers/run-popover";
 import { useProjects } from "@/features/projects/api";
 import { PrTabs } from "@/features/prs/pr-tabs";
 import { usePrs } from "@/features/prs/store";
@@ -49,9 +50,7 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
           </div>
           <div className="pointer-events-auto flex shrink-0 items-center gap-1">
             {/* A Composer has one chat, so there are no closed chats to bring back. */}
-            <IconButton label="Toggle right panel" hint="⌘⌥B" onClick={toggleRight}>
-              <PanelRightIcon />
-            </IconButton>
+            <RunPopover composer={composer} />
           </div>
         </>
       ) : null}

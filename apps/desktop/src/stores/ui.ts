@@ -21,6 +21,8 @@ type UiState = {
   /** Selected terminal tab for each workspace. */
   dockTab: Record<string, string>;
   shortcutsOpen: boolean;
+  /** The popover of a Composer run, opened from the top bar. */
+  runOpen: boolean;
   /** The Usage dialog. */
   usageOpen: boolean;
   addProjectOpen: boolean;
@@ -50,6 +52,7 @@ type UiState = {
   selectDockTab: (workspaceId: string, terminalId: string) => void;
   setShortcutsOpen: (open: boolean) => void;
   setUsageOpen: (open: boolean) => void;
+  setRunOpen: (open: boolean) => void;
   setAddProjectOpen: (open: boolean, tab?: "local" | "github" | "quick") => void;
   openCreate: (projectId?: string | null) => void;
   setCreateOpen: (open: boolean) => void;
@@ -72,6 +75,7 @@ export const useUi = create<UiState>()(
       bigTerminal: false,
       dockTab: {},
       shortcutsOpen: false,
+      runOpen: false,
       usageOpen: false,
       addProjectOpen: false,
       addProjectTab: "local",
@@ -102,6 +106,7 @@ export const useUi = create<UiState>()(
         set((s) => ({ dockTab: { ...s.dockTab, [workspaceId]: terminalId } })),
       setShortcutsOpen: (shortcutsOpen) => set({ shortcutsOpen }),
       setUsageOpen: (usageOpen) => set({ usageOpen }),
+      setRunOpen: (runOpen) => set({ runOpen }),
       setAddProjectOpen: (addProjectOpen, tab) =>
         set((s) => ({ addProjectOpen, addProjectTab: tab ?? s.addProjectTab })),
       openCreate: (projectId = null) => set({ createOpen: true, createProjectId: projectId }),
@@ -142,6 +147,7 @@ export const useUi = create<UiState>()(
       partialize: (s) => ({
         leftOpen: s.leftOpen,
         rightOpen: s.rightOpen,
+        runOpen: s.runOpen,
         zen: s.zen,
         leftWidth: s.leftWidth,
         rightWidth: s.rightWidth,

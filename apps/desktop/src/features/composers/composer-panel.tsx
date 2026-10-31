@@ -55,7 +55,7 @@ import {
 import { FleetGraph } from "./fleet-graph";
 import { TriggersEditor } from "./triggers-editor";
 
-type Tab = "fleet" | "approvals" | "steps" | "details";
+export type Tab = "fleet" | "approvals" | "steps" | "details";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "fleet", label: "Fleet" },
@@ -78,7 +78,7 @@ export type FleetGroup = {
  * One group per workspace. A run records starting a workspace and starting an agent in it as two
  * separate things, so the same workspace would otherwise be listed twice.
  */
-function groupFleet(items: FleetItem[]): FleetGroup[] {
+export function groupFleet(items: FleetItem[]): FleetGroup[] {
   const groups = new Map<string, FleetGroup>();
   for (const item of items) {
     const key = item.workspace?.id ?? item.child.workspace_id ?? item.child.id;
@@ -91,7 +91,7 @@ function groupFleet(items: FleetItem[]): FleetGroup[] {
   return [...groups.values()];
 }
 
-type FleetTone = "working" | "waiting" | "idle";
+export type FleetTone = "working" | "waiting" | "idle";
 
 const FLEET_DOT: Record<FleetTone, string> = {
   working: "bg-success animate-pulse",
@@ -100,14 +100,22 @@ const FLEET_DOT: Record<FleetTone, string> = {
 };
 
 /** What a workspace is doing, from its agents: waiting on you first, then working, else idle. */
-function fleetTone(group: FleetGroup): FleetTone {
+export function fleetTone(group: FleetGroup): FleetTone {
   if (group.chats.some((c) => c.status === "blocked")) return "waiting";
   if (group.chats.some((c) => c.status === "working")) return "working";
   return "idle";
 }
 
 /** One workspace of the fleet: a card that opens it. Its state, branch and where the branch stands. */
-function FleetCard({ group, tone, name }: { group: FleetGroup; tone: FleetTone; name: string }) {
+export function FleetCard({
+  group,
+  tone,
+  name,
+}: {
+  group: FleetGroup;
+  tone: FleetTone;
+  name: string;
+}) {
   const navigate = useNavigate();
   const stop = useStopChild();
   const ws = group.workspace;
@@ -828,8 +836,17 @@ function DetailsTab({ composer }: { composer: Composer }) {
 }
 
 /** The right pane of a Composer: what it started, what waits for you, what it did, and its setup. */
-export function ComposerPanel({ composer, runId }: { composer: Composer; runId?: string }) {
-  const [tab, setTab] = useState<Tab>("fleet");
+export function ComposerPanel({
+  composer,
+  runId,
+  initialTab = "fleet",
+}: {
+  composer: Composer;
+  runId?: string;
+  /** The tab it opens on. */
+  initialTab?: Tab;
+}) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const pending = (useApprovals({ composerId: composer.id, onlyPending: true }).data ?? []).length;
   return (
     <div className="flex h-full min-h-0 flex-col bg-background">

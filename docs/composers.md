@@ -19,7 +19,7 @@ It runs once with no tools, away from any project and without your own Claude se
 
 ## Running one
 
-Open a Composer and type a goal, for example "List my projects and tell me what each one is." Each start is a **run**, shown as a chat tab. The run page has a right pane with:
+Open a Composer and type a goal, for example "List my projects and tell me what each one is." Each start is a **run**, shown as a chat tab. The run page has no right pane. A button at the top right (a list icon, with the number of approvals waiting for you) shows or hides a panel that stays open while you work in the chat. It shows this Mac and the workspaces the run started, and its entries open the rest:
 
 - **Fleet:** every workspace and chat the Composer started, with status, last activity, changes and a link to open it. The workspaces also show in their project's group in the sidebar with a small badge linking back to the run.
 - **Approvals:** what is waiting for your answer.

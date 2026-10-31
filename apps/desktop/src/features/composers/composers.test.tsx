@@ -5,6 +5,7 @@ import { useUi } from "@/stores/ui";
 import { backend } from "@/test/backend";
 import { approval, composer, project, runView, session } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp, settingsBackend } from "@/test/render";
+import { openRunTab } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -473,7 +474,7 @@ describe("Composer dialog", () => {
         .on("composer_update", composer());
     });
     const app = renderApp("/composer/c1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     await app.user.click(await screen.findByRole("button", { name: "Composer settings" }));
     const dialog = await screen.findByRole("dialog", { name: /settings/ });
     expect(within(dialog).queryByRole("button", { name: "Edit" })).not.toBeInTheDocument();
@@ -502,7 +503,7 @@ describe("Composer dialog", () => {
         .on("composer_update", composer());
     });
     const app = renderApp("/composer/c1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     await app.user.click(await screen.findByRole("button", { name: "Composer settings" }));
     const dialog = await screen.findByRole("dialog", { name: /settings/ });
     expect(within(dialog).queryByRole("button", { name: "Edit" })).not.toBeInTheDocument();
@@ -716,7 +717,7 @@ describe("Composer page", () => {
     });
     const app = renderApp("/composer/c1/run/r1");
     await screen.findByRole("heading", { name: "Release captain" });
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     expect(await screen.findByRole("button", { name: "Composer settings" })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Repositories" })).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Integrations" })).toBeInTheDocument();
@@ -734,7 +735,7 @@ describe("Composer page", () => {
       chatBackend([session({ id: "r1", workspace_id: "cw1", title: "Triage open PRs" })]);
     });
     const app = renderApp("/composer/c1/run/r1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     await app.user.click(await screen.findByRole("button", { name: "Composer settings" }));
     const nav = await screen.findByRole("navigation", { name: "Composer settings" });
     const labels = within(nav)
@@ -792,7 +793,7 @@ describe("Composer page", () => {
         .on("jira_status", connected);
     });
     const app = renderApp("/composer/c1/run/r1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     const section = await screen.findByRole("region", { name: "Integrations" });
     await waitFor(() => expect(section).toHaveTextContent("Connected"));
     expect(section).toHaveTextContent("Jira");
@@ -815,7 +816,7 @@ describe("Composer page", () => {
         ]);
     });
     const app = renderApp("/composer/c1/run/r1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     const repos = await screen.findByRole("region", { name: "Repositories" });
     await waitFor(() => expect(repos).toHaveTextContent("beta"));
     expect(repos).toHaveTextContent("Only this repository");
@@ -837,7 +838,7 @@ describe("Composer page", () => {
         ]);
     });
     const app = renderApp("/composer/c1/run/r1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     const repos = await screen.findByRole("region", { name: "Repositories" });
     await waitFor(() => expect(repos).toHaveTextContent("alpha"));
     expect(repos).toHaveTextContent("All repositories");
@@ -849,7 +850,7 @@ describe("Composer page", () => {
       chatBackend([session({ id: "r1", workspace_id: "cw1", title: "Triage open PRs" })]);
     });
     const app = renderApp("/composer/c1/run/r1");
-    await app.user.click(await screen.findByRole("tab", { name: "Details" }));
+    await openRunTab(app.user, "Details");
     const section = await screen.findByRole("region", { name: "Integrations" });
     expect(section).toHaveTextContent("Off for this Composer");
   });

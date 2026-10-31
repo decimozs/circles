@@ -13,6 +13,7 @@ import {
   workspace,
 } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp } from "@/test/render";
+import { openRunTab } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -27,7 +28,7 @@ function seed(extra?: () => void) {
 
 const open = async (tab: string) => {
   const app = renderApp("/composer/c1/run/r1");
-  await app.user.click(await screen.findByRole("tab", { name: tab }));
+  await openRunTab(app.user, tab);
   return app;
 };
 
@@ -235,10 +236,11 @@ describe("Approvals tab", () => {
         .on("approval_answer", null);
     });
     const app = renderApp("/composer/c1/run/r1");
-    const tab = await screen.findByRole("tab", { name: /Approvals/ });
-    await waitFor(() => expect(tab).toHaveTextContent("1"));
-    await app.user.click(tab);
-    // The chat shows the waiting approval too, above its input. This one is in the right pane.
+    // The button at the top and the entry in the popover both count what waits.
+    const toggle = await screen.findByRole("button", { name: "Run details" });
+    await waitFor(() => expect(toggle).toHaveTextContent("1"));
+    await openRunTab(app.user, "Approvals");
+    // The chat shows the waiting approval too, above its input. This one is in the dialog.
     const cards = await screen.findAllByRole("group", { name: "Approval for delete workspace" });
     const card = cards[cards.length - 1] as HTMLElement;
     const answered = screen.getByRole("list", { name: "Answered" });
