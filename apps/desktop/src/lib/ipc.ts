@@ -246,6 +246,8 @@ export const ipc = {
   prBrowseFiles: (projectId: string, repo: string, number: number) =>
     call<PrFiles>("pr_browse_files", { projectId, repo, number }),
   prBrowseFile: (request: PrFileRequest) => call<FilePair>("pr_browse_file", { request }),
+  prBrowseMerge: (projectId: string, number: number, method: string) =>
+    call<null>("pr_browse_merge", { projectId, number, method }),
   prBrowseDetail: (projectId: string, number: number) =>
     call<PrDetail>("pr_browse_detail", { projectId, number }),
   prBrowseList: (projectId: string | null, which: BrowseState) =>

@@ -355,6 +355,7 @@ pub fn run() {
             commands::pr_browse::pr_browse_detail,
             commands::pr_browse::pr_browse_files,
             commands::pr_browse::pr_browse_file,
+            commands::pr_browse::pr_browse_merge,
             commands::workspace::workspace_take_pending_prompt,
             commands::terminal::terminal_list,
             commands::terminal::terminal_create,

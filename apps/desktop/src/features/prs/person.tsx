@@ -12,7 +12,7 @@ export function Person({
 }) {
   return (
     <span className={cn("inline-flex min-w-0 items-center gap-1.5", className)}>
-      {name ? (
+      {name && avatar ? (
         <img src={avatar} alt="" className="size-4 shrink-0 rounded-full bg-muted object-cover" />
       ) : null}
       <span className="truncate">{name || "unknown"}</span>

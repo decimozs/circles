@@ -7,6 +7,7 @@ import { formatAge } from "@/lib/time";
 import { usePrDetail } from "./api";
 import { CodeTab } from "./code-tab";
 import { Person } from "./person";
+import { PrActions } from "./pr-actions";
 import { StateIcon } from "./pr-row";
 import { type PrTab, usePrs } from "./store";
 import { SummaryTab } from "./summary-tab";
@@ -98,7 +99,7 @@ function Detail({ tab }: { tab: PrTab }) {
           <span className="min-w-0 truncate">{row.repo}</span>
           <span className="font-mono">#{row.number}</span>
           <Button
-            variant="outline"
+            variant="ghost"
             size="xs"
             className="ml-auto"
             onClick={() => openUrl(row.url).catch(() => {})}
@@ -106,6 +107,7 @@ function Detail({ tab }: { tab: PrTab }) {
             <ExternalLinkIcon />
             Open on GitHub
           </Button>
+          <PrActions detail={detail} projectId={tab.projectId} />
         </div>
         <h2 className="flex items-start gap-2 text-lg leading-snug font-semibold">
           <StateIcon row={row} className="mt-1.5" />
