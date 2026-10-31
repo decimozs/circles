@@ -14,7 +14,7 @@ use super::{avatar_url, bad_output, Gh, GhError, DEFAULT_TIMEOUT};
 /// How many repositories are asked at once.
 const AT_ONCE: usize = 4;
 
-const LIST_FIELDS: &str = "number,title,author,url,createdAt,updatedAt,additions,deletions,changedFiles,isDraft,state,labels,reviewDecision,reviewRequests,statusCheckRollup,headRefName,baseRefName";
+pub(super) const LIST_FIELDS: &str = "number,title,author,url,createdAt,updatedAt,additions,deletions,changedFiles,isDraft,state,labels,reviewDecision,reviewRequests,statusCheckRollup,headRefName,baseRefName";
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
 #[ts(export)]
@@ -100,9 +100,9 @@ where
 }
 
 #[derive(Deserialize)]
-struct RawPerson {
+pub(super) struct RawPerson {
     #[serde(default)]
-    login: String,
+    pub(super) login: String,
     #[serde(default)]
     slug: String,
 }
@@ -115,8 +115,8 @@ struct RawLabel {
 }
 
 #[derive(Deserialize)]
-struct RawRow {
-    number: u32,
+pub(super) struct RawRow {
+    pub(super) number: u32,
     #[serde(default)]
     title: String,
     author: Option<RawPerson>,
@@ -212,60 +212,60 @@ pub fn summarize_checks(rollup: &[serde_json::Value]) -> PrChecks {
     }
 }
 
+/// A pull request as the list shows it, from what `gh` returned.
+pub(super) fn to_row(r: RawRow, whose: &Whose) -> PrRow {
+    let author = r.author.map(|a| a.login).unwrap_or_default();
+    let requested: Vec<String> = r
+        .review_requests
+        .into_iter()
+        .map(|p| if p.login.is_empty() { p.slug } else { p.login })
+        .filter(|name| !name.is_empty())
+        .collect();
+    let me = !whose.me.is_empty();
+    PrRow {
+        project_id: whose.project_id.into(),
+        project_name: whose.project_name.into(),
+        repo: repo_from_url(&r.url),
+        number: r.number,
+        title: r.title,
+        url: r.url,
+        author_avatar: avatar_url(&author),
+        by_me: me && author.eq_ignore_ascii_case(whose.me),
+        review_requested: me && requested.iter().any(|n| n.eq_ignore_ascii_case(whose.me)),
+        author,
+        head_ref: r.head_ref,
+        base_ref: r.base_ref,
+        state: r.state.to_lowercase(),
+        is_draft: r.is_draft,
+        additions: r.additions,
+        deletions: r.deletions,
+        changed_files: r.changed_files,
+        created_at: r.created_at,
+        updated_at: r.updated_at,
+        labels: r
+            .labels
+            .into_iter()
+            .map(|l| PrLabel {
+                name: l.name,
+                color: l.color,
+            })
+            .collect(),
+        review: match r.review_decision.as_str() {
+            "APPROVED" => "approved",
+            "CHANGES_REQUESTED" => "changes_requested",
+            "REVIEW_REQUIRED" => "review_required",
+            _ => "none",
+        }
+        .into(),
+        requested_reviewers: requested,
+        checks: summarize_checks(&r.rollup),
+    }
+}
+
 /// Parses `gh pr list --json ...` for the repository of `whose`.
 pub fn parse_rows(json: &str, whose: &Whose) -> Result<Vec<PrRow>, GhError> {
     let raw: Vec<RawRow> = serde_json::from_str(json).map_err(bad_output)?;
-    Ok(raw
-        .into_iter()
-        .map(|r| {
-            let author = r.author.map(|a| a.login).unwrap_or_default();
-            let requested: Vec<String> = r
-                .review_requests
-                .into_iter()
-                .map(|p| if p.login.is_empty() { p.slug } else { p.login })
-                .filter(|name| !name.is_empty())
-                .collect();
-            let me = !whose.me.is_empty();
-            PrRow {
-                project_id: whose.project_id.into(),
-                project_name: whose.project_name.into(),
-                repo: repo_from_url(&r.url),
-                number: r.number,
-                title: r.title,
-                url: r.url,
-                author_avatar: avatar_url(&author),
-                by_me: me && author.eq_ignore_ascii_case(whose.me),
-                review_requested: me && requested.iter().any(|n| n.eq_ignore_ascii_case(whose.me)),
-                author,
-                head_ref: r.head_ref,
-                base_ref: r.base_ref,
-                state: r.state.to_lowercase(),
-                is_draft: r.is_draft,
-                additions: r.additions,
-                deletions: r.deletions,
-                changed_files: r.changed_files,
-                created_at: r.created_at,
-                updated_at: r.updated_at,
-                labels: r
-                    .labels
-                    .into_iter()
-                    .map(|l| PrLabel {
-                        name: l.name,
-                        color: l.color,
-                    })
-                    .collect(),
-                review: match r.review_decision.as_str() {
-                    "APPROVED" => "approved",
-                    "CHANGES_REQUESTED" => "changes_requested",
-                    "REVIEW_REQUIRED" => "review_required",
-                    _ => "none",
-                }
-                .into(),
-                requested_reviewers: requested,
-                checks: summarize_checks(&r.rollup),
-            }
-        })
-        .collect())
+    Ok(raw.into_iter().map(|r| to_row(r, whose)).collect())
 }
 
 impl Gh {

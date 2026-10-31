@@ -2,6 +2,8 @@
 
 use std::path::{Path, PathBuf};
 pub mod browse;
+pub mod browse_detail;
+pub mod browse_files;
 pub mod pr;
 
 use std::process::Stdio;
