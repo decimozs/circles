@@ -21,6 +21,10 @@ Choosing a pull request opens it beside the list, in a tab. Open several and swi
 - **Summary:** who reviews (who approved, who asked for changes, who was asked and has not answered), labels, the description as formatted text, the checks (open the list to see each one and its link) and the comments. A branch that cannot be merged because of conflicts says so.
 - **Timeline:** the opening, every commit, review and comment, and the merge, newest first. The button at the top reverses the order.
 
+- **Code:** the files the pull request changes, each with its status (added, modified, deleted, renamed), its size and a **Viewed** box. Open a file to see it before and after in a diff editor, side by side or in one column. Two files can be open at once. Marking a file as viewed puts it away and counts it, and Circles remembers that until the branch gets a new commit. A binary file or one that is too large says so; open the pull request on GitHub to see it.
+
+Circles reads the files from your own copy of the repository when it already has the commits, and from GitHub when not. It does not fetch into your repository.
+
 Pictures inside a description or comment are not shown. Circles only loads avatars from GitHub, so open the pull request on GitHub to see them.
 
 ## The next step
