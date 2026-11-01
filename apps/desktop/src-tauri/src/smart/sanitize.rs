@@ -13,6 +13,16 @@ fn first_line(text: &str) -> &str {
         .unwrap_or("")
 }
 
+/// Whether a line is the model trying to call a tool, such as `<invoke name="Bash">`, instead of
+/// answering. It is given no tools, but a small model sometimes writes the call out as text.
+fn is_tool_markup(line: &str) -> bool {
+    let lower = line.trim_start().to_lowercase();
+    lower.starts_with('<')
+        || ["<invoke", "<function_calls", "<parameter", "antml:"]
+            .iter()
+            .any(|m| lower.contains(m))
+}
+
 /// Removes the wrapping a model likes to add: quotes, a "Title:" label, markdown marks.
 fn unwrap(line: &str) -> String {
     let mut s = line.trim().to_string();
@@ -81,6 +91,9 @@ fn limit_words(s: &str, words: usize, chars: usize) -> String {
 /// characters, without a full stop. `None` when nothing usable is left.
 pub fn title(raw: &str) -> Option<String> {
     let line = unwrap(first_line(raw));
+    if is_tool_markup(&line) {
+        return None;
+    }
     // A question is the user's own, handed back. A reply or a greeting is not a title.
     if line.trim_end().ends_with('?') {
         return None;
@@ -120,6 +133,9 @@ pub fn title(raw: &str) -> Option<String> {
 /// mark so it reads as a sentence. `None` when nothing usable is left.
 pub fn suggestion(raw: &str) -> Option<String> {
     let line = unwrap(first_line(raw));
+    if is_tool_markup(&line) {
+        return None;
+    }
     // Only the first sentence.
     let sentence = match line.find(['.', '!', '?']) {
         Some(i) => line[..=i].to_string(),
@@ -179,6 +195,19 @@ mod tests {
         assert_eq!(title("What is the issue?"), None);
         assert_eq!(title("I'll get your tickets and spawn"), None);
         assert_eq!(title("Hello"), None);
+    }
+
+    #[test]
+    fn a_tool_call_written_as_text_is_not_a_title_or_a_suggestion() {
+        for raw in [
+            "<invoke name=\"Bash\">",
+            "  <invoke name=\"Bash\">\n<parameter name=\"command\">ls</parameter>",
+            "Let me look <invoke name=\"Bash\">",
+            "<function_calls>",
+        ] {
+            assert_eq!(title(raw), None, "{raw}");
+            assert_eq!(suggestion(raw), None, "{raw}");
+        }
     }
 
     #[test]
