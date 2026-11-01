@@ -110,6 +110,18 @@
   --elevation-sm: 0 1px 2px rgb(0 0 0 / 6%);
   --elevation-md: 0 4px 12px rgb(0 0 0 / 8%), 0 1px 3px rgb(0 0 0 / 6%);
   --elevation-lg: 0 12px 32px rgb(0 0 0 / 12%), 0 2px 6px rgb(0 0 0 / 8%);
+
+  /* Glass: the frosted look of the Translucency setting. A surface is its tint at this strength over
+     whatever is behind it (the blurred desktop, or the app). Contrast is checked in both themes
+     against the worst backdrops for the theme by check:contrast. They are the floor: lower alphas fail it. */
+  --glass-chrome-tint: #f6f6f5;
+  --glass-chrome-alpha: 0.92;
+  --glass-surface-tint: #ffffff;
+  --glass-surface-alpha: 0.86;
+  --glass-edge: rgb(255 255 255 / 55%);
+  --glass-blur: 24px;
+  --glass-saturate: 1.6;
+  --glass-shadow: 0 8px 32px rgb(0 0 0 / 14%), 0 1px 0 rgb(255 255 255 / 40%) inset;
 }
 
 .dark {
@@ -189,4 +201,11 @@
   --elevation-sm: 0 1px 2px rgb(0 0 0 / 40%);
   --elevation-md: 0 4px 12px rgb(0 0 0 / 45%), 0 1px 3px rgb(0 0 0 / 35%);
   --elevation-lg: 0 12px 32px rgb(0 0 0 / 55%), 0 2px 6px rgb(0 0 0 / 40%);
+
+  --glass-chrome-tint: #171717;
+  --glass-chrome-alpha: 0.74;
+  --glass-surface-tint: #1c1c1c;
+  --glass-surface-alpha: 0.78;
+  --glass-edge: rgb(255 255 255 / 12%);
+  --glass-shadow: 0 8px 32px rgb(0 0 0 / 50%), 0 1px 0 rgb(255 255 255 / 8%) inset;
 }

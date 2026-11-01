@@ -100,11 +100,14 @@ describe("settings pages", () => {
 
   it("applies the theme, font size and density from the file", async () => {
     open("/settings/appearance", {
-      user: { appearance: { theme: "dark", font_size: "large", density: "compact" } },
+      user: {
+        appearance: { theme: "dark", font_size: "large", density: "compact", translucency: true },
+      },
     });
     await waitFor(() => expect(document.documentElement).toHaveClass("dark"));
     expect(document.documentElement.style.fontSize).toBe("18px");
     expect(document.documentElement.dataset.density).toBe("compact");
+    expect(document.documentElement.dataset.translucent).toBe("true");
   });
 
   it("writes the theme chosen in the toggle back to the file", async () => {

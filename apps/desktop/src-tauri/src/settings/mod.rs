@@ -86,6 +86,8 @@ pub struct Appearance {
     pub font_size: Option<String>,
     /// `comfortable` or `compact`.
     pub density: Option<String>,
+    /// Frosted, see-through surfaces. Off when it is not set.
+    pub translucency: Option<bool>,
 }
 
 /// What a new chat starts with.

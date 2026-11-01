@@ -12,4 +12,8 @@ font_size: string | null,
 /**
  * `comfortable` or `compact`.
  */
-density: string | null, };
+density: string | null, 
+/**
+ * Frosted, see-through surfaces. Off when it is not set.
+ */
+translucency: boolean | null, };

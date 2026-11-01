@@ -56,6 +56,11 @@ export function useApplySettings() {
     document.documentElement.dataset.density = density;
   }, [density]);
 
+  const translucency = appearance?.translucency ?? false;
+  useEffect(() => {
+    document.documentElement.dataset.translucent = translucency ? "true" : "false";
+  }, [translucency]);
+
   // The default from the settings is applied when it changes. After that, a pick made in the
   // Create dialog is kept, so the setting does not undo it at every launch.
   const model = models?.model ?? null;

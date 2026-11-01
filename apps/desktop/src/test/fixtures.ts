@@ -218,7 +218,7 @@ export function emptySettings(): Settings {
       sound: null,
       long_text_to_attachment: null,
     },
-    appearance: { theme: null, font_size: null, density: null },
+    appearance: { theme: null, font_size: null, density: null, translucency: null },
     models: { model: null, effort: null, plan_by_default: null },
     agents: { claude_path: null, permission_mode: null, extra_args: [] },
     advanced: { log_level: null, checkpoint_days: null },
