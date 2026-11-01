@@ -371,6 +371,8 @@ pub fn run() {
             commands::skills::skills_list,
             commands::skills::skills_detail,
             commands::skills::skills_file,
+            commands::skills::skills_reveal,
+            commands::skills::skills_open,
             commands::usage::usage_summary,
             commands::usage::usage_refresh,
             commands::usage::usage_rebuild,

@@ -7,6 +7,7 @@ import { backend } from "@/test/backend";
 import { project } from "@/test/fixtures";
 import { defaultBackend, renderApp } from "@/test/render";
 import { groupRows, matches, NO_FILTERS, parseQuery, sortRows } from "./query";
+import { githubUrl } from "./skill-actions";
 import { useSkillsUi } from "./store";
 
 function row(over: Partial<SkillRow> = {}): SkillRow {
@@ -233,5 +234,45 @@ describe("the Skills page", () => {
     await screen.findByRole("button", { name: "mine" });
     expect(screen.getByRole("button", { name: "a-skill" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "b-skill" })).not.toBeInTheDocument();
+  });
+});
+
+describe("what can be done with a skill", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    useSkillsUi.setState({ tabs: [], selected: null, scope: null, query: "" });
+  });
+
+  it("copies its command, shows it in Finder and opens its text", async () => {
+    seed([row({ name: "caveman" })]);
+    backend.on("skills_reveal", null).on("skills_open", null);
+    const { user } = renderApp("/skills");
+    await user.click(await screen.findByRole("button", { name: "caveman" }));
+    await user.click(await screen.findByRole("button", { name: "Reveal" }));
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    await waitFor(() => expect(backend.callsTo("skills_reveal")).toHaveLength(1));
+    expect(backend.callsTo("skills_reveal")[0]).toEqual({ id: "/home/me/.claude/skills/caveman" });
+    expect(backend.callsTo("skills_open")[0]).toEqual({ id: "/home/me/.claude/skills/caveman" });
+    expect(screen.getByRole("button", { name: "Copy /caveman" })).toBeInTheDocument();
+    // Not a project skill, so there is nothing to open on GitHub.
+    expect(screen.queryByRole("button", { name: "GitHub" })).not.toBeInTheDocument();
+  });
+
+  it("builds the GitHub address of a project's skill, and only for a skill inside the project", () => {
+    const p = project({
+      path: "/work/circles",
+      remote_url: "git@github.com:decimozs/circles.git",
+      default_branch: "main",
+    });
+    expect(githubUrl(p, "/work/circles/.claude/skills/circles-pr-title")).toBe(
+      "https://github.com/decimozs/circles/tree/main/.claude/skills/circles-pr-title",
+    );
+    expect(
+      githubUrl({ ...p, remote_url: "https://github.com/decimozs/circles" }, "/work/circles/a b"),
+    ).toBe("https://github.com/decimozs/circles/tree/main/a%20b");
+    expect(githubUrl(p, "/elsewhere/skill")).toBeNull();
+    expect(githubUrl({ ...p, remote_url: "git@gitlab.com:a/b.git" }, "/work/circles/x")).toBeNull();
+    expect(githubUrl({ ...p, remote_url: null }, "/work/circles/x")).toBeNull();
+    expect(githubUrl(undefined, "/work/circles/x")).toBeNull();
   });
 });

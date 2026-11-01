@@ -360,6 +360,11 @@ fn known(src: &Sources, id: &str) -> AppResult<SkillRow> {
         .ok_or_else(|| AppError::NotFound("That skill is not in any folder Circles reads.".into()))
 }
 
+/// The folder of a skill the scan found, and nothing else.
+pub fn folder_of(src: &Sources, id: &str) -> AppResult<PathBuf> {
+    Ok(PathBuf::from(known(src, id)?.path))
+}
+
 pub fn detail(src: &Sources, id: &str) -> AppResult<SkillDetail> {
     let row = known(src, id)?;
     let folder = PathBuf::from(&row.path);
@@ -608,6 +613,15 @@ mod tests {
         };
         assert!(list(&src).skills.is_empty());
         assert!(list(&Sources::default()).skills.is_empty());
+    }
+
+    #[test]
+    fn only_a_listed_skills_folder_can_be_opened() {
+        let (_tmp, src) = fixture();
+        let id = list(&src).skills[0].id.clone();
+        assert!(folder_of(&src, &id).unwrap().join("SKILL.md").is_file());
+        assert!(folder_of(&src, "/etc").is_err());
+        assert!(folder_of(&src, &format!("{id}/..")).is_err());
     }
 
     /// Reads the real folders of this Mac: `cargo test --lib -- --ignored --nocapture real_skills`

@@ -51,3 +51,31 @@ pub async fn skills_file(
         .await
         .map_err(|e| AppError::Internal(e.to_string()))?
 }
+
+/// Shows a skill's folder in Finder.
+#[tauri::command]
+pub async fn skills_reveal(state: State<'_, AppState>, id: String) -> IpcResult<()> {
+    let src = sources(&state).await?;
+    let folder = tokio::task::spawn_blocking(move || skills::folder_of(&src, &id))
+        .await
+        .map_err(|e| AppError::Internal(e.to_string()))??;
+    std::process::Command::new("open")
+        .arg("-R")
+        .arg(folder)
+        .spawn()?;
+    Ok(())
+}
+
+/// Opens a skill's `SKILL.md` in the text editor macOS uses for text files.
+#[tauri::command]
+pub async fn skills_open(state: State<'_, AppState>, id: String) -> IpcResult<()> {
+    let src = sources(&state).await?;
+    let folder = tokio::task::spawn_blocking(move || skills::folder_of(&src, &id))
+        .await
+        .map_err(|e| AppError::Internal(e.to_string()))??;
+    std::process::Command::new("open")
+        .arg("-t")
+        .arg(folder.join("SKILL.md"))
+        .spawn()?;
+    Ok(())
+}
