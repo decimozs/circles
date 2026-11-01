@@ -84,6 +84,8 @@ const GLASS = [
   ["chrome", "muted-foreground", 4.5],
   ["surface", "popover-foreground", 4.5],
   ["surface", "muted-foreground", 4.5],
+  ["background", "foreground", 4.5],
+  ["background", "muted-foreground", 4.5],
 ];
 for (const [name, vars] of Object.entries(themes)) {
   for (const [kind, fg, min] of GLASS) {

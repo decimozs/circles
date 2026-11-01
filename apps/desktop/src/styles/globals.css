@@ -104,11 +104,16 @@
   }
 }
 
-/* The Translucency setting. The sidebar and the floating surfaces take the glass tints, which are
-   checked for contrast in tokens.css; the window's own material shows behind the sidebar. Other
-   surfaces (the chat, code and diffs) stay opaque. For people who reduce transparency the tints are
-   the solid colours they already were, and nothing blurs. */
+/* The Translucency setting. The page, the sidebar and the floating surfaces take the glass tints,
+   which are checked for contrast in tokens.css, so the window's own material shows through the whole
+   app. The code editors and terminals keep their own solid colours. For people who reduce
+   transparency the tints are the solid colours they already were, and nothing blurs. */
 :root[data-translucent="true"] {
+  --background: color-mix(
+    in srgb,
+    var(--glass-background-tint) calc(var(--glass-background-alpha) * 100%),
+    transparent
+  );
   --sidebar: color-mix(
     in srgb,
     var(--glass-chrome-tint) calc(var(--glass-chrome-alpha) * 100%),
@@ -137,6 +142,7 @@
 }
 @media (prefers-reduced-transparency: reduce) {
   :root[data-translucent="true"] {
+    --background: var(--glass-background-tint);
     --sidebar: var(--glass-chrome-tint);
     --popover: var(--glass-surface-tint);
   }

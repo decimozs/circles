@@ -118,6 +118,8 @@
   --glass-chrome-alpha: 0.92;
   --glass-surface-tint: #ffffff;
   --glass-surface-alpha: 0.86;
+  --glass-background-tint: #ffffff;
+  --glass-background-alpha: 0.88;
   --glass-edge: rgb(255 255 255 / 55%);
   --glass-blur: 24px;
   --glass-saturate: 1.6;
@@ -206,6 +208,8 @@
   --glass-chrome-alpha: 0.74;
   --glass-surface-tint: #1c1c1c;
   --glass-surface-alpha: 0.78;
+  --glass-background-tint: #141414;
+  --glass-background-alpha: 0.78;
   --glass-edge: rgb(255 255 255 / 12%);
   --glass-shadow: 0 8px 32px rgb(0 0 0 / 50%), 0 1px 0 rgb(255 255 255 / 8%) inset;
 }

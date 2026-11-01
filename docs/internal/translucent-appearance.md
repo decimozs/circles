@@ -43,12 +43,14 @@ opaque, so reading contrast and speed do not depend on the wallpaper.
 - **Liquid Glass is available.** The Tauri version in use (2.12) has `LiquidGlassRegular` for macOS 26 and
   newer, so the window asks for it, with the `Sidebar` material as the fallback for older macOS. The
   plan above called it an experiment; it turned out not to need `objc2`.
-- **The top bar stays opaque.** It sits inside the opaque centre column, so the glass is the sidebar and the
-  floating surfaces. Making the top bar glass needs the centre column split, which is left for later.
+- **Everything is translucent.** The page background takes a glass tint too (`--glass-background-*`), so the
+  chat, the top bar and the right pane show the window material, not only the sidebar and the floating
+  surfaces. Code editors and terminals keep their own solid colours. This replaces the first build, which
+  kept the centre column opaque.
 - **Reduce transparency** is left to CSS (`prefers-reduced-transparency`), where the tints become the
   solid colours. The native material is also made solid by macOS itself.
 - **Contrast floor:** the strengths had to be high to pass the check over a mid grey backdrop (light
-  sidebar 0.92, light surfaces 0.86, dark 0.74 and 0.78), so the light theme shows less of the backdrop than
+  sidebar 0.92, light surfaces 0.86, light page 0.88; dark 0.74, 0.78 and 0.78), so the light theme shows less of the backdrop than
   the dark one. Lower them only with the check changed on purpose.
 - **Not decided here:** the three questions below. Defaults used: off, one material (Liquid Glass or
   Sidebar), macOS only.

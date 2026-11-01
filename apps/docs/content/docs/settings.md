@@ -31,7 +31,7 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 
 ### Translucency
 
-Translucency (off by default) gives the window a macOS glass look. The sidebar shows a blurred view of what is behind the window, and menus, popovers, dialogs and the command palette are frosted. The chat, code and diffs stay solid, so reading does not depend on your wallpaper. It uses Liquid Glass on macOS 26 or newer and the system sidebar material on older versions. Turn it on and off in Settings > Appearance; it applies at once. If macOS is set to reduce transparency (System Settings > Accessibility > Display), Circles keeps the solid colours and nothing blurs. It works on macOS only for now; on other systems the setting changes nothing yet.
+Translucency (off by default) gives the window a macOS glass look. The sidebar shows a blurred view of what is behind the window, and menus, popovers, dialogs and the command palette are frosted, and the chat and other pages let a little of it through. The light theme shows less of the backdrop than the dark theme, because text on it must stay readable on a bright wallpaper. The code editors and terminals keep their own solid colours. It uses Liquid Glass on macOS 26 or newer and the system sidebar material on older versions. Turn it on and off in Settings > Appearance; it applies at once. If macOS is set to reduce transparency (System Settings > Accessibility > Display), Circles keeps the solid colours and nothing blurs. It works on macOS only for now; on other systems the setting changes nothing yet.
 
 **Agents and environment**
 
