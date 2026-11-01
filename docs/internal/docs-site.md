@@ -8,6 +8,10 @@ site instead of the pages. The `docs/` folder stays at the root for what still n
 (plans, audits, the threat model, the release checklist), which is for people working on Circles and stays
 out of the site, and a short `docs/README.md` that says where the guide is.
 
+The repository is **public**, so the guide's pages and `docs/internal/` can already be read on GitHub by
+anyone. The site shows "view on GitHub" and "edit" links to the page's own file for that reason. Keeping
+`docs/internal/` off the site is about audience (it is for people working on Circles), not about hiding it.
+
 ## What Fumadocs needs (checked on its site)
 
 - Node 22 or newer. This repository requires Node 24.
@@ -106,8 +110,8 @@ Found by searching the repository for references to the guide:
   is a pnpm workspace at the repository root.
 - **Install command:** `pnpm install --frozen-lockfile` (Vercel reads `packageManager` from the root
   `package.json`, which says pnpm 12.8.1). **Build command:** `pnpm build` (`next build`). **Node:** 24.
-- **Production branch:** `main`. Every pull request gets a preview, which for a private repository sits
-  behind Vercel's deployment protection by default, so only people with access see it.
+- **Production branch:** `main`. Every pull request gets a preview, which Vercel may put
+  behind its deployment protection (a login), depending on the project's setting.
 - **Ignored build step:** build only when `apps/docs` changed
   (`git diff --quiet HEAD^ HEAD -- apps/docs ../../pnpm-lock.yaml`), so a change to the desktop app does not
   rebuild the site.
