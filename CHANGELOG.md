@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- A card the agent asked you something with stayed above the message box after you answered it, and its see-through background let the chat show through the text. An answered or closed card now leaves, and cards use the theme's own card colours with no yellow.
 - macOS no longer asks for your Keychain password while a Composer or chat uses Jira. The Jira login is kept in a file only you can read, instead of in the Keychain, which asks again after every build of an app that is not signed. A login saved in the Keychain is not carried over: connect Jira again.
 - Create PR said "GitHub sees no commits" for a branch whose work was already merged: changes, commits ahead and the pull request check compared with the local `main`, which a merge on GitHub never moves, instead of `origin/main`.
 - A Composer stopped for good once it had started 10 workspaces and chats in total over its whole life. The limit is now per request, counted from your latest message.

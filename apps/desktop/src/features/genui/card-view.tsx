@@ -425,8 +425,8 @@ export function CardView({ stored, from }: { stored: StoredCard; from?: string }
     <section
       aria-label={card.title ?? "Question from the agent"}
       className={cn(
-        "flex flex-col gap-3 rounded-lg border p-3 text-sm",
-        pending ? "border-warning/60 bg-warning/5" : "border-border bg-card",
+        "flex flex-col gap-3 rounded-lg border border-border bg-card p-3 text-sm text-card-foreground shadow-sm",
+        pending && "border-ring",
       )}
     >
       <header className="flex items-start gap-2">
