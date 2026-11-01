@@ -156,14 +156,26 @@ impl Integrations {
         Ok(known.clone())
     }
 
-    /// What is connected, from the plain file. The first time there is no file, it is worked out
-    /// from the Keychain once, which is how connections made before this existed are found. That
-    /// is the only time the Keychain is asked about the state.
+    /// Whether a login is saved at all: the token one or the Atlassian one.
+    fn has_secrets(&self) -> bool {
+        matches!(self.store.load_oauth(), Ok(Some(_))) || matches!(self.store.load(), Ok(Some(_)))
+    }
+
+    /// What is connected, from the plain file. When a file says something is connected but no login
+    /// is saved, as after the logins moved out of the macOS Keychain, nothing is connected and the
+    /// person connects again. The first time there is no file, it is worked out from the saved
+    /// login.
     pub(crate) fn current_meta(&self) -> Option<meta::Meta> {
         let mut slot = self.meta.lock().unwrap();
         if slot.is_none() {
             let from_file = self.meta_path.as_deref().and_then(meta::read);
             let found = match from_file {
+                Some(m) if m.connected() && !self.has_secrets() => {
+                    if let Some(path) = &self.meta_path {
+                        meta::write(path, &meta::Meta::default());
+                    }
+                    None
+                }
                 Some(m) => Some(m).filter(meta::Meta::connected),
                 None => {
                     let derived = if let Ok(Some(s)) = self.store.load_oauth() {
@@ -440,7 +452,7 @@ mod tests {
     }
 
     #[test]
-    fn the_state_is_shown_without_asking_the_keychain() {
+    fn the_state_is_read_from_the_file_once_and_not_asked_again_and_again() {
         let dir = tempfile::tempdir().unwrap();
         let file = dir.path().join("integrations.json");
         std::fs::write(
@@ -448,11 +460,29 @@ mod tests {
             r#"{"method":"oauth","site":"t.atlassian.net","email":null,"account_name":"Marlon"}"#,
         )
         .unwrap();
+        let inner = MemorySecrets::default();
+        inner
+            .save_oauth(&secrets::OAuthSession {
+                client_id: "c".into(),
+                token_endpoint: "https://a.example/t".into(),
+                resource: "https://m.example".into(),
+                access_token: "a".into(),
+                refresh_token: None,
+                expires_at_ms: 0,
+                cloud_id: "id".into(),
+                site: "t.atlassian.net".into(),
+                account_name: "Marlon".into(),
+            })
+            .unwrap();
         let store = std::sync::Arc::new(Counting {
-            inner: MemorySecrets::default(),
+            inner,
             reads: std::sync::atomic::AtomicUsize::new(0),
         });
         let hub = Integrations::new(Box::new(store.clone()), file);
+        let first = hub.jira_status().unwrap();
+        let reads = store.reads.load(std::sync::atomic::Ordering::SeqCst);
+        assert!(reads > 0, "it checks that a login is saved");
+        assert!(first.connected);
         for _ in 0..5 {
             let status = hub.jira_status().unwrap();
             assert!(status.connected);
@@ -460,15 +490,32 @@ mod tests {
             assert_eq!(status.method.as_deref(), Some("oauth"));
             assert!(hub.is_jira_connected());
         }
-        assert_eq!(
-            store.reads.load(std::sync::atomic::Ordering::SeqCst),
-            0,
-            "no password prompt just for showing the state"
+        assert_eq!(store.reads.load(std::sync::atomic::Ordering::SeqCst), reads);
+    }
+
+    #[test]
+    fn a_connection_whose_login_is_gone_is_not_connected_and_is_forgotten() {
+        // What a person sees after the logins moved out of the Keychain: the file of the old
+        // version says Jira is connected, and no login was saved in the new place.
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("integrations.json");
+        std::fs::write(
+            &file,
+            r#"{"method":"token","site":"t.atlassian.net","email":"me@x.com","account_name":"me@x.com"}"#,
+        )
+        .unwrap();
+        let hub = Integrations::new(Box::new(MemorySecrets::default()), file.clone());
+        let status = hub.jira_status().unwrap();
+        assert!(!status.connected);
+        assert!(!hub.is_jira_connected());
+        assert!(
+            !meta::read(&file).is_some_and(|m| m.connected()),
+            "not remembered as connected"
         );
     }
 
     #[test]
-    fn a_connection_from_before_is_found_once_and_then_remembered_in_the_file() {
+    fn a_login_with_no_file_about_it_is_found_and_remembered_in_the_file() {
         let dir = tempfile::tempdir().unwrap();
         let file = dir.path().join("integrations.json");
         let inner = MemorySecrets::default();
@@ -483,13 +530,11 @@ mod tests {
         let status = hub.jira_status().unwrap();
         assert_eq!(status.method.as_deref(), Some("token"));
         assert!(file.exists(), "written for next time");
-        let reads = store.reads.load(std::sync::atomic::Ordering::SeqCst);
-        assert!(reads > 0);
+        assert!(store.reads.load(std::sync::atomic::Ordering::SeqCst) > 0);
 
-        // The next start does not read the secrets at all.
+        // The next start finds the file, and the login is still there.
         let again = Integrations::new(Box::new(store.clone()), file);
         assert!(again.jira_status().unwrap().connected);
-        assert_eq!(store.reads.load(std::sync::atomic::Ordering::SeqCst), reads);
     }
 
     #[test]

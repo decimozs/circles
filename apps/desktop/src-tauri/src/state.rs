@@ -12,7 +12,7 @@ use crate::github::Gh;
 use crate::harness::claude::ClaudeCode;
 use crate::harness::sessions::{AgentEvents, SessionManager, WorkspaceSync};
 use crate::harness::store::SessionStore;
-use crate::integrations::secrets::KeychainSecrets;
+use crate::integrations::secrets::FileSecrets;
 use crate::integrations::Integrations;
 use crate::logging::Redactor;
 use crate::paths::AppPaths;
@@ -95,6 +95,7 @@ impl AppState {
         let composers = ComposerHub::new(db.clone(), &paths.data_dir);
         sessions.set_launch_hook(composers.clone());
         let integrations_file = paths.data_dir.join("integrations.json");
+        let secrets_file = paths.data_dir.join("integration-secrets.json");
         let genui_events = Arc::new(crate::genui::LateEvents::default());
         let genui = crate::genui::service::GenuiService::new(
             crate::genui::store::CardStore::new(db.clone()),
@@ -114,7 +115,10 @@ impl AppState {
             genui,
             genui_events,
             side: crate::side::service::SideService::default(),
-            integrations: Integrations::new(Box::new(KeychainSecrets::new()), integrations_file),
+            integrations: Integrations::new(
+                Box::new(FileSecrets::new(secrets_file)),
+                integrations_file,
+            ),
             comments,
             watchers: Watchers::default(),
             settings_watcher: SettingsWatcher::default(),
