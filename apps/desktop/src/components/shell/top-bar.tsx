@@ -59,6 +59,15 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
           <div className="pointer-events-auto flex shrink-0 items-center gap-2">
             <StatusIndicator state={workspace.state} spinner={false} />
             <h1 className="text-sm font-semibold">{workspace.title ?? workspace.city}</h1>
+            {workspace.branch && workspace.branch !== "-" ? (
+              <span
+                data-testid="branch-badge"
+                title={`Branch ${workspace.branch}`}
+                className="max-w-56 truncate rounded-md bg-muted px-1.5 py-0.5 font-mono text-2xs text-muted-foreground"
+              >
+                {workspace.branch}
+              </span>
+            ) : null}
             {links.get(workspace.id) ? (
               <button
                 type="button"

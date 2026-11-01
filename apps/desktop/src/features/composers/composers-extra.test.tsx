@@ -43,6 +43,19 @@ describe("workspaces a Composer started", () => {
     await waitFor(() => expect(app.router.state.location.pathname).toBe("/composer/c1/run/r1"));
   });
 
+  it("show the branch beside the title in the top bar, and none for a plain folder", async () => {
+    seed(() => backend.on("workspace_get", workspace({ id: "w1", branch: "me/21lsb" })));
+    renderApp("/workspace/w1");
+    expect(await screen.findByTestId("branch-badge")).toHaveTextContent("me/21lsb");
+  });
+
+  it("show no branch badge for a folder that is not a checkout", async () => {
+    seed(() => backend.on("workspace_get", workspace({ id: "w1", branch: "-" })));
+    renderApp("/workspace/w1");
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByTestId("branch-badge")).not.toBeInTheDocument();
+  });
+
   it("have no mark when nobody started them", async () => {
     seed();
     renderApp("/");

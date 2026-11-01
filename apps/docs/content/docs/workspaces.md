@@ -19,7 +19,7 @@ Circles then:
 
 Circles keeps private notes for a workspace in `.context/`, which it adds to the worktree's local exclude, so it never touches the repository's `.gitignore`.
 
-The branch name follows the project's [branch naming rule](./projects.md) when it has one. You can rename the branch from the workspace menu.
+The branch name follows the project's [branch naming rule](./projects.md) when it has one. You can rename the branch from the workspace menu. The top bar shows the branch as a small badge beside the workspace title.
 
 ## States
 

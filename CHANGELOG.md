@@ -11,6 +11,7 @@
 - A workspace a Composer made but started no agent in showed a blank pane. It now says so and offers "Start a chat".
 
 ### Changed
+- A workspace's top bar shows its branch, such as `alfa-marlon/21lsb`, as a small badge beside the title.
 - The Git graph opens as wide as the file view. A Composer's run panel is a little narrower, and has no Fleet graph row while nothing runs.
 - The Mac's name and its menu are gone from the top of the sidebar and of Settings. Settings, Usage and Keyboard shortcuts stay in the sidebar footer, and the theme is chosen in Settings > Appearance.
 - Settings > Appearance has a Translucency switch (off by default). On macOS it gives the window a glass look: a blurred view of what is behind the window shows through the sidebar, and menus, popovers, dialogs and the command palette are frosted. The whole window is translucent; code editors and terminals keep their own solid colours. It follows macOS's Reduce transparency setting. The app now needs Tauri's macOS private API for the transparent window, so it cannot go in the Mac App Store.
