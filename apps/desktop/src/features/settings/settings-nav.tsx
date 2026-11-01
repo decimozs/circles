@@ -3,7 +3,6 @@ import { cn } from "@circles/ui/utils";
 import {
   ArrowLeftIcon,
   BotIcon,
-  ChevronDownIcon,
   CircleUserIcon,
   CpuIcon,
   FlaskConicalIcon,
@@ -20,7 +19,6 @@ import {
 import { type ReactNode, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router";
 import { JiraIcon } from "@/components/jira-icon";
-import { useMachineName } from "@/features/app/api";
 import { useSettingsPages } from "@/features/integrations/api";
 import { useProjects } from "@/features/projects/api";
 import { ProjectAvatar } from "@/features/projects/project-avatar";
@@ -56,7 +54,6 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 export function SettingsNav() {
   const navigate = useNavigate();
   const projects = useProjects().data ?? [];
-  const machineName = useMachineName();
   const pages = useSettingsPages();
   const { query, setQuery } = useSettingsSearch();
   const search = useRef<HTMLInputElement>(null);
@@ -90,13 +87,6 @@ export function SettingsNav() {
         >
           <ArrowLeftIcon className="size-4" />
         </button>
-      </div>
-      <div className="flex -mt-1 h-8 items-center gap-2 px-2 text-sm font-medium">
-        <span className="flex size-5 items-center justify-center rounded-full bg-muted text-2xs">
-          {machineName.slice(0, 1).toUpperCase()}
-        </span>
-        <span className="min-w-0 flex-1 truncate">{machineName}</span>
-        <ChevronDownIcon className="size-3.5 text-muted-foreground" />
       </div>
       <div className="relative my-2">
         <SearchIcon className="pointer-events-none absolute top-2.5 left-2.5 size-3.5 text-muted-foreground" />

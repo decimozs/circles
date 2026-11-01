@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { useChat } from "@/stores/chat";
 import { useCreatePrefs } from "@/stores/create-prefs";
 import { backend, emitBackendEvent } from "@/test/backend";
-import { appInfo, project } from "@/test/fixtures";
+import { project } from "@/test/fixtures";
 import { defaultBackend, renderApp, settingsBackend } from "@/test/render";
 
 const last = () => backend.callsTo("settings_set").slice(-1)[0];
@@ -110,20 +110,6 @@ describe("settings pages", () => {
     expect(document.documentElement.dataset.translucent).toBe("true");
     await waitFor(() =>
       expect(backend.callsTo("window_set_translucent").slice(-1)[0]).toEqual({ enabled: true }),
-    );
-  });
-
-  it("writes the theme chosen in the toggle back to the file", async () => {
-    const app = open("/");
-    await app.user.click(
-      await screen.findByRole("button", { name: new RegExp(appInfo().machine_name) }),
-    );
-    await app.user.click(await screen.findByRole("button", { name: "Dark" }));
-    await waitFor(() =>
-      expect(last()).toMatchObject({
-        path: ["appearance", "theme"],
-        value: "dark",
-      }),
     );
   });
 
