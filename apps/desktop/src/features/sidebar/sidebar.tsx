@@ -16,6 +16,7 @@ import {
   PlusIcon,
   SearchIcon,
   SettingsIcon,
+  SparklesIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useMatch, useNavigate } from "react-router";
@@ -183,6 +184,7 @@ export function Sidebar() {
   const waiting = (useApprovals({ onlyPending: true }).data ?? []).length;
   const onComposers = useMatch("/composers");
   const onPrs = useMatch("/pull-requests");
+  const onSkills = useMatch("/skills");
 
   const pinned = live.filter((w) => w.pinned);
   const unpinned = live.filter((w) => !w.pinned);
@@ -232,6 +234,14 @@ export function Sidebar() {
               {waiting}
             </span>
           ) : null}
+        </NavLink>
+        <NavLink
+          to="/skills"
+          end
+          className={cn(NAV_ITEM, onSkills && "bg-sidebar-accent text-sidebar-accent-foreground")}
+        >
+          <SparklesIcon className="size-4 text-muted-foreground" />
+          Skills
         </NavLink>
         <NavLink
           to="/pull-requests"

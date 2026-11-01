@@ -13,7 +13,7 @@ source: string, project_id: string | null, path: string,
 /**
  * Other places that link to the same folder.
  */
-also_in: Array<string>, modified_ms: bigint, 
+also_in: Array<string>, modified_ms: number, 
 /**
  * Files in its folder besides `SKILL.md`.
  */

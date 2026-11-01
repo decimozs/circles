@@ -54,6 +54,7 @@ pub struct SkillRow {
     pub path: String,
     /// Other places that link to the same folder.
     pub also_in: Vec<String>,
+    #[ts(type = "number")]
     pub modified_ms: i64,
     /// Files in its folder besides `SKILL.md`.
     pub files: u32,
