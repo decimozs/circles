@@ -1,13 +1,6 @@
 import type { Project } from "@circles/bindings/Project";
 import type { Workspace } from "@circles/bindings/Workspace";
 import { Button } from "@circles/ui/components/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
 import { ScrollArea } from "@circles/ui/components/scroll-area";
 import { cn } from "@circles/ui/utils";
 import {
@@ -23,15 +16,13 @@ import {
   PlusIcon,
   SearchIcon,
   SettingsIcon,
+  SparklesIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useMatch, useNavigate } from "react-router";
 import { ComposerOrb } from "@/components/composer-orb";
 import { IconButton } from "@/components/shell/icon-button";
 import { ShellControls } from "@/components/shell/shell-controls";
-import { useTheme } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { useMachineName } from "@/features/app/api";
 import { useApprovals, useComposers, useWorkspaceLinks } from "@/features/composers/api";
 import {
   ComposersSection,
@@ -185,8 +176,6 @@ export function Sidebar() {
   const setUsageOpen = useUi((s) => s.setUsageOpen);
   const openCreate = useUi((s) => s.openCreate);
   const setPaletteOpen = useUi((s) => s.setPaletteOpen);
-  const machineName = useMachineName();
-  const { resolvedTheme, setTheme } = useTheme();
 
   const projects = useProjects().data ?? [];
   const sections = useSections().data ?? [];
@@ -195,6 +184,7 @@ export function Sidebar() {
   const waiting = (useApprovals({ onlyPending: true }).data ?? []).length;
   const onComposers = useMatch("/composers");
   const onPrs = useMatch("/pull-requests");
+  const onSkills = useMatch("/skills");
 
   const pinned = live.filter((w) => w.pinned);
   const unpinned = live.filter((w) => !w.pinned);
@@ -206,41 +196,6 @@ export function Sidebar() {
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="relative z-30 flex h-10 shrink-0 items-center justify-end pr-2">
         <ShellControls />
-      </div>
-
-      <div className="px-2 pb-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <button
-                type="button"
-                className="flex h-8 w-full items-center gap-2 rounded-md px-2 text-sm font-medium outline-none hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring/60"
-              />
-            }
-          >
-            <span className="flex size-5 items-center justify-center rounded-full bg-muted text-2xs">
-              {machineName.slice(0, 1).toUpperCase()}
-            </span>
-            <span className="min-w-0 flex-1 truncate text-left">{machineName}</span>
-            <ChevronDownIcon className="size-3.5 text-muted-foreground" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56">
-            <DropdownMenuItem onClick={() => navigate("/settings/general")}>
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setShortcutsOpen(true)}>
-              Keyboard shortcuts
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}>
-              Toggle theme
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <div className="flex items-center justify-between px-2 py-1.5">
-              <span className="text-xs text-muted-foreground">Theme</span>
-              <ThemeToggle />
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       <nav className="flex flex-col gap-0.5 px-2" aria-label="Primary">
@@ -279,6 +234,14 @@ export function Sidebar() {
               {waiting}
             </span>
           ) : null}
+        </NavLink>
+        <NavLink
+          to="/skills"
+          end
+          className={cn(NAV_ITEM, onSkills && "bg-sidebar-accent text-sidebar-accent-foreground")}
+        >
+          <SparklesIcon className="size-4 text-muted-foreground" />
+          Skills
         </NavLink>
         <NavLink
           to="/pull-requests"

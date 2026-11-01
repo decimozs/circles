@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useTheme } from "@/components/theme-provider";
+import { ipc } from "@/lib/ipc";
 import { EFFORTS, MODELS } from "@/lib/models";
 import { useChat } from "@/stores/chat";
 import { useCreatePrefs } from "@/stores/create-prefs";
@@ -55,6 +56,13 @@ export function useApplySettings() {
   useEffect(() => {
     document.documentElement.dataset.density = density;
   }, [density]);
+
+  const translucency = appearance?.translucency ?? false;
+  useEffect(() => {
+    document.documentElement.dataset.translucent = translucency ? "true" : "false";
+    // The window's material goes with it. A failure leaves the page opaque but otherwise fine.
+    ipc.windowSetTranslucent(translucency).catch(() => {});
+  }, [translucency]);
 
   // The default from the settings is applied when it changes. After that, a pick made in the
   // Create dialog is kept, so the setting does not undo it at every launch.

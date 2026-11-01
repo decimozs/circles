@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { useChat } from "@/stores/chat";
 import { useCreatePrefs } from "@/stores/create-prefs";
 import { backend, emitBackendEvent } from "@/test/backend";
-import { appInfo, project } from "@/test/fixtures";
+import { project } from "@/test/fixtures";
 import { defaultBackend, renderApp, settingsBackend } from "@/test/render";
 
 const last = () => backend.callsTo("settings_set").slice(-1)[0];
@@ -100,24 +100,16 @@ describe("settings pages", () => {
 
   it("applies the theme, font size and density from the file", async () => {
     open("/settings/appearance", {
-      user: { appearance: { theme: "dark", font_size: "large", density: "compact" } },
+      user: {
+        appearance: { theme: "dark", font_size: "large", density: "compact", translucency: true },
+      },
     });
     await waitFor(() => expect(document.documentElement).toHaveClass("dark"));
     expect(document.documentElement.style.fontSize).toBe("18px");
     expect(document.documentElement.dataset.density).toBe("compact");
-  });
-
-  it("writes the theme chosen in the toggle back to the file", async () => {
-    const app = open("/");
-    await app.user.click(
-      await screen.findByRole("button", { name: new RegExp(appInfo().machine_name) }),
-    );
-    await app.user.click(await screen.findByRole("button", { name: "Dark" }));
+    expect(document.documentElement.dataset.translucent).toBe("true");
     await waitFor(() =>
-      expect(last()).toMatchObject({
-        path: ["appearance", "theme"],
-        value: "dark",
-      }),
+      expect(backend.callsTo("window_set_translucent").slice(-1)[0]).toEqual({ enabled: true }),
     );
   });
 

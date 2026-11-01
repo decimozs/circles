@@ -420,15 +420,15 @@ describe("composer", () => {
       expect(backend.callsTo("session_send")).toHaveLength(0);
     });
 
-    it("keeps an answered card in view, with what was chosen", async () => {
+    it("removes a card once it is answered or closed", async () => {
       const rendered = open();
-      backend.on("genui_cards", [{ ...card, status: "answered", answer: { b: ["main"] } }]);
+      backend.on("genui_cards", [
+        { ...card, status: "answered", answer: { b: ["main"] } },
+        { ...card, uid: "u10", status: "dismissed" },
+      ]);
       await pane(rendered);
-      const done = await screen.findByRole("region", { name: "Which branch?" });
-      expect(done).toHaveTextContent("Answered");
-      expect(within(done).getByRole("radio", { name: "main" })).toBeChecked();
-      expect(within(done).getByRole("radio", { name: "main" })).toBeDisabled();
-      expect(within(done).queryByRole("button", { name: "Send" })).not.toBeInTheDocument();
+      await screen.findAllByRole("textbox");
+      expect(screen.queryByRole("region", { name: "Which branch?" })).not.toBeInTheDocument();
     });
   });
 

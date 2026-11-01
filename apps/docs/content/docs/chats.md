@@ -47,7 +47,7 @@ A new chat gets a short title from what you asked. Claude Haiku writes it, throu
 
 ## Cards
 
-If you allow it (Settings > Agents), a chat can show a small card in the conversation to ask you to choose or fill something in, such as a checklist or a form, and read your answer back. A card waits ten minutes for an answer.
+If you allow it (Settings > Agents), a chat can show a small card in the conversation to ask you to choose or fill something in, such as a checklist or a form, and read your answer back. A card waits ten minutes for an answer. Once you answer it or close it, it leaves the chat.
 
 ## Notifications
 

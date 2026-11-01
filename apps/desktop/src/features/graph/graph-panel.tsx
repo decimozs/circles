@@ -274,7 +274,7 @@ export function GraphPanel({ workspaceId }: { workspaceId: string }) {
         </div>
       ) : null}
       <Dialog open={expanded} onOpenChange={setExpanded}>
-        <DialogContent className="flex h-[88vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(720px,94vw)]">
+        <DialogContent className="flex h-[88vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(1280px,94vw)]">
           <DialogHeader className="shrink-0 border-b border-border px-5 py-3">
             <DialogTitle>Git graph</DialogTitle>
             <DialogDescription className="truncate">

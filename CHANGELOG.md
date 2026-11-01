@@ -2,13 +2,22 @@
 
 ## Unreleased
 
+### Added
+- A Skills page, above Pull requests in the sidebar, lists the skills on this Mac (your Claude folders, `~/.agents`, installed plugins) and in your projects, laid out like the pull requests list. A skill opens beside it with an overview, its `SKILL.md` as formatted text and its files, and can be copied by name, shown in Finder, opened in your editor, or opened on GitHub. It only reads: nothing in it runs.
+
 ### Fixed
+- A chat could be named `<invoke name="Bash">`, when the small model that writes titles answered with a tool call written out as text. Such an answer is no longer used as a title or as a suggested message, so the chat keeps the first words of your message. A chat already named that way keeps its name until you rename it.
+- A card the agent asked you something with stayed above the message box after you answered it, and its see-through background let the chat show through the text. An answered or closed card now leaves, and cards use the theme's own card colours with no yellow.
 - macOS no longer asks for your Keychain password while a Composer or chat uses Jira. The Jira login is kept in a file only you can read, instead of in the Keychain, which asks again after every build of an app that is not signed. A login saved in the Keychain is not carried over: connect Jira again.
 - Create PR said "GitHub sees no commits" for a branch whose work was already merged: changes, commits ahead and the pull request check compared with the local `main`, which a merge on GitHub never moves, instead of `origin/main`.
 - A Composer stopped for good once it had started 10 workspaces and chats in total over its whole life. The limit is now per request, counted from your latest message.
 - A workspace a Composer made but started no agent in showed a blank pane. It now says so and offers "Start a chat".
 
 ### Changed
+- A workspace's top bar shows its branch, such as `alfa-marlon/21lsb`, as a small badge beside the title.
+- The Git graph opens as wide as the file view. A Composer's run panel is a little narrower, and has no Fleet graph row while nothing runs.
+- The Mac's name and its menu are gone from the top of the sidebar and of Settings. Settings, Usage and Keyboard shortcuts stay in the sidebar footer, and the theme is chosen in Settings > Appearance.
+- Settings > Appearance has a Translucency switch (off by default). On macOS it gives the window a glass look: a blurred view of what is behind the window shows through the sidebar, and menus, popovers, dialogs and the command palette are frosted. The whole window is translucent; code editors and terminals keep their own solid colours. It follows macOS's Reduce transparency setting. The app now needs Tauri's macOS private API for the transparent window, so it cannot go in the Mac App Store.
 - The guide is a website (Fumadocs, in `apps/docs`) instead of Markdown pages in `docs/`. The plans and audits stay in `docs/internal/`.
 - A Composer's run has a panel you show or hide from a button at the top right, instead of a right pane. It stays open while you work, and shows the run's workspaces live, with a spinner and a time that counts up for each agent that works. Each workspace opens out to its editor, branch, pull request, next step and changes. What waits for your approval is answered in it, the fleet graph opens from it, and its repositories, integrations and Settings are in it. The Steps list is gone. The pane beside the list of pull requests can be dragged wider or narrower. Chat work blocks and tool calls highlight only the width of their words when you point at them.
 - The message box is a little taller, with more room above the text. The model (now with its number, such as Sonnet 5.5), the effort and the permission mode read as plain words with no arrow beside them, and the permission mode that never asks is called Full access (it was Bypass). The sidebar footer has Settings and Usage at the left and Help at the right; the version label is gone.

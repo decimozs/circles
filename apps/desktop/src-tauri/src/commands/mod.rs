@@ -15,6 +15,7 @@ pub mod session;
 pub mod settings;
 pub mod setup;
 pub mod side;
+pub mod skills;
 pub mod smart;
 pub mod terminal;
 pub mod usage;

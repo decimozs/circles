@@ -7,8 +7,12 @@ function block(selector) {
   const start = css.indexOf(`${selector} {`);
   const end = css.indexOf("\n}", start);
   const vars = {};
-  for (const m of css.slice(start, end).matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{6})\s*;/g)) {
+  const body = css.slice(start, end);
+  for (const m of body.matchAll(/--([\w-]+):\s*(#[0-9a-fA-F]{6})\s*;/g)) {
     vars[m[1]] = m[2];
+  }
+  for (const m of body.matchAll(/--([\w-]+-alpha):\s*([\d.]+)\s*;/g)) {
+    vars[m[1]] = Number(m[2]);
   }
   return vars;
 }
@@ -61,6 +65,40 @@ for (const [name, vars] of Object.entries(themes)) {
     console.log(
       `${ok ? "ok  " : "FAIL"} ${name.padEnd(5)} ${fg} on ${bg}: ${r.toFixed(2)} (min ${min})`,
     );
+  }
+}
+
+// Glass: a translucent surface sits over the blurred desktop, which can be anything. The window's
+// material follows the theme, so text must pass over the extreme that theme can meet (white for light,
+// black for dark) and over a mid grey, the worst for muted text.
+function over(tint, alpha, backdrop) {
+  const mix = [1, 3, 5].map((i) => {
+    const t = Number.parseInt(tint.slice(i, i + 2), 16);
+    const b = Number.parseInt(backdrop.slice(i, i + 2), 16);
+    return Math.round(t * alpha + b * (1 - alpha));
+  });
+  return `#${mix.map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+}
+const GLASS = [
+  ["chrome", "sidebar-foreground", 4.5],
+  ["chrome", "muted-foreground", 4.5],
+  ["surface", "popover-foreground", 4.5],
+  ["surface", "muted-foreground", 4.5],
+  ["background", "foreground", 4.5],
+  ["background", "muted-foreground", 4.5],
+];
+for (const [name, vars] of Object.entries(themes)) {
+  for (const [kind, fg, min] of GLASS) {
+    const extreme = name === "light" ? ["white", "#ffffff"] : ["black", "#000000"];
+    for (const [label, backdrop] of [extreme, ["grey", "#808080"]]) {
+      const surface = over(vars[`glass-${kind}-tint`], vars[`glass-${kind}-alpha`], backdrop);
+      const r = ratio(vars[fg], surface);
+      const ok = r >= min;
+      if (!ok) failed++;
+      console.log(
+        `${ok ? "ok  " : "FAIL"} ${name.padEnd(5)} ${fg} on glass ${kind} over ${label}: ${r.toFixed(2)} (min ${min})`,
+      );
+    }
   }
 }
 if (failed) {

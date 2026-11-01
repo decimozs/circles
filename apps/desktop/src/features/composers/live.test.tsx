@@ -187,11 +187,8 @@ describe("the Fleet section of the run panel", () => {
     const toggle = screen.getByRole("button", { name: "Run details" });
     expect(within(toggle).queryByRole("status", { name: /running/ })).not.toBeInTheDocument();
     expect(within(panel).queryByText(/Steps/)).not.toBeInTheDocument();
-    for (const name of ["Fleet graph"]) {
-      expect(
-        within(panel).getByRole("button", { name: new RegExp(`^${name}`) }),
-      ).toBeInTheDocument();
-    }
+    // Nothing runs, so there is no fleet graph to open.
+    expect(within(panel).queryByRole("button", { name: /^Fleet graph/ })).not.toBeInTheDocument();
     // There is no Details link: the repositories, integrations and Settings are in the panel.
     expect(within(panel).queryByRole("button", { name: /^Details/ })).not.toBeInTheDocument();
     expect(within(panel).getByRole("region", { name: "Repositories" })).toBeInTheDocument();

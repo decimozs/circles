@@ -29,6 +29,7 @@ mod review;
 mod scripts;
 mod settings;
 mod side;
+mod skills;
 mod smart;
 mod state;
 mod system;
@@ -233,6 +234,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::app::get_app_info,
+            commands::app::window_set_translucent,
             commands::app::settings_get,
             commands::project::project_list,
             commands::project::project_add_local,
@@ -366,6 +368,11 @@ pub fn run() {
             commands::composer::trigger_delete,
             commands::session::permission_reply,
             commands::session::claude_rate_limit,
+            commands::skills::skills_list,
+            commands::skills::skills_detail,
+            commands::skills::skills_file,
+            commands::skills::skills_reveal,
+            commands::skills::skills_open,
             commands::usage::usage_summary,
             commands::usage::usage_refresh,
             commands::usage::usage_rebuild,

@@ -10,6 +10,8 @@ import { useProjects } from "@/features/projects/api";
 import { PrTabs } from "@/features/prs/pr-tabs";
 import { usePrs } from "@/features/prs/store";
 import { OpenFileMenu, useSettingsRoute } from "@/features/settings/settings-page";
+import { SkillTabs } from "@/features/skills/skill-tabs";
+import { useSkillsUi } from "@/features/skills/store";
 import { useWorkspace } from "@/features/workspaces/api";
 import { StatusIndicator } from "@/features/workspaces/status";
 import { WorkspaceActions } from "@/features/workspaces/workspace-actions";
@@ -31,6 +33,8 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
   const onSettings = useMatch("/settings/*") !== null;
   const onPrs = useMatch("/pull-requests") !== null;
   const hasPrTabs = usePrs((s) => s.tabs.length > 0);
+  const onSkills = useMatch("/skills") !== null;
+  const hasSkillTabs = useSkillsUi((s) => s.tabs.length > 0);
   const settingsRoute = useSettingsRoute();
   const project = useProjects().data?.find((p) => p.id === workspace?.project_id);
 
@@ -59,6 +63,15 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
           <div className="pointer-events-auto flex shrink-0 items-center gap-2">
             <StatusIndicator state={workspace.state} spinner={false} />
             <h1 className="text-sm font-semibold">{workspace.title ?? workspace.city}</h1>
+            {workspace.branch && workspace.branch !== "-" ? (
+              <span
+                data-testid="branch-badge"
+                title={`Branch ${workspace.branch}`}
+                className="max-w-56 truncate rounded-md bg-muted px-1.5 py-0.5 font-mono text-2xs text-muted-foreground"
+              >
+                {workspace.branch}
+              </span>
+            ) : null}
             {links.get(workspace.id) ? (
               <button
                 type="button"
@@ -107,6 +120,11 @@ export function TopBar({ leftVisible }: { leftVisible: boolean }) {
       {onPrs && hasPrTabs ? (
         <div className="pointer-events-auto min-w-0 flex-1 self-stretch">
           <PrTabs />
+        </div>
+      ) : null}
+      {onSkills && hasSkillTabs ? (
+        <div className="pointer-events-auto min-w-0 flex-1 self-stretch">
+          <SkillTabs />
         </div>
       ) : null}
       {onSettings ? (

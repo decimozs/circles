@@ -103,3 +103,61 @@
     }
   }
 }
+
+/* The Translucency setting. The page, the sidebar and the floating surfaces take the glass tints,
+   which are checked for contrast in tokens.css, so the window's own material shows through the whole
+   app. The code editors and terminals keep their own solid colours. For people who reduce
+   transparency the tints are the solid colours they already were, and nothing blurs. */
+:root[data-translucent="true"] {
+  --background: color-mix(
+    in srgb,
+    var(--glass-background-tint) calc(var(--glass-background-alpha) * 100%),
+    transparent
+  );
+  --sidebar: color-mix(
+    in srgb,
+    var(--glass-chrome-tint) calc(var(--glass-chrome-alpha) * 100%),
+    transparent
+  );
+  --popover: color-mix(
+    in srgb,
+    var(--glass-surface-tint) calc(var(--glass-surface-alpha) * 100%),
+    transparent
+  );
+}
+:root[data-translucent="true"]
+  :is(
+    [data-slot="popover-content"],
+    [data-slot="dropdown-menu-content"],
+    [data-slot="dropdown-menu-sub-content"],
+    [data-slot="context-menu-content"],
+    [data-slot="context-menu-sub-content"],
+    [data-slot="select-content"],
+    [data-slot="dialog-content"],
+    [data-slot="command"]
+  ) {
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow: var(--glass-shadow);
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-translucent="true"] {
+    --background: var(--glass-background-tint);
+    --sidebar: var(--glass-chrome-tint);
+    --popover: var(--glass-surface-tint);
+  }
+  :root[data-translucent="true"]
+    :is(
+      [data-slot="popover-content"],
+      [data-slot="dropdown-menu-content"],
+      [data-slot="dropdown-menu-sub-content"],
+      [data-slot="context-menu-content"],
+      [data-slot="context-menu-sub-content"],
+      [data-slot="select-content"],
+      [data-slot="dialog-content"],
+      [data-slot="command"]
+    ) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

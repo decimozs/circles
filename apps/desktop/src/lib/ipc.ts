@@ -66,6 +66,8 @@ import type { SettingsPayload } from "@circles/bindings/SettingsPayload";
 import type { SettingsView } from "@circles/bindings/SettingsView";
 import type { SetupItem } from "@circles/bindings/SetupItem";
 import type { SharedComposer } from "@circles/bindings/SharedComposer";
+import type { SkillDetail } from "@circles/bindings/SkillDetail";
+import type { SkillList } from "@circles/bindings/SkillList";
 import type { SlashCommand } from "@circles/bindings/SlashCommand";
 import type { SmartStatus } from "@circles/bindings/SmartStatus";
 import type { SmartTest } from "@circles/bindings/SmartTest";
@@ -131,6 +133,7 @@ export function errorFix(error: unknown): string | null {
 
 export const ipc = {
   getAppInfo: () => call<AppInfo>("get_app_info"),
+  windowSetTranslucent: (enabled: boolean) => call<void>("window_set_translucent", { enabled }),
   settingsGet: (projectId?: string) =>
     call<SettingsPayload>("settings_get", { projectId: projectId ?? null }),
 
@@ -251,6 +254,11 @@ export const ipc = {
     call<PrDetail>("pr_browse_detail", { projectId, number, refresh }),
   prBrowseList: (projectId: string | null, which: BrowseState, refresh = false) =>
     call<PrList>("pr_browse_list", { projectId, which, refresh }),
+  skillsList: () => call<SkillList>("skills_list"),
+  skillsDetail: (id: string) => call<SkillDetail>("skills_detail", { id }),
+  skillsFile: (id: string, path: string) => call<string>("skills_file", { id, path }),
+  skillsReveal: (id: string) => call<null>("skills_reveal", { id }),
+  skillsOpen: (id: string) => call<null>("skills_open", { id }),
   cacheInfo: () => call<CacheInfo>("cache_info"),
   cacheClear: () => call<null>("cache_clear"),
   usageRefresh: () => call<null>("usage_refresh"),

@@ -143,13 +143,13 @@ describe("the Pull requests page", () => {
     usePrs.setState({ scope: undefined, which: "open", query: "" });
   });
 
-  it("has its own item in the sidebar, after Composer", async () => {
+  it("has its own item in the sidebar, after Composer and Skills", async () => {
     seed({ rows: [], failures: [] });
     renderApp("/");
     await screen.findByRole("main");
     const nav = screen.getByRole("navigation", { name: "Primary" });
     const names = [...nav.querySelectorAll("a, button")].map((e) => e.textContent?.trim());
-    expect(names.slice(-2)).toEqual(["Composer", "Pull requests"]);
+    expect(names.slice(-3)).toEqual(["Composer", "Skills", "Pull requests"]);
   });
 
   it("lists the pull requests in groups, with size, and starts with the project worked in last", async () => {

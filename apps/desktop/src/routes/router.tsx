@@ -7,6 +7,7 @@ import { ComposersHome } from "@/features/composers/composers-home";
 import { HomePage } from "@/features/home/home-page";
 import { PullRequestsPage } from "@/features/prs/pull-requests-page";
 import { SettingsPage } from "@/features/settings/settings-page";
+import { SkillsPage } from "@/features/skills/skills-page";
 import { DesignGallery } from "@/routes/design";
 import { DebugPage, NotFoundPage, WorkspacePage } from "@/routes/pages";
 import { RouteError } from "@/routes/route-error";
@@ -24,6 +25,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <HomePage /> },
           { path: "workspace/:id", element: <WorkspacePage /> },
           { path: "composers", element: <ComposersHome /> },
+          { path: "skills", element: <SkillsPage /> },
           { path: "pull-requests", element: <PullRequestsPage /> },
           { path: "composers/audit", element: <AuditPage /> },
           { path: "composer/:id", element: <ComposerPage /> },

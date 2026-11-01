@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { backend } from "@/test/backend";
 import { approval, composer, project, runView, session, workspace } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp, settingsBackend } from "@/test/render";
-import { openRunTab } from "@/test/run-popover";
+import { openRunTab, runningFleetItem } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -41,6 +41,19 @@ describe("workspaces a Composer started", () => {
     const badge = await screen.findByRole("button", { name: /Started by Release captain/ });
     await app.user.click(badge);
     await waitFor(() => expect(app.router.state.location.pathname).toBe("/composer/c1/run/r1"));
+  });
+
+  it("show the branch beside the title in the top bar, and none for a plain folder", async () => {
+    seed(() => backend.on("workspace_get", workspace({ id: "w1", branch: "me/21lsb" })));
+    renderApp("/workspace/w1");
+    expect(await screen.findByTestId("branch-badge")).toHaveTextContent("me/21lsb");
+  });
+
+  it("show no branch badge for a folder that is not a checkout", async () => {
+    seed(() => backend.on("workspace_get", workspace({ id: "w1", branch: "-" })));
+    renderApp("/workspace/w1");
+    await screen.findByRole("heading", { level: 1 });
+    expect(screen.queryByTestId("branch-badge")).not.toBeInTheDocument();
   });
 
   it("have no mark when nobody started them", async () => {
@@ -171,7 +184,7 @@ describe("accessibility of the Composer screens", () => {
   it("a run with its popover and dialogs has none", async () => {
     seed(() => {
       chatBackend([session({ id: "r1", workspace_id: "cw1", title: "Triage" })]);
-      backend.on("composer_approvals", [approval()]);
+      backend.on("composer_approvals", [approval()]).on("composer_fleet", [runningFleetItem()]);
     });
     const app = renderApp("/composer/c1/run/r1");
     await screen.findByLabelText("Message");

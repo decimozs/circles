@@ -40,10 +40,9 @@ describe("Sidebar", () => {
     expect(within(lima).getByTitle("Last used")).toHaveTextContent("3h");
   });
 
-  it("shows the machine name and the real projects with their workspace counts", async () => {
+  it("shows the real projects with their workspace counts", async () => {
     seed();
     renderApp("/");
-    expect(await within(sidebar()).findByText("Test Mac")).toBeInTheDocument();
     const mine = await screen.findByRole("region", { name: "My workspaces" });
     expect(await within(mine).findByRole("button", { name: /^roster/ })).toHaveTextContent("2");
     expect(within(mine).getByRole("button", { name: /^portfolio/ })).toHaveTextContent("0");

@@ -4,8 +4,32 @@ type MonacoApi = typeof Monaco;
 
 let loading: Promise<MonacoApi> | null = null;
 
+let pixel: CanvasRenderingContext2D | null | undefined;
+
+/**
+ * A token as `#rrggbb`, or `#rrggbbaa` when it is see-through. Monaco only reads hex, rgb and hsl,
+ * but a token can be a `color-mix(...)` (the Translucency setting makes the page colour one), which
+ * the page reports as written. The browser works the colour out, and a canvas turns it into numbers.
+ */
 function cssColor(name: string): string {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const root = document.documentElement;
+  const raw = getComputedStyle(root).getPropertyValue(name).trim();
+  if (/^#[0-9a-f]{6}$/i.test(raw)) return raw;
+  if (pixel === undefined) {
+    pixel = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+  }
+  if (!pixel) return raw;
+  const probe = document.createElement("span");
+  probe.style.color = `var(${name})`;
+  root.appendChild(probe);
+  const computed = getComputedStyle(probe).color;
+  probe.remove();
+  pixel.clearRect(0, 0, 1, 1);
+  pixel.fillStyle = computed;
+  pixel.fillRect(0, 0, 1, 1);
+  const [r, g, b, a] = pixel.getImageData(0, 0, 1, 1).data;
+  const hex = (n: number) => n.toString(16).padStart(2, "0");
+  return `#${hex(r)}${hex(g)}${hex(b)}${a === 255 ? "" : hex(a)}`;
 }
 
 /** `#rrggbb` with an opacity, for the diff backgrounds that must let the text show through. */
@@ -69,10 +93,10 @@ export function loadMonaco(): Promise<MonacoApi> {
       },
     };
     applyTheme(monaco);
-    // The theme setting flips a class on the page, so follow it.
+    // The theme setting flips a class, and Translucency an attribute, on the page, so follow both.
     new MutationObserver(() => applyTheme(monaco)).observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["class", "data-translucent"],
     });
     return monaco;
   })();

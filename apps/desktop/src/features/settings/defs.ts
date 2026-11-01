@@ -147,6 +147,16 @@ export const SETTINGS: SettingDef[] = [
     keywords: "compact spacing",
   },
   {
+    id: "translucency",
+    page: "appearance",
+    title: "Translucency",
+    description:
+      "Frosted, see-through sidebar, menus and dialogs, in the style of macOS. It turns itself off when macOS is set to reduce transparency.",
+    path: ["appearance", "translucency"],
+    control: { kind: "toggle", default: false },
+    keywords: "glass blur transparent vibrancy frosted",
+  },
+  {
     id: "model",
     page: "models",
     title: "Model",

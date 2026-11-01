@@ -30,3 +30,18 @@ describe("the glass panel", () => {
     );
   });
 });
+
+describe("the translucent setting", () => {
+  it("gives the sidebar and the floating surfaces the glass tints and a blur", () => {
+    expect(css).toMatch(/:root\[data-translucent="true"\]\s*\{\s*--background:\s*color-mix\(/);
+    expect(css).toMatch(/--popover:\s*color-mix\(/);
+    expect(css).toMatch(/--sidebar:\s*color-mix\(/);
+    expect(css).toMatch(/\[data-slot="popover-content"\][^{]*\{[^}]*backdrop-filter:\s*blur/);
+  });
+
+  it("goes back to the solid colours for people who reduce transparency", () => {
+    expect(css).toMatch(
+      /prefers-reduced-transparency:\s*reduce\)\s*\{\s*:root\[data-translucent="true"\]\s*\{\s*--background:\s*var\(--glass-background-tint\);\s*--sidebar:\s*var\(--glass-chrome-tint\);\s*--popover:\s*var\(--glass-surface-tint\);/,
+    );
+  });
+});
