@@ -21,3 +21,6 @@
 - A new app: add `apps/<name>/package.json` named `@circles/<name>` with the scripts `dev`, `build`,
   `typecheck`, `test`, extend `@circles/config/tsconfig.react.json`, and import the theme with
   `@import "@circles/ui/styles/theme.css"` and an `@source` line for `packages/ui/src`.
+- Vulnerabilities in dependencies: `pnpm audit --prod` and `cargo audit` (the `Audit` workflow runs both every
+  week). Monaco ships its own copy of DOMPurify, so `patches/monaco-editor@*.patch` replaces it with a fixed
+  one; a test fails if it stops applying, and the patch is dropped when a Monaco release has a fixed copy.
