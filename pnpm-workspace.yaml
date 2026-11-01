@@ -3,12 +3,12 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# Versions that must be the same in every app and package.
 # Dependencies whose install scripts may run. esbuild (pulled in by the docs site) does not need one:
 # it runs from its platform package.
 allowBuilds:
   esbuild: false
 
+# Versions that must be the same in every app and package.
 catalog:
   "@biomejs/biome": "^2.5.15"
   "@types/react": "^19.1.8"
@@ -20,3 +20,15 @@ catalog:
   "typescript": "~6.0.3"
   "vite": "^8.0.16"
   "vitest": "^5.0.3"
+
+# Monaco lists `dompurify` as a dependency at the exact version 3.4.15 but does not import it: its code
+# uses the copy it ships. The override keeps the unused package on the fixed release too, so audits are
+# clean and nothing can start using the old one.
+overrides:
+  dompurify: ">=3.4.17"
+
+# Monaco ships its own copy of DOMPurify (3.4.15), which has known vulnerabilities, and its newest
+# release still does. The patch replaces that file with DOMPurify 3.4.17. It stops applying, and install
+# fails, when Monaco is upgraded: check whether the new release has a fixed copy, then drop the patch.
+patchedDependencies:
+  monaco-editor@0.57.0: patches/monaco-editor@0.57.0.patch
