@@ -1,0 +1,41 @@
+name: Audit
+
+# Known vulnerabilities in what the app ships. It runs every week, because a new advisory can appear
+# for a version that has not changed, and when a lockfile changes on main. It does not run on pull
+# requests, so an advisory published today cannot fail an unrelated change.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - "pnpm-lock.yaml"
+      - "Cargo.lock"
+      - "patches/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # What ships in the app and the site. The tools that only run on a developer's Mac are not in it.
+      - run: pnpm audit --prod
+
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@cargo-audit
+      # Vulnerabilities fail the job. Warnings about unmaintained or unsound crates do not: most come
+      # from Linux-only dependencies of Tauri that a Mac build never contains.
+      - run: cargo audit
