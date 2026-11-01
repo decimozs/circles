@@ -29,6 +29,7 @@ mod review;
 mod scripts;
 mod settings;
 mod side;
+mod skills;
 mod smart;
 mod state;
 mod system;
@@ -367,6 +368,9 @@ pub fn run() {
             commands::composer::trigger_delete,
             commands::session::permission_reply,
             commands::session::claude_rate_limit,
+            commands::skills::skills_list,
+            commands::skills::skills_detail,
+            commands::skills::skills_file,
             commands::usage::usage_summary,
             commands::usage::usage_refresh,
             commands::usage::usage_rebuild,
