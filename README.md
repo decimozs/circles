@@ -51,3 +51,7 @@ pnpm build          # production frontend build
 scripts/test-all.sh # every check and test
 scripts/release.sh  # test, then build the .dmg
 ```
+
+## License
+
+[MIT](LICENSE), copyright 2026 Marlon Martin.
