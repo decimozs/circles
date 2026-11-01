@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Added
+- A Skills page, above Pull requests in the sidebar, lists the skills on this Mac (your Claude folders, `~/.agents`, installed plugins) and in your projects, laid out like the pull requests list. A skill opens beside it with an overview, its `SKILL.md` as formatted text and its files, and can be copied by name, shown in Finder, opened in your editor, or opened on GitHub. It only reads: nothing in it runs.
+
 ### Fixed
 - A chat could be named `<invoke name="Bash">`, when the small model that writes titles answered with a tool call written out as text. Such an answer is no longer used as a title or as a suggested message, so the chat keeps the first words of your message. A chat already named that way keeps its name until you rename it.
 - A card the agent asked you something with stayed above the message box after you answered it, and its see-through background let the chat show through the text. An answered or closed card now leaves, and cards use the theme's own card colours with no yellow.

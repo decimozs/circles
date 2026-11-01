@@ -12,12 +12,13 @@ Circles is a Mac app that runs Claude Code agents in parallel. Each agent works 
 3. [Workspaces](./workspaces.md): what a workspace is, its files, changes and graph, the terminal and scripts.
 4. [Chats](./chats.md): talking to an agent, permissions, checkpoints and side questions.
 5. [Pull requests](./pull-requests.md): drafting, checks, and merging.
-6. [Composers](./composers.md): a manager agent that starts and follows other agents for you.
-7. [Jira](./jira.md): letting chats and Composers read and work with Jira.
-8. [Settings](./settings.md): where settings live, and what each page holds.
-9. [Usage](./usage.md): tokens and estimated cost of Claude Code, and your plan limits.
-10. [Keyboard shortcuts](./shortcuts.md).
-11. [Troubleshooting](./troubleshooting.md).
+6. [Skills](./skills.md): a directory of the skills on this Mac and in your projects.
+7. [Composers](./composers.md): a manager agent that starts and follows other agents for you.
+8. [Jira](./jira.md): letting chats and Composers read and work with Jira.
+9. [Settings](./settings.md): where settings live, and what each page holds.
+10. [Usage](./usage.md): tokens and estimated cost of Claude Code, and your plan limits.
+11. [Keyboard shortcuts](./shortcuts.md).
+12. [Troubleshooting](./troubleshooting.md).
 
 ## Words used in this guide
 

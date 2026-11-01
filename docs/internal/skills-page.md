@@ -1,6 +1,6 @@
 # A Skills page: plan
 
-Status: planned, nothing built. A **Skills** item in the sidebar, before **Pull requests**, opens a directory of
+Status: built in phases 1 to 5. Checked by tests and a run against this Mac's folders; the pages are not yet seen in the running app. A **Skills** item in the sidebar, before **Pull requests**, opens a directory of
 the skills that exist on this Mac and in the repositories added to Circles, laid out like the list of pull
 requests: a searchable, grouped list, and a pane that opens beside it for the one you pick.
 
@@ -85,6 +85,19 @@ A project's skills are read from the project's folder. A workspace on another br
 - Frontend (Vitest with the IPC mock): grouping and counts, search syntax, sort, scope, tabs open and close,
   the empty and error states, Use in chat writes the command, Markdown with raw HTML shows as text.
 - Not testable here: a real run against your folders (about 50 skills and symlinks); checked by hand.
+
+## What changed while building
+
+- **No YAML crate.** A small flat parser reads the front matter (folded, literal, quoted, inline and block lists),
+  so no dependency was added.
+- **No cache table.** The scan reads about 50 small files and is quick; TanStack Query keeps the list and reads
+  it again on focus.
+- **Phases 2 and 3 in one PR** (list and pane). The pane's width is shared with the pull request pane.
+- **File text is a plain scrollable block,** not Monaco.
+- **Use in chat is Copy /name.** The page has no open chat to put it in, so it copies the command. Reveal and
+  Open (SKILL.md in the text editor) are macOS only for now, like the other Finder actions.
+- **Defaults used for the open questions:** all four groups, read only, tabs in the top bar, project folder,
+  copy for Use in chat.
 
 ## Questions for you
 
