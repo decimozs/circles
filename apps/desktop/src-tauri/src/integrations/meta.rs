@@ -1,6 +1,6 @@
 //! What is known about a connection without any secret in it: how it is connected, to which site
-//! and as whom. It lives in a plain file so the app can show the state without asking the
-//! Keychain, which would make macOS ask for a password every time the app starts.
+//! and as whom. It lives in a plain file of its own, apart from the saved login, so the state can be
+//! shown without opening the file that holds the secrets.
 
 use std::path::Path;
 

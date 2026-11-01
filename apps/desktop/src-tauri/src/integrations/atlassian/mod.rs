@@ -145,7 +145,7 @@ impl Integrations {
         Ok(slot.session.clone())
     }
 
-    /// Signed in with Atlassian, known without asking the Keychain.
+    /// Signed in with Atlassian, known without opening the file of logins.
     pub(crate) fn is_oauth(&self) -> bool {
         self.current_meta()
             .is_some_and(|m| m.method.as_deref() == Some("oauth"))

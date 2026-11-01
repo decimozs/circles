@@ -185,15 +185,6 @@ pub fn build_items(deps: &[Dependency], login_item: bool, menu_bar: bool) -> Vec
     disk.action = action("open_full_disk", "Open System Settings");
     out.push(disk);
 
-    let mut keychain = item(
-        "keychain",
-        "Keychain",
-        "Connections such as Jira keep their login in your Keychain. macOS may ask once. Choose Always Allow.",
-        false,
-    );
-    keychain.state = "optional".into();
-    out.push(keychain);
-
     let mut login = item(
         "login",
         "Open at login and the menu bar",

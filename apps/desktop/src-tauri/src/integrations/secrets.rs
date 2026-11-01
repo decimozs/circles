@@ -1,7 +1,14 @@
-//! Where the Jira token is kept: the macOS Keychain. Hashing is not an option, since every call to
-//! Jira needs the real token. Nothing here logs or prints it.
+//! Where the Jira login is kept: a file in the app's data folder that only the person who runs
+//! Circles can read. Hashing is not an option, since every call to Jira needs the real token.
+//! Nothing here logs or prints it.
+//!
+//! It was the macOS Keychain, which asks for the account's password whenever the program asking is
+//! not the one that was allowed before, and every build of an app that is not signed is a new
+//! program. A file has no such prompt, and anything running as the same person can read it, which is
+//! also true of the Keychain once a program is allowed.
 
 use std::fmt;
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use serde::{Deserialize, Serialize};
@@ -97,82 +104,129 @@ pub trait SecretStore: Send + Sync {
     fn delete_oauth(&self) -> AppResult<()>;
 }
 
-fn keychain(error: keyring::Error) -> AppError {
-    // The text of a keychain error never holds the secret.
-    AppError::Env(format!("the Keychain said: {error}"))
+/// What is in the file: the token login and the Atlassian sign-in, each when there is one.
+#[derive(Default, Serialize, Deserialize)]
+struct Stored {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    jira: Option<Credentials>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    oauth: Option<OAuthSession>,
 }
 
-pub struct KeychainSecrets {
-    service: String,
+/// The logins, in a file made readable and writable by its owner only (mode 0600).
+pub struct FileSecrets {
+    path: PathBuf,
+    /// One change at a time, so two writes cannot lose each other.
+    lock: Mutex<()>,
 }
 
-fn read_entry(entry: &keyring::Entry) -> AppResult<Option<String>> {
-    match entry.get_password() {
-        Ok(text) => Ok(Some(text)),
-        Err(keyring::Error::NoEntry) => Ok(None),
-        Err(e) => Err(keychain(e)),
-    }
-}
-
-fn remove_entry(entry: &keyring::Entry) -> AppResult<()> {
-    match entry.delete_credential() {
-        Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
-        Err(e) => Err(keychain(e)),
-    }
-}
-
-impl KeychainSecrets {
-    pub fn new() -> Self {
+impl FileSecrets {
+    pub fn new(path: PathBuf) -> Self {
         Self {
-            service: "circles".into(),
+            path,
+            lock: Mutex::new(()),
         }
     }
 
-    fn entry(&self) -> AppResult<keyring::Entry> {
-        keyring::Entry::new(&self.service, "jira").map_err(keychain)
+    /// What is in the file. A file that is missing, empty or cannot be read as it should is the same
+    /// as nothing saved: the person connects again.
+    fn read(&self) -> Stored {
+        tighten(&self.path);
+        std::fs::read_to_string(&self.path)
+            .ok()
+            .and_then(|text| serde_json::from_str(&text).ok())
+            .unwrap_or_default()
     }
 
-    fn oauth_entry(&self) -> AppResult<keyring::Entry> {
-        keyring::Entry::new(&self.service, "jira-oauth").map_err(keychain)
+    /// Replaces the file, or removes it when nothing is left. It is written under another name
+    /// first, with its permissions set before anything secret goes in, and then moved into place,
+    /// so a crash never leaves half a file and the secret is never readable by others.
+    fn write(&self, stored: &Stored) -> AppResult<()> {
+        if stored.jira.is_none() && stored.oauth.is_none() {
+            return match std::fs::remove_file(&self.path) {
+                Ok(()) => Ok(()),
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(()),
+                Err(e) => Err(e.into()),
+            };
+        }
+        let text = serde_json::to_string(stored).map_err(|e| AppError::Internal(e.to_string()))?;
+        if let Some(parent) = self.path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        let temporary = self.path.with_extension("tmp");
+        write_private(&temporary, text.as_bytes())?;
+        std::fs::rename(&temporary, &self.path)?;
+        Ok(())
+    }
+
+    fn change(&self, edit: impl FnOnce(&mut Stored)) -> AppResult<()> {
+        let _one_at_a_time = self
+            .lock
+            .lock()
+            .map_err(|_| AppError::Internal("secrets lock poisoned".into()))?;
+        let mut stored = self.read();
+        edit(&mut stored);
+        self.write(&stored)
     }
 }
 
-impl SecretStore for KeychainSecrets {
-    fn load(&self) -> AppResult<Option<Credentials>> {
-        match self.entry()?.get_password() {
-            Ok(text) => Ok(serde_json::from_str(&text).ok()),
-            Err(keyring::Error::NoEntry) => Ok(None),
-            Err(e) => Err(keychain(e)),
+#[cfg(unix)]
+fn write_private(path: &std::path::Path, bytes: &[u8]) -> std::io::Result<()> {
+    use std::io::Write;
+    use std::os::unix::fs::OpenOptionsExt;
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .mode(0o600)
+        .open(path)?;
+    // A file left from an earlier run keeps its own mode, so it is set again.
+    std::fs::set_permissions(path, std::os::unix::fs::PermissionsExt::from_mode(0o600))?;
+    file.write_all(bytes)
+}
+
+#[cfg(not(unix))]
+fn write_private(path: &std::path::Path, bytes: &[u8]) -> std::io::Result<()> {
+    std::fs::write(path, bytes)
+}
+
+/// Takes group and other access off a file that has it, for one that was changed by hand.
+#[cfg(unix)]
+fn tighten(path: &std::path::Path) {
+    use std::os::unix::fs::PermissionsExt;
+    if let Ok(meta) = std::fs::metadata(path) {
+        if meta.permissions().mode() & 0o077 != 0 {
+            let _ = std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600));
         }
+    }
+}
+
+#[cfg(not(unix))]
+fn tighten(_path: &std::path::Path) {}
+
+impl SecretStore for FileSecrets {
+    fn load(&self) -> AppResult<Option<Credentials>> {
+        Ok(self.read().jira)
     }
 
     fn save(&self, credentials: &Credentials) -> AppResult<()> {
-        let text =
-            serde_json::to_string(credentials).map_err(|e| AppError::Internal(e.to_string()))?;
-        self.entry()?.set_password(&text).map_err(keychain)
+        self.change(|s| s.jira = Some(credentials.clone()))
     }
 
     fn delete(&self) -> AppResult<()> {
-        remove_entry(&self.entry()?)
+        self.change(|s| s.jira = None)
     }
 
     fn load_oauth(&self) -> AppResult<Option<OAuthSession>> {
-        self.oauth_load()
+        Ok(self.read().oauth)
     }
 
     fn save_oauth(&self, session: &OAuthSession) -> AppResult<()> {
-        let text = serde_json::to_string(session).map_err(|e| AppError::Internal(e.to_string()))?;
-        self.oauth_entry()?.set_password(&text).map_err(keychain)
+        self.change(|s| s.oauth = Some(session.clone()))
     }
 
     fn delete_oauth(&self) -> AppResult<()> {
-        remove_entry(&self.oauth_entry()?)
-    }
-}
-
-impl KeychainSecrets {
-    fn oauth_load(&self) -> AppResult<Option<OAuthSession>> {
-        Ok(read_entry(&self.oauth_entry()?)?.and_then(|t| serde_json::from_str(&t).ok()))
+        self.change(|s| s.oauth = None)
     }
 }
 
@@ -205,5 +259,150 @@ impl SecretStore for MemorySecrets {
     fn delete_oauth(&self) -> AppResult<()> {
         *self.1.lock().unwrap() = None;
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn session() -> OAuthSession {
+        OAuthSession {
+            client_id: "client".into(),
+            token_endpoint: "https://auth.example/token".into(),
+            resource: "https://mcp.example".into(),
+            access_token: "ACCESS-SECRET".into(),
+            refresh_token: Some("REFRESH-SECRET".into()),
+            expires_at_ms: 1,
+            cloud_id: "cloud".into(),
+            site: "t.atlassian.net".into(),
+            account_name: "Marlon".into(),
+        }
+    }
+
+    fn login() -> Credentials {
+        Credentials::new("t.atlassian.net", "me@x.com", "API-SECRET").unwrap()
+    }
+
+    fn store() -> (tempfile::TempDir, FileSecrets) {
+        let tmp = tempfile::tempdir().unwrap();
+        let file = tmp.path().join("integration-secrets.json");
+        (tmp, FileSecrets::new(file))
+    }
+
+    #[test]
+    fn a_saved_login_comes_back_and_a_deleted_one_does_not() {
+        let (_tmp, secrets) = store();
+        assert_eq!(secrets.load().unwrap(), None);
+        secrets.save(&login()).unwrap();
+        assert_eq!(secrets.load().unwrap(), Some(login()));
+        secrets.delete().unwrap();
+        assert_eq!(secrets.load().unwrap(), None);
+        // Deleting what is not there is not an error.
+        secrets.delete().unwrap();
+        secrets.delete_oauth().unwrap();
+    }
+
+    #[test]
+    fn the_token_login_and_the_atlassian_sign_in_are_kept_apart() {
+        let (_tmp, secrets) = store();
+        secrets.save(&login()).unwrap();
+        secrets.save_oauth(&session()).unwrap();
+        assert_eq!(secrets.load().unwrap(), Some(login()));
+        assert_eq!(secrets.load_oauth().unwrap(), Some(session()));
+        secrets.delete_oauth().unwrap();
+        assert_eq!(secrets.load_oauth().unwrap(), None);
+        assert_eq!(
+            secrets.load().unwrap(),
+            Some(login()),
+            "the other one stays"
+        );
+    }
+
+    #[test]
+    fn it_is_the_file_that_keeps_them_so_another_run_of_the_app_sees_them() {
+        let (tmp, secrets) = store();
+        secrets.save(&login()).unwrap();
+        let again = FileSecrets::new(tmp.path().join("integration-secrets.json"));
+        assert_eq!(again.load().unwrap(), Some(login()));
+    }
+
+    #[test]
+    fn the_file_goes_when_nothing_is_left_in_it() {
+        let (tmp, secrets) = store();
+        let file = tmp.path().join("integration-secrets.json");
+        secrets.save(&login()).unwrap();
+        assert!(file.exists());
+        secrets.delete().unwrap();
+        assert!(
+            !file.exists(),
+            "no empty file with a name that says secrets"
+        );
+        // And nothing is left over from writing it.
+        assert!(!file.with_extension("tmp").exists());
+    }
+
+    #[test]
+    fn a_file_that_cannot_be_read_is_the_same_as_none_and_is_replaced_by_the_next_save() {
+        let (tmp, secrets) = store();
+        let file = tmp.path().join("integration-secrets.json");
+        std::fs::write(&file, "this is not json").unwrap();
+        assert_eq!(secrets.load().unwrap(), None);
+        assert_eq!(secrets.load_oauth().unwrap(), None);
+        secrets.save(&login()).unwrap();
+        assert_eq!(secrets.load().unwrap(), Some(login()));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn only_the_owner_can_read_it_even_when_it_was_left_open_before() {
+        use std::os::unix::fs::PermissionsExt;
+        let (tmp, secrets) = store();
+        let file = tmp.path().join("integration-secrets.json");
+        let mode = |p: &std::path::Path| std::fs::metadata(p).unwrap().permissions().mode() & 0o777;
+
+        secrets.save(&login()).unwrap();
+        assert_eq!(mode(&file), 0o600);
+
+        // Made open by hand, it is closed again the next time it is read.
+        std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o644)).unwrap();
+        assert_eq!(secrets.load().unwrap(), Some(login()));
+        assert_eq!(mode(&file), 0o600);
+
+        // A file that was there, open, is not written to before it is closed: the new content never
+        // sits in a readable file.
+        std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o666)).unwrap();
+        secrets.save_oauth(&session()).unwrap();
+        assert_eq!(mode(&file), 0o600);
+    }
+
+    #[test]
+    fn nothing_prints_a_secret() {
+        let text = format!("{:?} {:?}", login(), session());
+        for secret in ["API-SECRET", "ACCESS-SECRET", "REFRESH-SECRET"] {
+            assert!(!text.contains(secret), "{secret} was printed");
+        }
+    }
+
+    #[test]
+    fn several_changes_at_once_do_not_lose_each_other() {
+        let (_tmp, secrets) = store();
+        let secrets = std::sync::Arc::new(secrets);
+        let a = secrets.clone();
+        let b = secrets.clone();
+        let one = std::thread::spawn(move || {
+            for _ in 0..30 {
+                a.save(&login()).unwrap();
+            }
+        });
+        let two = std::thread::spawn(move || {
+            for _ in 0..30 {
+                b.save_oauth(&session()).unwrap();
+            }
+        });
+        one.join().unwrap();
+        two.join().unwrap();
+        assert_eq!(secrets.load().unwrap(), Some(login()));
+        assert_eq!(secrets.load_oauth().unwrap(), Some(session()));
     }
 }
