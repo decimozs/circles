@@ -25,9 +25,13 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 |---|---|
 | General | The send key (Enter or Cmd+Enter), what a message sent while the agent works does (steer or queue), notifications and the completion sound, full disk access, and whether long pasted text becomes an attachment. |
 | Accounts | A card for the GitHub account the GitHub CLI uses, with a **Switch account** menu when several are signed in (what it shows is kept and checked again in the background every couple of minutes, and when you come back to the window), and a card for the Claude account Claude Code is signed in with, with its plan. Each says what to run when it is not signed in. Circles never holds either login. |
-| Appearance | Theme (light, dark or system), font size and density. |
+| Appearance | Theme (light, dark or system), font size, density and Translucency. |
 | Default models | The model and effort a new chat starts with, and whether new chats start in plan mode. |
 | Git | The branch prefix, the branch naming rule, the merge strategy, and the commit author git will use. |
+
+### Translucency
+
+Translucency (off by default) gives the window a macOS glass look. The sidebar shows a blurred view of what is behind the window, and menus, popovers, dialogs and the command palette are frosted. The chat, code and diffs stay solid, so reading does not depend on your wallpaper. It uses Liquid Glass on macOS 26 or newer and the system sidebar material on older versions. Turn it on and off in Settings > Appearance; it applies at once. If macOS is set to reduce transparency (System Settings > Accessibility > Display), Circles keeps the solid colours and nothing blurs. It works on macOS only for now; on other systems the setting changes nothing yet.
 
 **Agents and environment**
 

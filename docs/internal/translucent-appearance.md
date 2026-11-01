@@ -1,6 +1,6 @@
 # A translucent appearance (Apple-style glass): plan
 
-Status: planned, nothing built. Circles has Light, Dark and System (`appearance.theme`). This adds a
+Status: built in phases 1 to 4. Checked by tests and builds; not yet seen in the running app. Circles has Light, Dark and System (`appearance.theme`). This adds a
 **Translucency** option that gives macOS-style glass: the window's chrome shows a blurred view of what is
 behind it, and floating surfaces are frosted. macOS first; Windows and Linux later.
 
@@ -38,11 +38,24 @@ opaque, so reading contrast and speed do not depend on the wallpaper.
 - **Contrast:** `check:contrast` runs for the glass tokens against a light and a dark worst-case backdrop,
   so text on a translucent surface passes on a bright and a dark wallpaper.
 
+## What changed while building
+
+- **Liquid Glass is available.** The Tauri version in use (2.12) has `LiquidGlassRegular` for macOS 26 and
+  newer, so the window asks for it, with the `Sidebar` material as the fallback for older macOS. The
+  plan above called it an experiment; it turned out not to need `objc2`.
+- **The top bar stays opaque.** It sits inside the opaque centre column, so the glass is the sidebar and the
+  floating surfaces. Making the top bar glass needs the centre column split, which is left for later.
+- **Reduce transparency** is left to CSS (`prefers-reduced-transparency`), where the tints become the
+  solid colours. The native material is also made solid by macOS itself.
+- **Contrast floor:** the strengths had to be high to pass the check over a mid grey backdrop (light
+  sidebar 0.92, light surfaces 0.86, dark 0.74 and 0.78), so the light theme shows less of the backdrop than
+  the dark one. Lower them only with the check changed on purpose.
+- **Not decided here:** the three questions below. Defaults used: off, one material (Liquid Glass or
+  Sidebar), macOS only.
+
 ## Not in scope
 
-- Apple's Liquid Glass (macOS 26: lens refraction, moving highlights) is a native control
-  (`NSGlassEffectView`) that Tauri does not expose. Wrapping it with `objc2` is an experiment for later,
-  since it may break between macOS releases. The vibrancy materials look like the older frosted style.
+- Interactive glass effects of macOS 27 (`interactive` in Tauri's effects) are not used.
 - Windows (Mica/Acrylic) and Linux: the same setting, a different backend. Later.
 
 ## Risks
