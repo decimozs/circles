@@ -207,17 +207,19 @@ function RunContent({
       </p>
       <FleetSection rows={rows} now={now} />
       <ApprovalsSection composer={composer} />
-      <div className="border-t border-border py-1">
-        <button
-          type="button"
-          title="Every workspace and agent of this run, drawn as a graph"
-          onClick={onGraph}
-          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted/50 focus-visible:bg-muted/50"
-        >
-          <span className="min-w-0 flex-1">Fleet graph</span>
-          <ChevronRightIcon className="size-3.5 text-muted-foreground" />
-        </button>
-      </div>
+      {runningCount(rows) > 0 ? (
+        <div className="border-t border-border py-1">
+          <button
+            type="button"
+            title="Every workspace and agent of this run, drawn as a graph"
+            onClick={onGraph}
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm outline-none hover:bg-muted/50 focus-visible:bg-muted/50"
+          >
+            <span className="min-w-0 flex-1">Fleet graph</span>
+            <ChevronRightIcon className="size-3.5 text-muted-foreground" />
+          </button>
+        </div>
+      ) : null}
       <div className="flex flex-col gap-4 border-t border-border p-3">
         <RepositoriesSection composer={composer} />
         <IntegrationsSection composer={composer} />
@@ -295,7 +297,7 @@ export function RunPopover({ composer }: { composer: Composer }) {
         <PopoverContent
           align="end"
           aria-label="This run"
-          className="max-h-[70vh] w-[22rem] gap-0 overflow-y-auto p-0"
+          className="max-h-[70vh] w-[19.5rem] gap-0 overflow-y-auto p-0"
         >
           <RunContent
             composer={composer}

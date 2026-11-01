@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { backend } from "@/test/backend";
 import { approval, composer, project, runView, session, workspace } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp, settingsBackend } from "@/test/render";
-import { openRunTab } from "@/test/run-popover";
+import { openRunTab, runningFleetItem } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -171,7 +171,7 @@ describe("accessibility of the Composer screens", () => {
   it("a run with its popover and dialogs has none", async () => {
     seed(() => {
       chatBackend([session({ id: "r1", workspace_id: "cw1", title: "Triage" })]);
-      backend.on("composer_approvals", [approval()]);
+      backend.on("composer_approvals", [approval()]).on("composer_fleet", [runningFleetItem()]);
     });
     const app = renderApp("/composer/c1/run/r1");
     await screen.findByLabelText("Message");

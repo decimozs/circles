@@ -12,7 +12,7 @@ import {
   workspace,
 } from "@/test/fixtures";
 import { chatBackend, defaultBackend, renderApp } from "@/test/render";
-import { openRunTab } from "@/test/run-popover";
+import { openRunTab, runningFleetItem } from "@/test/run-popover";
 
 function seed(extra?: () => void) {
   defaultBackend();
@@ -56,6 +56,16 @@ const fleetItem = (over: { chatStatus?: "working" | "idle" | "blocked"; cost?: n
   }),
 });
 
+const busy = runningFleetItem;
+
+/** The card of the workspace the tests look at, among those of a run that also has one going. */
+const oslo = async () =>
+  within(
+    (await screen.findAllByTestId("fleet-card")).find((c) =>
+      c.textContent?.includes("Add dark mode"),
+    ) as HTMLElement,
+  );
+
 describe("Fleet", () => {
   it("shows what the run started, with the agent's state and cost", async () => {
     seed(() => backend.on("composer_fleet", [fleetItem()]));
@@ -87,10 +97,10 @@ describe("Fleet", () => {
   });
 
   it("offers no Stop for an agent that is done, and opens the workspace", async () => {
-    seed(() => backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" })]));
+    seed(() => backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" }), busy()]));
     const app = await open("Fleet");
     await screen.findByText("Add dark mode");
-    expect(screen.queryByRole("button", { name: "Stop" })).not.toBeInTheDocument();
+    expect((await oslo()).queryByRole("button", { name: "Stop" })).not.toBeInTheDocument();
     await app.user.click(screen.getByRole("button", { name: "Open Add dark mode" }));
     await waitFor(() => expect(app.router.state.location.pathname).toBe("/workspace/w2"));
   });
@@ -102,7 +112,11 @@ describe("Fleet", () => {
       chat: null,
     };
     seed(() =>
-      backend.on("composer_fleet", [started, fleetItem({ chatStatus: "idle", cost: 0.16 })]),
+      backend.on("composer_fleet", [
+        started,
+        fleetItem({ chatStatus: "idle", cost: 0.16 }),
+        busy(),
+      ]),
     );
     await open("Fleet");
     const list = await screen.findByRole("list", { name: "Fleet" });
@@ -121,7 +135,7 @@ describe("Fleet", () => {
   it("shows the pull request number of a workspace", async () => {
     const item = fleetItem({ chatStatus: "idle" });
     item.workspace = { ...item.workspace, pr_number: 7 };
-    seed(() => backend.on("composer_fleet", [item]));
+    seed(() => backend.on("composer_fleet", [item, busy()]));
     await open("Fleet");
     expect(await screen.findByText("#7")).toBeInTheDocument();
   });
@@ -141,45 +155,52 @@ describe("Fleet", () => {
     await waitFor(() => expect(app.router.state.location.pathname).toBe("/workspace/w2"));
   });
 
-  it("has no Expand button before anything was started", async () => {
-    seed();
-    await open("Fleet");
-    await screen.findByText(/has not started any workspace or agent/);
-    expect(screen.queryByRole("button", { name: "Expand fleet" })).not.toBeInTheDocument();
+  it("offers no fleet graph when nothing runs, even for a run that started work", async () => {
+    seed(() => backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" })]));
+    await open("Details");
+    await screen.findByText("Add dark mode");
+    expect(screen.queryByRole("button", { name: /^Fleet graph/ })).not.toBeInTheDocument();
   });
 
   it("says where the branch stands, next to the pull request number, in its colour", async () => {
     const item = fleetItem({ chatStatus: "idle" });
     item.workspace = { ...item.workspace, pr_number: 2 };
     seed(() => {
-      backend.on("composer_fleet", [item]);
+      backend.on("composer_fleet", [item, busy()]);
       backend.on("pr_readiness", readiness({ pr: prStatus({ number: 2, state: "merged" }) }));
     });
     await open("Fleet");
-    const badge = await screen.findByTestId("branch-status");
+    const badge = (await oslo()).getByTestId("branch-status");
     expect(badge).toHaveTextContent("Merged");
     expect(badge.className).toMatch(/bg-info\/20/);
     expect(badge.previousElementSibling).toHaveTextContent("#2");
     // Below the branch name, in the card's own colour.
     expect(badge.parentElement?.previousElementSibling).toHaveTextContent("me/abc12");
-    expect(screen.getByTestId("fleet-card").className).toMatch(/border-info\/30/);
+    expect(
+      screen.getAllByTestId("fleet-card").find((c) => c.textContent?.includes("Add dark mode"))
+        ?.className,
+    ).toMatch(/border-info\/30/);
   });
 
   it("colours a branch with only commits differently from a merged one, like the Create PR step", async () => {
     seed(() => {
-      backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" })]);
+      backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" }), busy()]);
       backend.on("pr_readiness", readiness());
     });
     await open("Fleet");
-    const card = await screen.findByTestId("fleet-card");
+    const card = (await oslo())
+      .getByRole("button", { name: "Open Add dark mode" })
+      .closest('[data-testid="fleet-card"]') as HTMLElement;
     await waitFor(() => expect(card.className).toMatch(/border-violet\/30/));
     expect(card.className).not.toMatch(/border-info/);
   });
 
   it("opens the workspace when the card is clicked, with no separate link icon", async () => {
-    seed(() => backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" })]));
+    seed(() => backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" }), busy()]));
     const app = await open("Fleet");
-    const card = await screen.findByTestId("fleet-card");
+    const card = (await oslo())
+      .getByRole("button", { name: "Open Add dark mode" })
+      .closest('[data-testid="fleet-card"]') as HTMLElement;
     // One way in, and it covers the whole card.
     expect(within(card).getAllByRole("button")).toHaveLength(1);
     await app.user.click(within(card).getByRole("button", { name: "Open Add dark mode" }));
@@ -196,13 +217,13 @@ describe("Fleet", () => {
       binary: false,
     });
     seed(() => {
-      backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" })]);
+      backend.on("composer_fleet", [fleetItem({ chatStatus: "idle" }), busy()]);
       backend.on("pr_readiness", readiness());
       backend.on("changes_list", [file("a.ts", 10, 4), file("b.ts", 5, 2)]);
     });
     await open("Fleet");
     // What it changed, like the Changes tab's footer, in place of a badge.
-    const summary = await screen.findByTestId("branch-changes");
+    const summary = (await oslo()).getByTestId("branch-changes");
     expect(summary).toHaveTextContent("2 files");
     expect(summary).toHaveTextContent("+15");
     expect(summary).toHaveTextContent("−6");
@@ -212,10 +233,13 @@ describe("Fleet", () => {
     expect(summary.previousElementSibling).toHaveTextContent("me/abc12");
   });
 
-  it("is empty before anything was started", async () => {
+  it("is empty before anything was started, with no fleet graph to open", async () => {
     seed();
-    await open("Fleet");
-    expect(await screen.findByText(/has not started any workspace or agent/)).toBeInTheDocument();
+    await open("Details");
+    expect(
+      await screen.findByText("This run has not started any workspace yet."),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Fleet graph/ })).not.toBeInTheDocument();
   });
 });
 
