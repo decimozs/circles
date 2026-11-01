@@ -233,6 +233,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::app::get_app_info,
+            commands::app::window_set_translucent,
             commands::app::settings_get,
             commands::project::project_list,
             commands::project::project_add_local,

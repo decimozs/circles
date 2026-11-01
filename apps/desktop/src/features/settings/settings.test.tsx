@@ -108,6 +108,9 @@ describe("settings pages", () => {
     expect(document.documentElement.style.fontSize).toBe("18px");
     expect(document.documentElement.dataset.density).toBe("compact");
     expect(document.documentElement.dataset.translucent).toBe("true");
+    await waitFor(() =>
+      expect(backend.callsTo("window_set_translucent").slice(-1)[0]).toEqual({ enabled: true }),
+    );
   });
 
   it("writes the theme chosen in the toggle back to the file", async () => {

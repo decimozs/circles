@@ -159,3 +159,25 @@ pub async fn settings_get(
 ) -> IpcResult<SettingsPayload> {
     settings::load_merged(&settings_layers(&state, project_id.as_deref())?)
 }
+
+/// Puts the macOS window material behind the page, or takes it away. With Liquid Glass on macOS 26
+/// or newer, and the sidebar material on older macOS, where the first is not available. Elsewhere
+/// there is no effect to set, and the call changes nothing.
+#[tauri::command]
+pub fn window_set_translucent(window: tauri::WebviewWindow, enabled: bool) -> IpcResult<()> {
+    #[cfg(target_os = "macos")]
+    {
+        use tauri::utils::config::WindowEffectsConfig;
+        use tauri::window::Effect;
+        let effects = enabled.then(|| WindowEffectsConfig {
+            effects: vec![Effect::LiquidGlassRegular, Effect::Sidebar],
+            ..Default::default()
+        });
+        window
+            .set_effects(effects)
+            .map_err(|e| AppError::Internal(e.to_string()))?;
+    }
+    #[cfg(not(target_os = "macos"))]
+    let _ = (&window, enabled);
+    Ok(())
+}

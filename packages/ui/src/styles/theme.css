@@ -95,7 +95,11 @@
     @apply bg-background text-foreground text-sm;
     margin: 0;
     -webkit-font-smoothing: antialiased;
+    /* With translucency on, the window's own material shows through where the app is not opaque. */
     text-rendering: optimizeLegibility;
+  }
+  html[data-translucent="true"] body {
+    background: transparent;
   }
   code,
   kbd,

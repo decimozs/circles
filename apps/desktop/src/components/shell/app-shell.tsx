@@ -81,7 +81,7 @@ export function AppShell() {
   });
 
   return (
-    <div className="h-full w-full overflow-clip bg-background text-foreground">
+    <div className="h-full w-full overflow-clip bg-background in-data-[translucent=true]:bg-transparent text-foreground">
       <ShellActions />
       <ShortcutsDialog />
       <UsageDialog />
@@ -117,7 +117,7 @@ export function AppShell() {
           className={cn(SEPARATOR, !leftVisible && "pointer-events-none opacity-0")}
         />
         <Panel id="center" minSize={320}>
-          <div className="flex h-full min-w-0 flex-col">
+          <div className="flex h-full min-w-0 flex-col bg-background">
             <TopBar leftVisible={leftVisible} />
             <Workbench />
           </div>

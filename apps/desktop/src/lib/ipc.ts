@@ -131,6 +131,7 @@ export function errorFix(error: unknown): string | null {
 
 export const ipc = {
   getAppInfo: () => call<AppInfo>("get_app_info"),
+  windowSetTranslucent: (enabled: boolean) => call<void>("window_set_translucent", { enabled }),
   settingsGet: (projectId?: string) =>
     call<SettingsPayload>("settings_get", { projectId: projectId ?? null }),
 
