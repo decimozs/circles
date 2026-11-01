@@ -13,9 +13,8 @@ was marked as quarantined: run `xattr -dr com.apple.quarantine /Applications/Cir
 Circles could not send it itself and used a script. Allow notifications in System Settings,
 Notifications, and use the installed app rather than a development build.
 
-**macOS asks again and again for a Keychain password**
-A development build is a new program every time it is built, so macOS asks again. The installed
-app asks once: choose Always Allow.
+**Jira says it is not connected after an update**
+Earlier versions kept the Jira login in the macOS Keychain. Circles no longer uses the Keychain, so macOS stops asking for your password, and a login saved there is not carried over, because reading it would ask once more. Connect Jira again in Settings > Integrations. You can delete the old items in Keychain Access: search for `circles` and delete the entries named `jira` and `jira-oauth`.
 
 **Chats are not named, or the next message is not suggested**
 Titles and suggestions use Claude Haiku through Claude Code, so Claude Code has to be installed and signed in (see "Claude Code was not found" below). Settings > Smart titles has a **Try it** button that shows whether it answers, and the switches for each job.

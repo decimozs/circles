@@ -9,7 +9,7 @@ pub async fn jira_status(state: State<'_, AppState>) -> IpcResult<JiraStatus> {
     state.integrations.jira_status()
 }
 
-/// Checks the token with Jira and saves it in the Keychain. Also reconnects: the same call with a new token.
+/// Checks the token with Jira and saves it in the file of logins. Also reconnects: the same call with a new token.
 #[tauri::command]
 pub async fn jira_connect(
     app: AppHandle,

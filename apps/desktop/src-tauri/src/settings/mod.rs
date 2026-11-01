@@ -173,7 +173,7 @@ pub struct SideSettings {
     pub read_files: Option<bool>,
 }
 
-/// Outside services. Their logins are not here: the token is in the Keychain.
+/// Outside services. Their logins are not here: they are in their own file, readable only by you.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TS, PartialEq)]
 #[ts(export)]
 pub struct IntegrationSettings {

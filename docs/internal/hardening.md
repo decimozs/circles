@@ -69,7 +69,7 @@ a very large diff, terminal throughput. Record the numbers here when measured.
 
 ## Jira (integrations)
 
-- The API token lives only in the macOS Keychain. It is not in `settings.toml`, the database, an env
+- The API token lives only in `integration-secrets.json` in the data folder (mode 0600, written to a temporary file with those permissions and then moved into place; a file found more open is closed on the next read). It is not in the macOS Keychain any more: the Keychain asked for the account password again after every build of an unsigned app. The trade is that any program running as the same user can read the file, which the Keychain does not stop either once a program is allowed. It is not in `settings.toml`, the database, an env
   var, the MCP config file, a log or the audit log. Tests check that the token is not printed by
   `Debug`, not in audit rows and not left on the screen after saving.
 - The Jira address is fixed when connecting and limited to `*.atlassian.net`. No tool takes a URL.
@@ -79,7 +79,7 @@ a very large diff, terminal throughput. Record the numbers here when measured.
 - Sign in with Atlassian: PKCE (S256) and a random `state`; the browser returns to a listener on
   127.0.0.1 only, which serves one callback at a time, ignores any other path or wrong `state`, and
   stops after five minutes or Cancel. Authorization and token addresses must be HTTPS. The scopes
-  never include delete or manage. Access and refresh tokens are only in the Keychain, and not in
+  never include delete or manage. Access and refresh tokens are only in that file, and not in
   logs or `Debug`. Tools of Atlassian that Circles has no mapping for cannot be reached.
 
 ## Smart titles

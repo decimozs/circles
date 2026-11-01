@@ -62,7 +62,8 @@ function TokenForm({
       <p className="text-sm text-muted-foreground">
         Jira Cloud only. Create an API token at id.atlassian.com, under Security. It has the same
         permissions as your account, so use an account that can only see what you want agents to
-        see. The token is kept in the macOS Keychain, never in a file.
+        see. The token is kept in a file in Circles' data folder that only you can read, not in the
+        macOS Keychain, so macOS never asks for your password.
       </p>
       <div className="flex flex-col gap-3 text-sm">
         <div className="flex flex-col gap-1">
@@ -360,8 +361,8 @@ export function JiraCard() {
           <DialogHeader>
             <DialogTitle>Disconnect Jira?</DialogTitle>
             <DialogDescription>
-              The token is removed from the Keychain and Jira is switched off for every Composer.
-              Chats lose it too, until you connect again.
+              The saved login is deleted and Jira is switched off for every Composer. Chats lose it
+              too, until you connect again.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
