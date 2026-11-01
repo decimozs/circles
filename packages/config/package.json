@@ -2,6 +2,7 @@
   "name": "@circles/config",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "description": "Shared TypeScript presets.",
   "files": [
     "tsconfig.base.json",

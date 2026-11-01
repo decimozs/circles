@@ -2,6 +2,7 @@
   "name": "@circles/ui",
   "private": true,
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "Design tokens, the Tailwind theme and the shadcn components every Circles app uses.",
   "exports": {
