@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@circles/ui/components/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@amplify/ui/components/dialog";
 import { ACTION_GROUPS, flattenActions, useActionRegistry } from "@/lib/actions";
 import { formatShortcut } from "@/lib/shortcuts";
 import { useUi } from "@/stores/ui";

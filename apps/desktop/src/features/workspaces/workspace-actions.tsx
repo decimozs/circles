@@ -1,5 +1,5 @@
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -7,17 +7,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Input } from "@circles/ui/components/input";
-import { Switch } from "@circles/ui/components/switch";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dropdown-menu";
+import { Input } from "@amplify/ui/components/input";
+import { Switch } from "@amplify/ui/components/switch";
+import { cn } from "@amplify/ui/utils";
 import { MoreHorizontalIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
@@ -201,7 +201,7 @@ export function WorkspaceActions({
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
             Auto-commit saves everything on the branch with the message "WIP: archived from
-            Circles", so nothing is lost and restoring brings it all back.
+            Amplify", so nothing is lost and restoring brings it all back.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialog(null)}>
@@ -219,7 +219,7 @@ export function WorkspaceActions({
           <DialogHeader>
             <DialogTitle>Delete {workspace.city}?</DialogTitle>
             <DialogDescription>
-              Removes the workspace from Circles. The branch stays in your repository unless you
+              Removes the workspace from Amplify. The branch stays in your repository unless you
               choose to delete it too.
             </DialogDescription>
           </DialogHeader>

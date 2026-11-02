@@ -1,6 +1,6 @@
-import type { ChangedFile } from "@circles/bindings/ChangedFile";
-import type { ChangeStatus } from "@circles/bindings/ChangeStatus";
-import { cn } from "@circles/ui/utils";
+import type { ChangedFile } from "@amplify/bindings/ChangedFile";
+import type { ChangeStatus } from "@amplify/bindings/ChangeStatus";
+import { cn } from "@amplify/ui/utils";
 import {
   FileDiffIcon,
   FilePlusIcon,

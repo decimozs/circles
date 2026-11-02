@@ -217,13 +217,13 @@ pub fn random_suffix(pick: &mut dyn FnMut(usize) -> usize) -> String {
 pub fn branch_prefix(raw: &str) -> String {
     let slug = slugify(raw);
     if slug.is_empty() {
-        "circles".to_string()
+        "amplify".to_string()
     } else {
         slug
     }
 }
 
-/// Folder name for a project under `~/circles/workspaces`.
+/// Folder name for a project under `~/amplify/workspaces`.
 pub fn project_dir_name(name: &str) -> String {
     let cleaned: String = name
         .chars()
@@ -325,8 +325,8 @@ mod tests {
         assert_eq!(branch_prefix("decimozs"), "decimozs");
         assert_eq!(branch_prefix("Marlon Martin"), "marlon-martin");
         assert_eq!(branch_prefix("  --Weird__Name!! "), "weird-name");
-        assert_eq!(branch_prefix("***"), "circles");
-        assert_eq!(branch_prefix(""), "circles");
+        assert_eq!(branch_prefix("***"), "amplify");
+        assert_eq!(branch_prefix(""), "amplify");
     }
 
     #[test]

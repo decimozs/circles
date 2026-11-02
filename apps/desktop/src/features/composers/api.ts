@@ -1,8 +1,8 @@
-import type { Autonomy } from "@circles/bindings/Autonomy";
-import type { Composer } from "@circles/bindings/Composer";
-import type { ComposerInput } from "@circles/bindings/ComposerInput";
-import type { Tier } from "@circles/bindings/Tier";
-import type { TriggerInput } from "@circles/bindings/TriggerInput";
+import type { Autonomy } from "@amplify/bindings/Autonomy";
+import type { Composer } from "@amplify/bindings/Composer";
+import type { ComposerInput } from "@amplify/bindings/ComposerInput";
+import type { Tier } from "@amplify/bindings/Tier";
+import type { TriggerInput } from "@amplify/bindings/TriggerInput";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";

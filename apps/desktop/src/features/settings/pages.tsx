@@ -1,6 +1,6 @@
-import type { SettingsView } from "@circles/bindings/SettingsView";
-import type { SmartTest } from "@circles/bindings/SmartTest";
-import { Button } from "@circles/ui/components/button";
+import type { SettingsView } from "@amplify/bindings/SettingsView";
+import type { SmartTest } from "@amplify/bindings/SmartTest";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
@@ -462,7 +462,7 @@ function ResetRow({ def, highlight }: { def: SettingDef; highlight?: string }) {
             <DialogDescription>
               This stops every agent and terminal, then deletes chats, workspace records,
               checkpoints and terminal history. Your settings, logs and repositories are kept.
-              Circles restarts afterwards. This cannot be undone.
+              Amplify restarts afterwards. This cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <Input

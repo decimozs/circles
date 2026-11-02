@@ -1,4 +1,4 @@
-import { Button } from "@circles/ui/components/button";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import { ipc } from "@/lib/ipc";
@@ -42,7 +42,7 @@ export function QuitDialog() {
     <Dialog open={open} onOpenChange={(o) => !o && setRunning(null)}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Quit Circles?</DialogTitle>
+          <DialogTitle>Quit Amplify?</DialogTitle>
           <DialogDescription>
             {running} {noun} still running in your terminals, scripts and agent chats. Quitting
             stops

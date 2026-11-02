@@ -1,5 +1,5 @@
 {
-  "name": "circles-monorepo",
+  "name": "amplify-monorepo",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
@@ -9,19 +9,19 @@
     "node": ">=24"
   },
   "scripts": {
-    "dev": "pnpm --filter @circles/desktop dev",
-    "build": "pnpm --filter @circles/desktop build",
-    "tauri": "pnpm --filter @circles/desktop tauri",
+    "dev": "pnpm --filter @amplify/desktop dev",
+    "build": "pnpm --filter @amplify/desktop build",
+    "tauri": "pnpm --filter @amplify/desktop tauri",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "test:rust": "cargo test --workspace",
     "lint": "biome check .",
     "format": "biome format --write .",
-    "check": "pnpm --filter @circles/desktop check:tokens && pnpm --filter @circles/desktop check:contrast",
-    "check:tokens": "pnpm --filter @circles/desktop check:tokens",
-    "check:contrast": "pnpm --filter @circles/desktop check:contrast",
+    "check": "pnpm --filter @amplify/desktop check:tokens && pnpm --filter @amplify/desktop check:contrast",
+    "check:tokens": "pnpm --filter @amplify/desktop check:tokens",
+    "check:contrast": "pnpm --filter @amplify/desktop check:contrast",
     "check:rust": "cargo check --workspace",
-    "gen:types": "pnpm --filter @circles/desktop gen:types"
+    "gen:types": "pnpm --filter @amplify/desktop gen:types"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:"

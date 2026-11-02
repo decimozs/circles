@@ -60,7 +60,7 @@ impl AgentEvents for TauriAgentEvents {
                     .await
                     .get(&notification.workspace_id)
                     .map(|ws| ws.title.unwrap_or(ws.city))
-                    .unwrap_or_else(|_| "Circles".into());
+                    .unwrap_or_else(|_| "Amplify".into());
                 let body = from_settings::notification_text(notification.kind);
                 if let Err(e) = crate::system::notify(&title, body) {
                     tracing::warn!(error = %e, "cannot show a notification");

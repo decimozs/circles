@@ -12,8 +12,8 @@ describe("siteUrl", () => {
   });
 
   it("falls back to the production address Vercel gives, then to localhost", () => {
-    expect(siteUrl({ VERCEL_PROJECT_PRODUCTION_URL: "circles-docs.vercel.app" }).href).toBe(
-      "https://circles-docs.vercel.app/",
+    expect(siteUrl({ VERCEL_PROJECT_PRODUCTION_URL: "amplify-docs.vercel.app" }).href).toBe(
+      "https://amplify-docs.vercel.app/",
     );
     expect(siteUrl({}).href).toBe("http://localhost:3000/");
     expect(siteUrl({ NEXT_PUBLIC_SITE_URL: "  " }).href).toBe("http://localhost:3000/");

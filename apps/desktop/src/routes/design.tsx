@@ -1,5 +1,5 @@
-import { Badge } from "@circles/ui/components/badge";
-import { Button } from "@circles/ui/components/button";
+import { Badge } from "@amplify/ui/components/badge";
+import { Button } from "@amplify/ui/components/button";
 import {
   Command,
   CommandEmpty,
@@ -8,13 +8,13 @@ import {
   CommandItem,
   CommandList,
   CommandShortcut,
-} from "@circles/ui/components/command";
+} from "@amplify/ui/components/command";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@circles/ui/components/context-menu";
+} from "@amplify/ui/components/context-menu";
 import {
   Dialog,
   DialogContent,
@@ -22,29 +22,29 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Input } from "@circles/ui/components/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@circles/ui/components/popover";
-import { ScrollArea } from "@circles/ui/components/scroll-area";
+} from "@amplify/ui/components/dropdown-menu";
+import { Input } from "@amplify/ui/components/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@amplify/ui/components/popover";
+import { ScrollArea } from "@amplify/ui/components/scroll-area";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@circles/ui/components/select";
-import { Separator } from "@circles/ui/components/separator";
-import { Switch } from "@circles/ui/components/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@circles/ui/components/tabs";
-import { Textarea } from "@circles/ui/components/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@circles/ui/components/tooltip";
+} from "@amplify/ui/components/select";
+import { Separator } from "@amplify/ui/components/separator";
+import { Switch } from "@amplify/ui/components/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@amplify/ui/components/tabs";
+import { Textarea } from "@amplify/ui/components/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@amplify/ui/components/tooltip";
 import { toast } from "sonner";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -167,7 +167,7 @@ export function DesignGallery() {
             <p className="text-sm">UI text 13px (default)</p>
             <p className="text-xs">Small text 12px</p>
             <p className="text-2xs">Tiny text 11px</p>
-            <p className="font-mono text-sm">const circles = "JetBrains Mono";</p>
+            <p className="font-mono text-sm">const amplify = "JetBrains Mono";</p>
           </div>
         </Section>
 

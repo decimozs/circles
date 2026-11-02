@@ -7,7 +7,7 @@ Create, list, archive, and restore isolated worktree workspaces with a clear lif
 Phase 4.
 
 ## In scope
-- **Create:** fetch `origin/<base>`, create branch `<gh-username>/<random5>`, `git worktree add` at `~/circles/workspaces/<project>/<city>`.
+- **Create:** fetch `origin/<base>`, create branch `<gh-username>/<random5>`, `git worktree add` at `~/amplify/workspaces/<project>/<city>`.
 - **City names:** curated list, unique per project. Fall back to `<city>-2` when exhausted.
 - **Copy rules:** apply "Files to copy" and `.worktreeinclude` so gitignored files (`.env`) land in the new tree.
 - **`.context/`:** create it, add it to the worktree's local exclude (never touches the repo's `.gitignore`).

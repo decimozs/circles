@@ -1,4 +1,4 @@
-import type { UsageSummary } from "@circles/bindings/UsageSummary";
+import type { UsageSummary } from "@amplify/bindings/UsageSummary";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { backend, emitBackendEvent } from "@/test/backend";
@@ -153,7 +153,7 @@ describe("the Usage dialog", () => {
     const page = within(dialog);
     await page.findByText("$461.90", { selector: "p" });
     await user.click(page.getByRole("button", { name: "7 days" }));
-    await waitFor(() => expect(localStorage.getItem("circles.usage.range")).toBe("7d"));
+    await waitFor(() => expect(localStorage.getItem("amplify.usage.range")).toBe("7d"));
     await user.selectOptions(page.getByLabelText("Environment"), "/Users/me/.claude-work");
     await waitFor(() =>
       expect(

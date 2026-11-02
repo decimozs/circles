@@ -1,6 +1,6 @@
-import type { ComposerInput } from "@circles/bindings/ComposerInput";
-import type { Limits } from "@circles/bindings/Limits";
-import { Button } from "@circles/ui/components/button";
+import type { ComposerInput } from "@amplify/bindings/ComposerInput";
+import type { Limits } from "@amplify/bindings/Limits";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";

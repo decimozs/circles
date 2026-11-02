@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 
 /** A GitHub avatar and a name. Nothing is shown for an author that is not known. */
 export function Person({

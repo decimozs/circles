@@ -1,9 +1,9 @@
 ---
 title: "Projects"
-description: "Add repositories to Circles, pick them from GitHub, and see how Circles learns a repository's habits."
+description: "Add repositories to Amplify, pick them from GitHub, and see how Amplify learns a repository's habits."
 ---
 
-A project is a git repository you added to Circles. Circles never changes the original folder: agents work in workspaces made from it.
+A project is a git repository you added to Amplify. Amplify never changes the original folder: agents work in workspaces made from it.
 
 ## Adding a project
 
@@ -20,35 +20,35 @@ Choose a repository that is already on your Mac, or paste its path. Any folder i
 - It says which account it uses ("Signed in as ..."). `gh` has one active account even when several are signed in. If the active account owns no repositories and belongs to no organization, the list says "No repositories found for `<account>`". Switch with `gh auth switch --user <login>`.
 - The search box matches the owner, name and description across every owner. A repository outside the first 100 of its owner is cloned by typing `owner/name` (or a URL) in the box above the list.
 - An organization that cannot be listed, for example one that needs SSO, is named in a note under the list, and the rest still show.
-- The clone goes to `~/circles/repos/<name>`.
+- The clone goes to `~/amplify/repos/<name>`.
 
 ### Quick start
 
-Creates a new repository with an initial commit in `~/circles/repos/<name>`.
+Creates a new repository with an initial commit in `~/amplify/repos/<name>`.
 
 ## Removing and adding again
 
-Removing a project takes it out of Circles and keeps the repository folder, with or without its workspaces. Adding the same GitHub repository again reuses that folder when it holds the same repository (same `origin`) and no project uses it. A folder of another repository is never taken over: the clone goes to `<name>-2`, `<name>-3` and so on. Nothing is deleted.
+Removing a project takes it out of Amplify and keeps the repository folder, with or without its workspaces. Adding the same GitHub repository again reuses that folder when it holds the same repository (same `origin`) and no project uses it. A folder of another repository is never taken over: the clone goes to `<name>-2`, `<name>-3` and so on. Nothing is deleted.
 
 ## Repository settings
 
 Each project has its own page under Settings, with:
 
-- **Base branch:** new workspaces branch from it and pull requests target it. Circles reads `origin/HEAD`, then falls back to `main` and `master`.
+- **Base branch:** new workspaces branch from it and pull requests target it. Amplify reads `origin/HEAD`, then falls back to `main` and `master`.
 - **Scripts:** setup, run and archive, and whether the run script can start in several workspaces at once. See [Workspaces](./workspaces.md).
 - **Files to copy:** ignored files, such as `.env`, copied into every new workspace.
 - **Merge method:** squash, merge commit or rebase.
-- **Instructions:** text added to the prompts Circles sends in this repository. There is one for everything, and ones for reviews, pull requests, fixing errors, conflicts, branch names and commits.
+- **Instructions:** text added to the prompts Amplify sends in this repository. There is one for everything, and ones for reviews, pull requests, fixing errors, conflicts, branch names and commits.
 
 The **Branch naming rule** (Settings > Git, and in a project's shared or local settings file) sets how a project's branches are named, for example `{type}/{ticket}-{slug}`. `{type}` is feat, fix, chore and so on, `{slug}` is lowercase words joined by dashes, and `{ticket}` is an issue key such as `PROJ-123`. Left empty, it is `{type}/{slug}`. Composers follow it. **Learn** (below) can fill it in for a project.
 
-Changes are saved either to **Only me** (this Mac) or to **Shared**, which writes `.circles/settings.toml` in the repository so everyone who clones it gets the same settings. See [Settings](./settings.md).
+Changes are saved either to **Only me** (this Mac) or to **Shared**, which writes `.amplify/settings.toml` in the repository so everyone who clones it gets the same settings. See [Settings](./settings.md).
 
-## How Circles follows a repository's habits
+## How Amplify follows a repository's habits
 
-Claude Code loads `CLAUDE.md` and `.claude/skills` by itself in every workspace. Circles also tells the agent about `.agents/skills`, `.agent/skills` and `AGENTS.md`, which Claude Code does not load. So an agent in a chat follows what the repository writes down, whoever started the chat.
+Claude Code loads `CLAUDE.md` and `.claude/skills` by itself in every workspace. Amplify also tells the agent about `.agents/skills`, `.agent/skills` and `AGENTS.md`, which Claude Code does not load. So an agent in a chat follows what the repository writes down, whoever started the chat.
 
-Circles' own drafts of a pull request and its grouping of commits read the repository too:
+Amplify' own drafts of a pull request and its grouping of commits read the repository too:
 
 | What | Where it is looked for |
 |---|---|

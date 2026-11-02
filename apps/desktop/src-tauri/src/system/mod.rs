@@ -47,7 +47,7 @@ fn spawn_quiet(program: &str, args: &[&str]) -> AppResult<()> {
     Ok(())
 }
 
-/// The app, once it exists, so a notification can come from Circles itself.
+/// The app, once it exists, so a notification can come from Amplify itself.
 static APP: std::sync::OnceLock<tauri::AppHandle> = std::sync::OnceLock::new();
 
 pub fn set_app(app: tauri::AppHandle) {
@@ -57,13 +57,13 @@ pub fn set_app(app: tauri::AppHandle) {
 /// How a notification was sent.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum NotifyRoute {
-    /// From Circles, with its own name and icon.
+    /// From Amplify, with its own name and icon.
     Native,
     /// Through a script. It shows as coming from Script Editor.
     Script,
 }
 
-/// Shows a notification, from Circles when it can and through a script when it cannot.
+/// Shows a notification, from Amplify when it can and through a script when it cannot.
 pub fn notify_via(title: &str, body: &str) -> AppResult<NotifyRoute> {
     use tauri_plugin_notification::NotificationExt;
     if let Some(app) = APP.get() {
@@ -102,7 +102,7 @@ pub fn open_text(path: &Path) -> AppResult<()> {
 
 /// Copies the log files into a new folder in `into` and returns it.
 pub fn export_logs(paths: &AppPaths, into: &Path, stamp: &str) -> AppResult<PathBuf> {
-    let folder = into.join(format!("circles-logs-{stamp}"));
+    let folder = into.join(format!("amplify-logs-{stamp}"));
     std::fs::create_dir_all(&folder)?;
     if paths.logs_dir.is_dir() {
         for entry in std::fs::read_dir(&paths.logs_dir)?.flatten() {
@@ -154,7 +154,7 @@ mod tests {
     fn paths(root: &Path) -> AppPaths {
         AppPaths {
             data_dir: root.to_path_buf(),
-            db_file: root.join("circles.db"),
+            db_file: root.join("amplify.db"),
             settings_file: root.join("settings.toml"),
             logs_dir: root.join("logs"),
             projects_dir: root.join("projects"),
@@ -167,8 +167,8 @@ mod tests {
     #[test]
     fn notification_text_cannot_break_out_of_the_script() {
         assert_eq!(
-            notification_script("Circles", "Done"),
-            "display notification \"Done\" with title \"Circles\""
+            notification_script("Amplify", "Done"),
+            "display notification \"Done\" with title \"Amplify\""
         );
         let script = notification_script(
             "A \"title\"",
@@ -187,14 +187,14 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         let paths = paths(tmp.path());
         std::fs::create_dir_all(&paths.logs_dir).unwrap();
-        std::fs::write(paths.logs_dir.join("circles.log.2026-01-01"), "line").unwrap();
+        std::fs::write(paths.logs_dir.join("amplify.log.2026-01-01"), "line").unwrap();
         std::fs::create_dir_all(paths.logs_dir.join("subfolder")).unwrap();
         let downloads = tmp.path().join("Downloads");
         std::fs::create_dir_all(&downloads).unwrap();
         let folder = export_logs(&paths, &downloads, "now").unwrap();
-        assert_eq!(folder, downloads.join("circles-logs-now"));
+        assert_eq!(folder, downloads.join("amplify-logs-now"));
         assert_eq!(
-            std::fs::read_to_string(folder.join("circles.log.2026-01-01")).unwrap(),
+            std::fs::read_to_string(folder.join("amplify.log.2026-01-01")).unwrap(),
             "line"
         );
         assert!(!folder.join("subfolder").exists());
@@ -212,9 +212,9 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         let paths = paths(tmp.path());
         for file in [
-            "circles.db",
-            "circles.db-wal",
-            "circles.db-shm",
+            "amplify.db",
+            "amplify.db-wal",
+            "amplify.db-shm",
             "settings.toml",
         ] {
             std::fs::write(tmp.path().join(file), "x").unwrap();
@@ -233,15 +233,15 @@ mod tests {
         assert_eq!(reset_data(&paths, "").unwrap_err().code(), "invalid");
         assert_eq!(reset_data(&paths, "yes").unwrap_err().code(), "invalid");
         assert!(
-            tmp.path().join("circles.db").exists(),
+            tmp.path().join("amplify.db").exists(),
             "nothing was deleted without the word"
         );
 
         reset_data(&paths, " reset ").unwrap();
         for gone in [
-            "circles.db",
-            "circles.db-wal",
-            "circles.db-shm",
+            "amplify.db",
+            "amplify.db-wal",
+            "amplify.db-shm",
             "scrollback",
             "context",
             "projects",

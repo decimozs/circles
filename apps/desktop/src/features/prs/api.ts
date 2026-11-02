@@ -1,5 +1,5 @@
-import type { BrowseState } from "@circles/bindings/BrowseState";
-import type { PrFileRequest } from "@circles/bindings/PrFileRequest";
+import type { BrowseState } from "@amplify/bindings/BrowseState";
+import type { PrFileRequest } from "@amplify/bindings/PrFileRequest";
 import { keepPreviousData, useQuery, type useQueryClient } from "@tanstack/react-query";
 import { ipc } from "@/lib/ipc";
 
@@ -13,7 +13,7 @@ export const prKeys = {
   list: (projectId: string | null, which: BrowseState) => ["pr-browse", projectId, which] as const,
 };
 
-/** The pull requests of one project, or of all of them. What Circles kept comes back at once, and
+/** The pull requests of one project, or of all of them. What Amplify kept comes back at once, and
  * it is asked from GitHub again in the background; `useCacheSync` reads again when that is done.
  * Only a repository seen for the first time waits for GitHub. While another project or state
  * loads, the list on screen stays. */

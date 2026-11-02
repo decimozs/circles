@@ -1,7 +1,7 @@
 # Phase 15: Hardening and packaging
 
 ## Goal
-Make Circles safe, stable, and installable.
+Make Amplify safe, stable, and installable.
 
 ## Depends on
 All previous phases.

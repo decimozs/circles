@@ -1,5 +1,5 @@
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
 import { Channel } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { FitAddon } from "@xterm/addon-fit";

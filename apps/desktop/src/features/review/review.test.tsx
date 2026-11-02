@@ -1,8 +1,8 @@
-import type { ChangedFile } from "@circles/bindings/ChangedFile";
-import type { Comment } from "@circles/bindings/Comment";
-import type { FileContent } from "@circles/bindings/FileContent";
-import type { FilePair } from "@circles/bindings/FilePair";
-import type { FsEntry } from "@circles/bindings/FsEntry";
+import type { ChangedFile } from "@amplify/bindings/ChangedFile";
+import type { Comment } from "@amplify/bindings/Comment";
+import type { FileContent } from "@amplify/bindings/FileContent";
+import type { FilePair } from "@amplify/bindings/FilePair";
+import type { FsEntry } from "@amplify/bindings/FsEntry";
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useChat } from "@/stores/chat";

@@ -1,4 +1,4 @@
-import type { NewComment } from "@circles/bindings/NewComment";
+import type { NewComment } from "@amplify/bindings/NewComment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";

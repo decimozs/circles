@@ -9,8 +9,8 @@ export type ComposerSettings = {
  */
 daily_run_cap: number | null, 
 /**
- * Keep Circles running in the menu bar after its window is closed. Takes effect the next
- * time Circles starts.
+ * Keep Amplify running in the menu bar after its window is closed. Takes effect the next
+ * time Amplify starts.
  */
 menu_bar: boolean | null, 
 /**
@@ -18,11 +18,11 @@ menu_bar: boolean | null,
  */
 keep_awake: boolean | null, 
 /**
- * Open Circles when you log in.
+ * Open Amplify when you log in.
  */
 start_at_login: boolean | null, 
 /**
- * A notification when something waits for you, while Circles is in the background. On
+ * A notification when something waits for you, while Amplify is in the background. On
  * unless switched off.
  */
 notify_waiting: boolean | null, };

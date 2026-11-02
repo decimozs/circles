@@ -1,4 +1,4 @@
-import type { TerminalChange } from "@circles/bindings/TerminalChange";
+import type { TerminalChange } from "@amplify/bindings/TerminalChange";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";

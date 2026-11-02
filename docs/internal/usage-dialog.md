@@ -2,7 +2,7 @@
 
 Replace the "Add project" button in the sidebar footer with a **Usage** button that opens a Usage
 dialog: cost, tokens and limits for Claude Code, in the layout of the reference screenshot.
-Status: built in phases 1 to 3 (phases 2 and 3 together). The "Only chats run in Circles" switch is not built, and the scan cache lives in memory, not on disk, so the first scan after a restart reads the history again.
+Status: built in phases 1 to 3 (phases 2 and 3 together). The "Only chats run in Amplify" switch is not built, and the scan cache lives in memory, not on disk, so the first scan after a restart reads the history again.
 
 ## Sidebar change
 
@@ -29,27 +29,27 @@ Header: `Usage` / `All environments` / `All providers` breadcrumb, range buttons
     bar under each model.
 - **Tokens view:** the same chart and breakdown in tokens, not dollars.
 - **Limits view:** the plan windows Claude Code reports (5-hour and 7-day utilisation, status, when
-  the window resets, whether overage is in use), from the data Circles already reads.
+  the window resets, whether overage is in use), from the data Amplify already reads.
 - **Environments:** the second breadcrumb is the Claude config folder, such as `~/.claude` and
   `~/.claude-work`, since this user runs two. `All environments` is the sum.
 - **Providers:** only Claude Code exists, so the filter is shown but has one entry, ready for more.
 
 ## Where the numbers come from
 
-Circles stores one running cost per chat (`sessions.total_cost_usd`), with no tokens, model or date
+Amplify stores one running cost per chat (`sessions.total_cost_usd`), with no tokens, model or date
 per turn. That cannot draw this dialog. Two options:
 
-| | A. Read Claude Code's own transcripts | B. Record usage per turn in Circles' database |
+| | A. Read Claude Code's own transcripts | B. Record usage per turn in Amplify' database |
 |---|---|---|
 | Source | `<config dir>/projects/**/*.jsonl`: each assistant message has `model`, `timestamp` and `usage` (input, output, cache read, cache write, 5-minute and 1-hour cache) | the `result` event of each turn, saved to a new table |
 | History | everything already on disk | only from the day it ships |
-| Covers | Circles chats and anything else run through Claude Code | Circles chats only |
-| Cost | a price table in Circles, so "API estimate" | the CLI's own `total_cost_usd` per turn, but only the total, not by type |
+| Covers | Amplify chats and anything else run through Claude Code | Amplify chats only |
+| Cost | a price table in Amplify, so "API estimate" | the CLI's own `total_cost_usd` per turn, but only the total, not by type |
 
 **Decision: A.** It has history from day one, gives tokens by type (needed for cost by type
 and cache savings), and covers both config folders. The price is that cost is an estimate from a
-price table, which the dialog says. A switch, "Only chats run in Circles", limits it to the Claude
-session ids Circles has stored, so the total can match what Circles started.
+price table, which the dialog says. A switch, "Only chats run in Amplify", limits it to the Claude
+session ids Amplify has stored, so the total can match what Amplify started.
 
 ## Backend (Rust)
 
@@ -68,7 +68,7 @@ session ids Circles has stored, so the total can match what Circles started.
     with the date it was last checked.
   - `aggregate.rs`: totals, per day, per model, per type, cache savings (what cache reads would have
     cost as plain input, minus what they cost), session counts.
-- Commands in `commands/usage.rs`: `usage_summary(range, environment, only_circles)` and
+- Commands in `commands/usage.rs`: `usage_summary(range, environment, only_amplify)` and
   `usage_refresh()`. ts-rs types: `UsageSummary`, `UsageDay`, `UsageModel`, `UsageTotals`.
 - The Limits view reuses `claude_rate_limit` and the stored `RateLimit` (`five_hour_utilization`,
   `seven_day_utilization`, `resets_at`). It shows "no data yet" until a turn has reported one.
@@ -83,7 +83,7 @@ session ids Circles has stored, so the total can match what Circles started.
   small amount of SVG, so draw them by hand and keep the bundle light (a library would add tens of KB
   for one chart). Axis labels, hover readout, keyboard-reachable data table fallback for
   accessibility. The colour comes from the theme tokens.
-- Dialog from `@circles/ui` (`dialog.tsx`), wide, scrollable body, state (range, view, grouping) kept
+- Dialog from `@amplify/ui` (`dialog.tsx`), wide, scrollable body, state (range, view, grouping) kept
   in the component and the last range remembered in `localStorage`, in try/catch.
 - Empty state: "No Claude Code usage found yet" with the folders that were searched.
 - Money formatting by `Intl.NumberFormat`; tokens as `2.16B`, `15.9K`.
@@ -113,7 +113,7 @@ session ids Circles has stored, so the total can match what Circles started.
    environment filters, totals, daily chart, cost by type, breakdown.
 3. **Tokens and Limits views.**
 4. **Docs.** `docs/usage.md` (new page, added to `docs/README.md`), `docs/shortcuts.md`,
-   `docs/settings.md` if a setting is added, `CHANGELOG.md`, through `circles-update-docs`.
+   `docs/settings.md` if a setting is added, `CHANGELOG.md`, through `amplify-update-docs`.
 
 ## Process
 

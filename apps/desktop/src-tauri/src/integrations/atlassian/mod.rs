@@ -1,4 +1,4 @@
-//! Signing in with Atlassian, and Jira through Atlassian's remote MCP server. The Circles Jira
+//! Signing in with Atlassian, and Jira through Atlassian's remote MCP server. The Amplify Jira
 //! tools stay the same. Only where their calls go changes. See `tools.rs` for the mapping.
 
 pub mod mcp;
@@ -823,7 +823,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn a_circles_tool_runs_as_the_atlassian_tool_and_is_shaped_the_same() {
+    async fn a_amplify_tool_runs_as_the_atlassian_tool_and_is_shaped_the_same() {
         let (hub, _fake, seen, _s) = signed_in(Atlassian::new()).await;
         let out = crate::integrations::jira::tools::run(
             &hub,
@@ -875,7 +875,7 @@ mod tests {
             .unwrap()
             .iter()
             .any(|r| r.body.contains(r#""name":"searchJiraIssuesUsingJql""#)));
-        // A tool Circles has no mapping for is simply unreachable.
+        // A tool Amplify has no mapping for is simply unreachable.
         let err = crate::integrations::jira::tools::run(&hub, "deleteJiraIssue", &json!({}))
             .await
             .unwrap_err();

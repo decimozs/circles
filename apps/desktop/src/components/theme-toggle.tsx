@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { type Theme, useTheme } from "@/components/theme-provider";
 

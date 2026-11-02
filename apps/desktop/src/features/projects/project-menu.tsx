@@ -1,19 +1,19 @@
-import type { Project } from "@circles/bindings/Project";
-import { Button } from "@circles/ui/components/button";
+import type { Project } from "@amplify/bindings/Project";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@circles/ui/components/tooltip";
+} from "@amplify/ui/components/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@amplify/ui/components/tooltip";
 import { MoreHorizontalIcon, TriangleAlertIcon } from "lucide-react";
 import { useState } from "react";
 import { RemoveProjectDialog } from "@/features/projects/remove-project-dialog";
 import { useUi } from "@/stores/ui";
 
-/** Shown next to a project whose repository folder was moved or deleted outside Circles. */
+/** Shown next to a project whose repository folder was moved or deleted outside Amplify. */
 export function MissingFolderMarker({ project }: { project: Project }) {
   if (project.path_exists) return null;
   return (

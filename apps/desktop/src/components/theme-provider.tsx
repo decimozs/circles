@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 export type Theme = "light" | "dark" | "system";
 export type ResolvedTheme = "light" | "dark";
 
-const STORAGE_KEY = "circles-theme";
+const STORAGE_KEY = "amplify-theme";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 type ThemeContextValue = {

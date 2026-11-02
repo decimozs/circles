@@ -126,7 +126,7 @@ pub async fn script_run(
     .ok_or_else(|| match &name {
         Some(name) => AppError::NotFound(format!("run script \"{name}\"")),
         None => AppError::Invalid(
-            "This project has no run script. Add one under [scripts] in .circles/settings.toml."
+            "This project has no run script. Add one under [scripts] in .amplify/settings.toml."
                 .into(),
         ),
     })?
@@ -181,7 +181,7 @@ pub async fn app_quit(app: AppHandle, state: State<'_, AppState>) -> IpcResult<(
     Ok(())
 }
 
-/// Creates `.circles/settings.toml` from the template if needed and opens it in the default
+/// Creates `.amplify/settings.toml` from the template if needed and opens it in the default
 /// text editor. Returns its path.
 #[tauri::command]
 pub async fn project_open_settings(

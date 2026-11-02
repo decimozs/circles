@@ -493,7 +493,7 @@ impl SessionStore {
                 rows.collect::<Result<_, _>>()?
             };
             c.execute(
-                "UPDATE sessions SET status = 'interrupted', last_error = 'Circles stopped while this chat was working.', updated_at = ?1,
+                "UPDATE sessions SET status = 'interrupted', last_error = 'Amplify stopped while this chat was working.', updated_at = ?1,
                     working_since = NULL
                  WHERE status IN ('working', 'blocked')",
                 params![now_ms()],
@@ -770,7 +770,7 @@ mod tests {
             .unwrap();
         assert!(store.get(&s.id).unwrap().working_since.unwrap() > began);
 
-        // A chat cut off by Circles stopping is not working any more either.
+        // A chat cut off by Amplify stopping is not working any more either.
         store.interrupt_stale().unwrap();
         assert_eq!(store.get(&s.id).unwrap().working_since, None);
     }

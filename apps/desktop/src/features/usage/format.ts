@@ -1,4 +1,4 @@
-import type { UsageDay } from "@circles/bindings/UsageDay";
+import type { UsageDay } from "@amplify/bindings/UsageDay";
 
 export type RangeId = "24h" | "7d" | "30d" | "90d";
 

@@ -1,8 +1,8 @@
-import type { NextAction } from "@circles/bindings/NextAction";
-import type { PrStatus } from "@circles/bindings/PrStatus";
-import type { Readiness } from "@circles/bindings/Readiness";
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
+import type { NextAction } from "@amplify/bindings/NextAction";
+import type { PrStatus } from "@amplify/bindings/PrStatus";
+import type { Readiness } from "@amplify/bindings/Readiness";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -10,8 +10,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { cn } from "@amplify/ui/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import {

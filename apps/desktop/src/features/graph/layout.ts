@@ -1,4 +1,4 @@
-import type { GraphCommit } from "@circles/bindings/GraphCommit";
+import type { GraphCommit } from "@amplify/bindings/GraphCommit";
 
 /** Number of colours the graph cycles through. See `--graph-1` to `--graph-5` in the tokens. */
 export const COLORS = 5;

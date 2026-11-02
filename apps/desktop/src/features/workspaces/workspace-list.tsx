@@ -1,7 +1,7 @@
-import type { Section } from "@circles/bindings/Section";
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
+import type { Section } from "@amplify/bindings/Section";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
 import { Loader2Icon, PinIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";

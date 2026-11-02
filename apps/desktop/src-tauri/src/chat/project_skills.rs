@@ -84,7 +84,7 @@ pub fn note(root: &Path) -> Option<String> {
     let mut out = String::from(
         "This project has its own way of working. Follow it before your own habits or any \
          general preference. If it says how branches are named and this branch does not follow \
-         it, say so in your final message. Do not rename the branch with git: Circles keeps \
+         it, say so in your final message. Do not rename the branch with git: Amplify keeps \
          track of its name.\n",
     );
     if !files.is_empty() {

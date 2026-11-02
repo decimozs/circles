@@ -10,7 +10,7 @@ A chat is a conversation with one Claude Code agent inside a workspace. A worksp
 The box floats over the bottom of the conversation. Messages scroll under it and show through, blurred, and the last message can always be scrolled clear of it. When you have scrolled up, **Scroll to end** appears above the box and takes you back to the newest message. If your Mac is set to reduce transparency, the box is solid.
 
 - **Send** with Enter or Cmd+Enter. Settings > General chooses which one sends and which one breaks the line.
-- **`@`** mentions a file. Circles searches the workspace as you type.
+- **`@`** mentions a file. Amplify searches the workspace as you type.
 - **`/`** starts a slash command: your project's and your own `.claude/commands`, your skills, and built-ins such as `/add-dir`.
 - **Attachments:** the `+` button, drag and drop, or paste. Pasted text over 5,000 characters becomes an attachment so it does not fill the box (Settings > General). An attachment can be at most 25 MB.
 - **Model and effort** pickers, and toggles for plan mode and fast mode. The icon next to the model is the Claude mark for Claude models.
@@ -35,7 +35,7 @@ New chats start in the mode set in Settings > Agents > Permission mode. A reques
 
 ## Checkpoints
 
-Before every message you send, Circles saves a snapshot of the workspace (tracked, modified and untracked files, not ignored ones). It is stored in private git refs, so your branch history and index are not touched. Hover a message and press **Revert** to go back: you see the files that will change, and the turn and everything after it are removed from the chat. Circles saves the state before a revert, so a revert can itself be undone for a while. **Branch conversation from here** starts a new chat from that point. Revert is blocked while a turn is running, and you are warned if another chat in the workspace is active. Checkpoints are removed after the time set in Settings > Advanced.
+Before every message you send, Amplify saves a snapshot of the workspace (tracked, modified and untracked files, not ignored ones). It is stored in private git refs, so your branch history and index are not touched. Hover a message and press **Revert** to go back: you see the files that will change, and the turn and everything after it are removed from the chat. Amplify saves the state before a revert, so a revert can itself be undone for a while. **Branch conversation from here** starts a new chat from that point. Revert is blocked while a turn is running, and you are warned if another chat in the workspace is active. Checkpoints are removed after the time set in Settings > Advanced.
 
 ## Side questions
 
@@ -51,4 +51,4 @@ If you allow it (Settings > Agents), a chat can show a small card in the convers
 
 ## Notifications
 
-When Circles is in the background it can send a system notification when an agent finishes or needs you, with a sound if you want one (Settings > General). Clicking it cannot open the chat yet.
+When Amplify is in the background it can send a system notification when an agent finishes or needs you, with a sound if you want one (Settings > General). Clicking it cannot open the chat yet.

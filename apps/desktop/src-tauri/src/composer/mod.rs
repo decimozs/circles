@@ -1,7 +1,7 @@
-//! Composers: manager agents that use Circles' own tools to run projects, workspaces and agents.
+//! Composers: manager agents that use Amplify' own tools to run projects, workspaces and agents.
 //!
 //! A Composer's runs are chats in a hidden scratch workspace, so every chat feature works for
-//! them. Claude Code is started in that chat with no built-in tools, and with Circles' tools
+//! them. Claude Code is started in that chat with no built-in tools, and with Amplify' tools
 //! through a small MCP helper. Every tool call comes back to the app and is checked there.
 
 pub mod awake;

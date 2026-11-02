@@ -1,5 +1,5 @@
-import type { BrowseState } from "@circles/bindings/BrowseState";
-import type { PrRow } from "@circles/bindings/PrRow";
+import type { BrowseState } from "@amplify/bindings/BrowseState";
+import type { PrRow } from "@amplify/bindings/PrRow";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { type Filters, NO_FILTERS, type SortId } from "./query";
@@ -89,7 +89,7 @@ export const usePrs = create<PrsState>()(
       setQuery: (query) => set({ query }),
     }),
     {
-      name: "circles-prs",
+      name: "amplify-prs",
       version: 1,
       // What was typed in the box is not worth bringing back.
       partialize: ({ scope, which, sort, filters, viewed }) => ({

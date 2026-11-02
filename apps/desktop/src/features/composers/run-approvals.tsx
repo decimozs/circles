@@ -1,5 +1,5 @@
-import type { Composer } from "@circles/bindings/Composer";
-import { cn } from "@circles/ui/utils";
+import type { Composer } from "@amplify/bindings/Composer";
+import { cn } from "@amplify/ui/utils";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { useState } from "react";
 import { useApprovals } from "./api";

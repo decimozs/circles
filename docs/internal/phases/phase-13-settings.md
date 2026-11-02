@@ -18,7 +18,7 @@ Phases 2 and 3. Most pages need features from phases 7-11 to be meaningful.
 - **Agents and environment**
   - Agents: Claude Code path and version check, credentials guidance, permission mode default, "bypass" warning, extra CLI args.
   - Environment: user-level env vars (values masked), MCP servers (add, edit, enable per project).
-- **Repositories** (one entry per project): base branch, scripts (setup, run, archive, run mode), files to copy, `.worktreeinclude`, instruction presets (general, review, PR, fix errors, conflicts, branch rename), merge method, "share settings" (write `.circles/settings.toml` into the repo), remove project.
+- **Repositories** (one entry per project): base branch, scripts (setup, run, archive, run mode), files to copy, `.worktreeinclude`, instruction presets (general, review, PR, fix errors, conflicts, branch rename), merge method, "share settings" (write `.amplify/settings.toml` into the repo), remove project.
 - **More**
   - Experimental: feature flags.
   - Advanced: data paths, reveal data folder, log level, export logs, reset app data (with confirmation), concurrency soft cap.

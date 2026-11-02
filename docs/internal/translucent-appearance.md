@@ -1,6 +1,6 @@
 # A translucent appearance (Apple-style glass): plan
 
-Status: built in phases 1 to 4. Checked by tests and builds; not yet seen in the running app. Circles has Light, Dark and System (`appearance.theme`). This adds a
+Status: built in phases 1 to 4. Checked by tests and builds; not yet seen in the running app. Amplify has Light, Dark and System (`appearance.theme`). This adds a
 **Translucency** option that gives macOS-style glass: the window's chrome shows a blurred view of what is
 behind it, and floating surfaces are frosted. macOS first; Windows and Linux later.
 
@@ -15,7 +15,7 @@ every colour and would not follow the system.
 1. **Native window (macOS).** The window is transparent and has a vibrancy material behind the web view.
    This is what lets the sidebar show the wallpaper and other windows blurred, which CSS cannot do.
 2. **CSS glass inside the window.** `backdrop-filter: blur() saturate()` with a translucent fill, a thin
-   light edge and a soft shadow, for surfaces that float over Circles' own content: message box (already
+   light edge and a soft shadow, for surfaces that float over Amplify' own content: message box (already
    frosted), popovers, menus, dialogs, the Composer run panel, the pull request pane header.
 
 Only the chrome is translucent: sidebar, top bar and the gaps. The chat, code, diffs and Monaco stay
@@ -76,13 +76,13 @@ opaque, so reading contrast and speed do not depend on the wallpaper.
    transparency.
 3. **Surfaces.** Sidebar, top bar, popovers, menus, dialogs, the run panel and the pull request header use
    the glass tokens when it is on.
-4. **Docs.** `settings.md`, `CHANGELOG.md`, through `circles-update-docs`.
+4. **Docs.** `settings.md`, `CHANGELOG.md`, through `amplify-update-docs`.
 
 ## Questions for you
 
 1. **Default:** Off (recommended) until it has been checked on your Mac, then maybe On.
 2. **Material:** `sidebar` for the sidebar and `underWindow` for the rest, or one material for the window?
-3. **Windows and Linux:** wanted soon, or only when Circles ships there?
+3. **Windows and Linux:** wanted soon, or only when Amplify ships there?
 
 ## Process
 

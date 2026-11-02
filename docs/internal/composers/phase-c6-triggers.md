@@ -16,11 +16,11 @@ C3.
 - **Inbox:** one list of everything waiting for a person, across all runs, with a notification.
 - **Guardrails for unattended runs:** lower limits by default, a daily cap on runs and spend, a quiet failure rule (stop and notify after repeated errors), and a global pause.
 - **Quiet hours and the Mac asleep:** missed schedules run once on wake or are skipped, as chosen.
-- **Keeping the app alive (open question 5):** an optional menu bar item that keeps Circles running after its window closes, an option to start at login, and an option to keep the Mac awake while an unattended run is active. All off by default and shown clearly in Settings.
+- **Keeping the app alive (open question 5):** an optional menu bar item that keeps Amplify running after its window closes, an option to start at login, and an option to keep the Mac awake while an unattended run is active. All off by default and shown clearly in Settings.
 - **Attended and unattended in one run:** a person can open an unattended run while it works, watch it, answer its approvals and take it over.
 
 ## Out of scope
-Remote triggers, webhooks from outside this Mac, and a separate background service that runs while the app is closed. Unattended runs need Circles to be running.
+Remote triggers, webhooks from outside this Mac, and a separate background service that runs while the app is closed. Unattended runs need Amplify to be running.
 
 ## Deliverables
 - Trigger settings per Composer, the inbox, the scheduler.

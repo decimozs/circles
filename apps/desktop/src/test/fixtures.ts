@@ -1,19 +1,19 @@
-import type { AppInfo } from "@circles/bindings/AppInfo";
-import type { Approval } from "@circles/bindings/Approval";
-import type { BranchInfo } from "@circles/bindings/BranchInfo";
-import type { Composer } from "@circles/bindings/Composer";
-import type { ComposerTool } from "@circles/bindings/ComposerTool";
-import type { Project } from "@circles/bindings/Project";
-import type { PrStatus } from "@circles/bindings/PrStatus";
-import type { PullRequest } from "@circles/bindings/PullRequest";
-import type { Readiness } from "@circles/bindings/Readiness";
-import type { RunView } from "@circles/bindings/RunView";
-import type { ScriptsInfo } from "@circles/bindings/ScriptsInfo";
-import type { Session } from "@circles/bindings/Session";
-import type { Settings } from "@circles/bindings/Settings";
-import type { SettingsView } from "@circles/bindings/SettingsView";
-import type { Terminal } from "@circles/bindings/Terminal";
-import type { Workspace } from "@circles/bindings/Workspace";
+import type { AppInfo } from "@amplify/bindings/AppInfo";
+import type { Approval } from "@amplify/bindings/Approval";
+import type { BranchInfo } from "@amplify/bindings/BranchInfo";
+import type { Composer } from "@amplify/bindings/Composer";
+import type { ComposerTool } from "@amplify/bindings/ComposerTool";
+import type { Project } from "@amplify/bindings/Project";
+import type { PrStatus } from "@amplify/bindings/PrStatus";
+import type { PullRequest } from "@amplify/bindings/PullRequest";
+import type { Readiness } from "@amplify/bindings/Readiness";
+import type { RunView } from "@amplify/bindings/RunView";
+import type { ScriptsInfo } from "@amplify/bindings/ScriptsInfo";
+import type { Session } from "@amplify/bindings/Session";
+import type { Settings } from "@amplify/bindings/Settings";
+import type { SettingsView } from "@amplify/bindings/SettingsView";
+import type { Terminal } from "@amplify/bindings/Terminal";
+import type { Workspace } from "@amplify/bindings/Workspace";
 
 export const NOW = Date.now();
 export const HOUR = 3_600_000;
@@ -42,7 +42,7 @@ export function workspace(overrides: Partial<Workspace> = {}): Workspace {
     title: null,
     branch: "me/abc12",
     base_branch: "main",
-    path: "/home/circles/workspaces/roster/algiers",
+    path: "/home/amplify/workspaces/roster/algiers",
     state: "ready",
     error: null,
     pinned: false,
@@ -84,12 +84,12 @@ export function appInfo(overrides: Partial<AppInfo> = {}): AppInfo {
     arch: "aarch64",
     paths: {
       data_dir: "/data",
-      db_file: "/data/circles.db",
+      db_file: "/data/amplify.db",
       settings_file: "/data/settings.toml",
       logs_dir: "/data/logs",
-      home_dir: "/home/circles",
-      workspaces_dir: "/home/circles/workspaces",
-      repos_dir: "/home/circles/repos",
+      home_dir: "/home/amplify",
+      workspaces_dir: "/home/amplify/workspaces",
+      repos_dir: "/home/amplify/repos",
     },
     env: { source: { kind: "login_shell" }, var_count: 1, path_entries: [], tools: [] },
     db: { schema_version: 3, journal_mode: "wal" },

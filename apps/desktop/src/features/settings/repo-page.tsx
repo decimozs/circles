@@ -1,7 +1,7 @@
-import type { Learned } from "@circles/bindings/Learned";
-import type { Project } from "@circles/bindings/Project";
-import type { SettingsView } from "@circles/bindings/SettingsView";
-import { Button } from "@circles/ui/components/button";
+import type { Learned } from "@amplify/bindings/Learned";
+import type { Project } from "@amplify/bindings/Project";
+import type { SettingsView } from "@amplify/bindings/SettingsView";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -9,9 +9,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
+import { cn } from "@amplify/ui/utils";
 import { Loader2Icon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -95,7 +95,7 @@ const REPO_DEFS: SettingDef[] = [
   text(
     "repo-general",
     "General instructions",
-    "Added to every prompt Circles sends in this repository.",
+    "Added to every prompt Amplify sends in this repository.",
     ["instructions", "general"],
     false,
   ),
@@ -303,7 +303,7 @@ function RemoveRow({ project }: { project: Project }) {
     <>
       <SettingRow
         title="Remove project"
-        description="Take it out of Circles, with or without its workspaces. The repository folder is never touched."
+        description="Take it out of Amplify, with or without its workspaces. The repository folder is never touched."
       >
         <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>
           Remove…
@@ -319,7 +319,7 @@ function RemoveRow({ project }: { project: Project }) {
   );
 }
 
-/** Settings of one repository. They are kept for this Mac, or shared in `.circles/settings.toml`. */
+/** Settings of one repository. They are kept for this Mac, or shared in `.amplify/settings.toml`. */
 export function RepoSettings({ projectId }: { projectId: string }) {
   const project = useProjects().data?.find((p) => p.id === projectId);
   const view = useSettingsView(projectId).data;
@@ -333,7 +333,7 @@ export function RepoSettings({ projectId }: { projectId: string }) {
           <p className="text-sm font-medium">Save changes to</p>
           <p className="text-xs text-muted-foreground">
             {shared
-              ? "The repository's .circles/settings.toml, shared with everyone who clones it."
+              ? "The repository's .amplify/settings.toml, shared with everyone who clones it."
               : "This Mac only."}
           </p>
         </div>

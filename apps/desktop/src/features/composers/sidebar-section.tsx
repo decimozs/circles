@@ -1,13 +1,13 @@
-import type { Composer } from "@circles/bindings/Composer";
-import { Button } from "@circles/ui/components/button";
+import type { Composer } from "@amplify/bindings/Composer";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dropdown-menu";
+import { cn } from "@amplify/ui/utils";
 import { PinIcon, PlusIcon } from "lucide-react";
 import { NavLink, useMatch, useNavigate } from "react-router";
 import { ComposerOrb } from "@/components/composer-orb";

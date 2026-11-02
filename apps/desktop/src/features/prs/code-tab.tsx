@@ -1,6 +1,6 @@
-import type { PrFile } from "@circles/bindings/PrFile";
-import type { PrFiles } from "@circles/bindings/PrFiles";
-import { cn } from "@circles/ui/utils";
+import type { PrFile } from "@amplify/bindings/PrFile";
+import type { PrFiles } from "@amplify/bindings/PrFiles";
+import { cn } from "@amplify/ui/utils";
 import {
   ChevronDownIcon,
   ChevronRightIcon,

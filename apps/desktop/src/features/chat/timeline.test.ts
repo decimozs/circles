@@ -1,4 +1,4 @@
-import type { Message } from "@circles/bindings/Message";
+import type { Message } from "@amplify/bindings/Message";
 import { describe, expect, it } from "vitest";
 import { buildTimeline, resultText, type TimelineItem, type ToolCall } from "./timeline";
 

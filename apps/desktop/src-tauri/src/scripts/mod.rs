@@ -48,7 +48,7 @@ fn non_empty(command: &str) -> Option<String> {
     (!command.is_empty()).then(|| command.to_string())
 }
 
-/// `available_in` is a string or a list of `local` and `cloud`. Circles only runs locally.
+/// `available_in` is a string or a list of `local` and `cloud`. Amplify only runs locally.
 fn available_locally(path: &str, value: Option<&toml::Value>) -> AppResult<bool> {
     let Some(value) = value else {
         return Ok(true);
@@ -189,17 +189,26 @@ pub fn workspace_env(
 ) -> Vec<(String, String)> {
     let mut vars = vec![
         (
-            "CIRCLES_WORKSPACE_NAME".to_string(),
+            "AMPLIFY_WORKSPACE_NAME".to_string(),
             names::city_slug(&ws.city),
         ),
-        ("CIRCLES_WORKSPACE_PATH".to_string(), ws.path.clone()),
-        ("CIRCLES_ROOT_PATH".to_string(), project.path.clone()),
-        ("CIRCLES_DEFAULT_BRANCH".to_string(), ws.base_branch.clone()),
-        ("CIRCLES_IS_LOCAL".to_string(), "1".to_string()),
+        ("AMPLIFY_WORKSPACE_PATH".to_string(), ws.path.clone()),
+        ("AMPLIFY_ROOT_PATH".to_string(), project.path.clone()),
+        ("AMPLIFY_DEFAULT_BRANCH".to_string(), ws.base_branch.clone()),
+        ("AMPLIFY_IS_LOCAL".to_string(), "1".to_string()),
     ];
     if let Some(port) = port {
-        vars.push(("CIRCLES_PORT".to_string(), port.to_string()));
+        vars.push(("AMPLIFY_PORT".to_string(), port.to_string()));
     }
+    // The names of earlier versions, so a script written for them still works.
+    let earlier: Vec<(String, String)> = vars
+        .iter()
+        .filter_map(|(k, v)| {
+            k.strip_prefix("AMPLIFY_")
+                .map(|rest| (format!("CIRCLES_{rest}"), v.clone()))
+        })
+        .collect();
+    vars.extend(earlier);
     vars.extend(
         settings
             .environment_variables
@@ -235,7 +244,7 @@ mod tests {
     #[test]
     fn simple_commands() {
         let info = scripts_from(
-            "[scripts]\nsetup = \"pnpm install\"\nrun = \"pnpm dev --port $CIRCLES_PORT\"\narchive = \"./cleanup.sh\"\nrun_mode = \"nonconcurrent\"\n",
+            "[scripts]\nsetup = \"pnpm install\"\nrun = \"pnpm dev --port $AMPLIFY_PORT\"\narchive = \"./cleanup.sh\"\nrun_mode = \"nonconcurrent\"\n",
         )
         .unwrap();
         assert_eq!(info.setup.as_deref(), Some("pnpm install"));
@@ -245,7 +254,7 @@ mod tests {
             info.run,
             vec![RunScript {
                 name: "Run".into(),
-                command: "pnpm dev --port $CIRCLES_PORT".into(),
+                command: "pnpm dev --port $AMPLIFY_PORT".into(),
                 default: true,
                 icon: None,
             }]
@@ -327,7 +336,7 @@ mod tests {
     #[test]
     fn workspace_environment_has_the_documented_variables() {
         let project = project_fixture("roster", "/code/roster");
-        let ws = workspace_fixture("Algiers", "/home/circles/workspaces/roster/algiers", "main");
+        let ws = workspace_fixture("Algiers", "/home/amplify/workspaces/roster/algiers", "main");
         let mut settings = Settings::default();
         settings
             .environment_variables
@@ -337,18 +346,18 @@ mod tests {
             workspace_env(&ws, &project, Some(55010), &settings)
                 .into_iter()
                 .collect();
-        assert_eq!(vars["CIRCLES_WORKSPACE_NAME"], "algiers");
+        assert_eq!(vars["AMPLIFY_WORKSPACE_NAME"], "algiers");
         assert_eq!(
-            vars["CIRCLES_WORKSPACE_PATH"],
-            "/home/circles/workspaces/roster/algiers"
+            vars["AMPLIFY_WORKSPACE_PATH"],
+            "/home/amplify/workspaces/roster/algiers"
         );
-        assert_eq!(vars["CIRCLES_ROOT_PATH"], "/code/roster");
-        assert_eq!(vars["CIRCLES_DEFAULT_BRANCH"], "main");
-        assert_eq!(vars["CIRCLES_PORT"], "55010");
-        assert_eq!(vars["CIRCLES_IS_LOCAL"], "1");
+        assert_eq!(vars["AMPLIFY_ROOT_PATH"], "/code/roster");
+        assert_eq!(vars["AMPLIFY_DEFAULT_BRANCH"], "main");
+        assert_eq!(vars["AMPLIFY_PORT"], "55010");
+        assert_eq!(vars["AMPLIFY_IS_LOCAL"], "1");
         assert_eq!(vars["API_URL"], "http://localhost");
 
         let no_port = workspace_env(&ws, &project, None, &settings);
-        assert!(no_port.iter().all(|(k, _)| k != "CIRCLES_PORT"));
+        assert!(no_port.iter().all(|(k, _)| k != "AMPLIFY_PORT"));
     }
 }

@@ -1,13 +1,13 @@
 ---
-name: circles-pr-description
+name: amplify-pr-description
 description: >-
-  Write the body of a Circles pull request from the repository's PR template: Description (ticket
+  Write the body of a Amplify pull request from the repository's PR template: Description (ticket
   link first), Summary, Changes, Evidence and Acceptance Criteria. Use when
-  drafting or checking a PR description, when the user runs /circles-pr-description, or from
-  circles-create-pr. Evidence is exact command output, never a claim.
+  drafting or checking a PR description, when the user runs /amplify-pr-description, or from
+  amplify-create-pr. Evidence is exact command output, never a claim.
 ---
 
-# circles-pr-description
+# amplify-pr-description
 
 Fill `.github/pull_request_template.md` exactly. Keep its headings and order. There is **no Stack
 section**: the position in a stack is not written in the description, nor in the title. No emoji, and no Claude
@@ -44,4 +44,4 @@ or Anthropic attribution anywhere in the body.
 
 1. `git log origin/main..HEAD --oneline`, `git diff --stat origin/main...HEAD`, and the ticket.
 2. Draft against the template. Print the whole body in chat.
-3. Hand it to `circles-create-pr`, or write it to a file for `gh pr create --body-file`.
+3. Hand it to `amplify-create-pr`, or write it to a file for `gh pr create --body-file`.

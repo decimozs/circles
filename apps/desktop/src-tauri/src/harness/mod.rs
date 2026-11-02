@@ -38,7 +38,7 @@ pub struct StartSpec {
     /// Our session id, passed back to the sink.
     pub session_id: String,
     pub cwd: PathBuf,
-    /// Added on top of the login environment (`CIRCLES_*` and custom variables).
+    /// Added on top of the login environment (`AMPLIFY_*` and custom variables).
     pub env: Vec<(String, String)>,
     pub launch: Launch,
     pub model: Option<String>,

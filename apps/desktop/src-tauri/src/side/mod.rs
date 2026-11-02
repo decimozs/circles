@@ -331,13 +331,13 @@ echo '{"type":"result","subtype":"success","is_error":false,"result":"The word."
     }
 
     /// With the real `claude`. Needs a saved session of it to fork:
-    /// `CIRCLES_REAL_CLAUDE_SESSION=<id> CIRCLES_REAL_CLAUDE_DIR=<its folder> cargo test real_claude -- --ignored --nocapture`
+    /// `AMPLIFY_REAL_CLAUDE_SESSION=<id> AMPLIFY_REAL_CLAUDE_DIR=<its folder> cargo test real_claude -- --ignored --nocapture`
     #[tokio::test]
     #[ignore]
     async fn real_claude_answers_a_side_question_from_the_forked_context() {
         let (Some(session), Some(dir)) = (
-            std::env::var("CIRCLES_REAL_CLAUDE_SESSION").ok(),
-            std::env::var("CIRCLES_REAL_CLAUDE_DIR").ok(),
+            std::env::var("AMPLIFY_REAL_CLAUDE_SESSION").ok(),
+            std::env::var("AMPLIFY_REAL_CLAUDE_DIR").ok(),
         ) else {
             return;
         };

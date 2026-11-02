@@ -1,5 +1,5 @@
-import type { Project } from "@circles/bindings/Project";
-import { cn } from "@circles/ui/utils";
+import type { Project } from "@amplify/bindings/Project";
+import { cn } from "@amplify/ui/utils";
 import { useState } from "react";
 
 /** GitHub owner avatar, or the first letter of the name. */

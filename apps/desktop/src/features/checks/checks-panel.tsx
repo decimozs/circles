@@ -1,9 +1,9 @@
-import type { Check } from "@circles/bindings/Check";
-import type { CheckBucket } from "@circles/bindings/CheckBucket";
-import type { ReviewThread } from "@circles/bindings/ReviewThread";
-import type { SectionError } from "@circles/bindings/SectionError";
-import { Button } from "@circles/ui/components/button";
-import { cn } from "@circles/ui/utils";
+import type { Check } from "@amplify/bindings/Check";
+import type { CheckBucket } from "@amplify/bindings/CheckBucket";
+import type { ReviewThread } from "@amplify/bindings/ReviewThread";
+import type { SectionError } from "@amplify/bindings/SectionError";
+import { Button } from "@amplify/ui/components/button";
+import { cn } from "@amplify/ui/utils";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import {
   CheckCircle2Icon,

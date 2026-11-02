@@ -1,13 +1,13 @@
-import type { GitGraph } from "@circles/bindings/GitGraph";
-import type { GraphRef } from "@circles/bindings/GraphRef";
+import type { GitGraph } from "@amplify/bindings/GitGraph";
+import type { GraphRef } from "@amplify/bindings/GraphRef";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { cn } from "@amplify/ui/utils";
 import { ChevronDownIcon, ChevronRightIcon, Maximize2Icon } from "lucide-react";
 import { type KeyboardEvent, type PointerEvent, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";

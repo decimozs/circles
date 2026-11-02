@@ -66,7 +66,7 @@ impl JiraClient {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(30))
             .redirect(reqwest::redirect::Policy::none())
-            .user_agent("circles")
+            .user_agent("amplify")
             .build()
             .map_err(|e| JiraFailure::Network(e.to_string()))?;
         let pair = format!("{}:{}", credentials.email, credentials.token);

@@ -1,6 +1,6 @@
 ---
 title: "Keyboard shortcuts"
-description: "The keyboard shortcuts of Circles."
+description: "The keyboard shortcuts of Amplify."
 ---
 
 Press Cmd+/ in the app to see the list. Cmd means the Command key.

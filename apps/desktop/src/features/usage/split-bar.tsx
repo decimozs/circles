@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 
 export type Segment = { label: string; value: number; shade: string; text: string };
 

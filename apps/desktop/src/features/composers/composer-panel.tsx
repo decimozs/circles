@@ -1,12 +1,12 @@
-import type { AuditEntry } from "@circles/bindings/AuditEntry";
-import type { Autonomy } from "@circles/bindings/Autonomy";
-import type { Composer } from "@circles/bindings/Composer";
-import type { ComposerInput } from "@circles/bindings/ComposerInput";
-import type { FleetItem } from "@circles/bindings/FleetItem";
-import type { Limits } from "@circles/bindings/Limits";
-import type { Tier } from "@circles/bindings/Tier";
-import { Badge } from "@circles/ui/components/badge";
-import { Button } from "@circles/ui/components/button";
+import type { AuditEntry } from "@amplify/bindings/AuditEntry";
+import type { Autonomy } from "@amplify/bindings/Autonomy";
+import type { Composer } from "@amplify/bindings/Composer";
+import type { ComposerInput } from "@amplify/bindings/ComposerInput";
+import type { FleetItem } from "@amplify/bindings/FleetItem";
+import type { Limits } from "@amplify/bindings/Limits";
+import type { Tier } from "@amplify/bindings/Tier";
+import { Badge } from "@amplify/ui/components/badge";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -14,10 +14,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
-import { Textarea } from "@circles/ui/components/textarea";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
+import { Textarea } from "@amplify/ui/components/textarea";
+import { cn } from "@amplify/ui/utils";
 import { Loader2Icon, Maximize2Icon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -370,7 +370,7 @@ export function RepositoriesSection({ composer }: { composer: Composer }) {
       ) : null}
       {gone > 0 ? (
         <p className="text-warning">
-          {gone} picked {gone === 1 ? "repository was" : "repositories were"} removed from Circles.
+          {gone} picked {gone === 1 ? "repository was" : "repositories were"} removed from Amplify.
         </p>
       ) : null}
     </section>

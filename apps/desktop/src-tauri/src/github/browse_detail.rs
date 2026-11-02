@@ -291,7 +291,7 @@ mod tests {
 
     const DETAIL: &str = r###"{
       "number": 27, "title": "fix: continue a chat", "author": {"login": "decimozs"},
-      "url": "https://github.com/decimozs/circles/pull/27",
+      "url": "https://github.com/decimozs/amplify/pull/27",
       "createdAt": "2026-10-30T04:00:00Z", "updatedAt": "2026-10-30T07:06:49Z",
       "additions": 10, "deletions": 2, "changedFiles": 3, "isDraft": false, "state": "MERGED",
       "labels": [], "reviewDecision": "", "reviewRequests": [],
@@ -300,7 +300,7 @@ mod tests {
       "mergeable": "UNKNOWN", "mergeStateStatus": "CLEAN", "headRefOid": "a1dc99e",
       "mergedBy": {"login": "decimozs", "name": "Marlon"}, "mergedAt": "2026-10-30T07:06:49Z",
       "reviews": [{"author": {"login": "ben"}, "state": "CHANGES_REQUESTED", "body": "Please split", "submittedAt": "2026-10-30T05:00:00Z"}],
-      "comments": [{"author": {"login": "ana"}, "body": "Looks good", "createdAt": "2026-10-30T06:00:00Z", "url": "https://github.com/decimozs/circles/pull/27#issuecomment-1"}],
+      "comments": [{"author": {"login": "ana"}, "body": "Looks good", "createdAt": "2026-10-30T06:00:00Z", "url": "https://github.com/decimozs/amplify/pull/27#issuecomment-1"}],
       "commits": [
         {"oid": "9ed64bb", "messageHeadline": "docs: first", "messageBody": "why", "authoredDate": "2026-10-30T04:34:01Z",
          "authors": [{"login": "decimozs", "name": "decimozs"}]},
@@ -316,7 +316,7 @@ mod tests {
     fn whose() -> Whose<'static> {
         Whose {
             project_id: "p",
-            project_name: "circles",
+            project_name: "amplify",
             me: "decimozs",
         }
     }
@@ -392,7 +392,7 @@ mod tests {
         let me = gh.current_user_in(&folder).await.unwrap_or_default();
         let whose = Whose {
             project_id: "p",
-            project_name: "circles",
+            project_name: "amplify",
             me: &me,
         };
         let d = gh.browse_pr(&folder, &whose, 27).await.unwrap();

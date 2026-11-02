@@ -1,5 +1,5 @@
 //! Port blocks for workspaces. Each workspace gets ten consecutive ports, starting at
-//! `CIRCLES_PORT`, so two dev servers in two workspaces never fight over a port.
+//! `AMPLIFY_PORT`, so two dev servers in two workspaces never fight over a port.
 
 use std::collections::HashSet;
 use std::net::TcpListener;

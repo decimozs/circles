@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { type ComponentProps, isValidElement, memo, type ReactNode, useState } from "react";

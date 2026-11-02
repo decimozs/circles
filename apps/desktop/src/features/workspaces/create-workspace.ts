@@ -1,4 +1,4 @@
-import type { Project } from "@circles/bindings/Project";
+import type { Project } from "@amplify/bindings/Project";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { useCreateWorkspace } from "@/features/workspaces/api";

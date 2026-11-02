@@ -251,29 +251,29 @@ mod tests {
     }
 
     /// Real Claude Code, the real helper binary and a fake app behind the socket. It checks that
-    /// Claude Code accepts the settings the app gives it, sees only Circles' tools, and that a
+    /// Claude Code accepts the settings the app gives it, sees only Amplify' tools, and that a
     /// call travels all the way through. Costs a few cents. Build the app first.
     #[tokio::test(flavor = "multi_thread")]
     #[ignore = "uses the real Claude Code and a little API credit"]
-    async fn real_claude_uses_only_the_circles_tools_through_the_helper() {
+    async fn real_claude_uses_only_the_amplify_tools_through_the_helper() {
         let exe = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .ancestors()
             .find(|p| p.join("Cargo.lock").is_file())
             .expect("a workspace with a Cargo.lock")
-            .join("target/debug/circles");
+            .join("target/debug/amplify");
         assert!(exe.is_file(), "run `cargo build` first: {}", exe.display());
         let (d, dir) = rig();
         let info = start(d.clone(), &dir.path().join("sock")).unwrap();
         let config = dir.path().join("mcp.json");
         std::fs::write(
             &config,
-            json!({"mcpServers": {"circles": {
+            json!({"mcpServers": {"amplify": {
                 "command": exe,
-                "args": ["--circles-mcp"],
+                "args": ["--amplify-mcp"],
                 "env": {
-                    "CIRCLES_SOCKET": info.socket,
-                    "CIRCLES_TOKEN": info.token,
-                    "CIRCLES_SESSION_ID": "run1",
+                    "AMPLIFY_SOCKET": info.socket,
+                    "AMPLIFY_TOKEN": info.token,
+                    "AMPLIFY_SESSION_ID": "run1",
                 },
             }}})
             .to_string(),
@@ -296,7 +296,7 @@ mod tests {
                 "--mcp-config",
             ])
             .arg(&config)
-            .args(["--allowedTools", "mcp__circles"])
+            .args(["--allowedTools", "mcp__amplify"])
             .output()
             .await
             .unwrap();

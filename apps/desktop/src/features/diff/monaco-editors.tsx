@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import type * as Monaco from "monaco-editor";
 import { useEffect, useRef } from "react";
 import { loadMonaco } from "./monaco";

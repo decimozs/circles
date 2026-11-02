@@ -1,4 +1,4 @@
-/* The look every Circles app shares: tokens, the Tailwind theme, and the base styles.
+/* The look every Amplify app shares: tokens, the Tailwind theme, and the base styles.
    The app imports Tailwind and the fonts itself, then this file. */
 @import "./tokens.css";
 

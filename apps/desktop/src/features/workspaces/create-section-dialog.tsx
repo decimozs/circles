@@ -1,4 +1,4 @@
-import { Button } from "@circles/ui/components/button";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -6,8 +6,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ErrorMessage } from "@/features/projects/error-message";

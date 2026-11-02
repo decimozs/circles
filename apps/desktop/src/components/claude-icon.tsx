@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 
 /** The Claude mark, next to the model name. From Material Icon Theme. */
 export function ClaudeIcon({ className }: { className?: string }) {

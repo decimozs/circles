@@ -192,7 +192,7 @@ pub struct Learned {
 }
 
 /// The block an agent answers the learning prompt with.
-pub const LEARN_FENCE: &str = "circles-conventions";
+pub const LEARN_FENCE: &str = "amplify-conventions";
 
 /// What the repository shows of its habits, for the model to read.
 pub struct Evidence<'a> {
@@ -376,7 +376,7 @@ mod tests {
 
     #[test]
     fn what_was_learned_is_read_from_the_last_block_and_cleaned() {
-        let text = "Here.\n```circles-conventions\n{\"branch_pattern\":\"x\"}\n```\n```circles-conventions\n{\"branch_pattern\":\" {type}/{ticket}-{slug} \",\"pr\":\"Start with the ticket.\",\"commits\":\"  \"}\n```";
+        let text = "Here.\n```amplify-conventions\n{\"branch_pattern\":\"x\"}\n```\n```amplify-conventions\n{\"branch_pattern\":\" {type}/{ticket}-{slug} \",\"pr\":\"Start with the ticket.\",\"commits\":\"  \"}\n```";
         assert_eq!(
             parse_learned(text),
             Some(Learned {
@@ -386,7 +386,7 @@ mod tests {
             })
         );
         // A pattern with no placeholder is not a pattern.
-        let plain = "```circles-conventions\n{\"branch_pattern\":\"main\"}\n```";
+        let plain = "```amplify-conventions\n{\"branch_pattern\":\"main\"}\n```";
         assert_eq!(parse_learned(plain).unwrap().branch_pattern, None);
         assert_eq!(parse_learned("no block"), None);
     }
@@ -405,7 +405,7 @@ mod tests {
         let prompt = learn_prompt(&evidence);
         assert!(prompt.contains("rules") && prompt.contains("feat(ui): add login"));
         assert!(!prompt.contains("Pull request template") && !prompt.contains("Recent branch"));
-        assert!(prompt.contains("circles-conventions"));
+        assert!(prompt.contains("amplify-conventions"));
     }
 
     /// Uses the real Claude Code and a little API credit:

@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import type { CSSProperties } from "react";
 
 /** How many colours there are to pick from. They are `--orb-1` to `--orb-12` in the tokens. */

@@ -30,7 +30,7 @@ use crate::terminal::Context;
 const SESSION_LOST_TEXT: &str = "No conversation found with session ID";
 
 /// What the person is told when that happens.
-const SESSION_LOST: &str = "Claude Code cannot find this conversation. It began under another Claude account or config folder (CLAUDE_CONFIG_DIR). Send your message again: Circles continues in a new session and tells it what was said.";
+const SESSION_LOST: &str = "Claude Code cannot find this conversation. It began under another Claude account or config folder (CLAUDE_CONFIG_DIR). Send your message again: Amplify continues in a new session and tells it what was said.";
 
 fn session_was_lost(errors: &[String]) -> bool {
     errors.iter().any(|e| e.contains(SESSION_LOST_TEXT))
@@ -531,7 +531,7 @@ impl SessionManager {
             .set_claude_session(&session.id, &claude_id, None)?;
 
         let mut env = ctx.env.clone();
-        env.push(("CIRCLES_SESSION_ID".into(), session.id.clone()));
+        env.push(("AMPLIFY_SESSION_ID".into(), session.id.clone()));
         let mut extras = self.launch_extras(session);
         env.extend(extras.env.clone());
         // The project's own skills and instruction files come before anyone's habits. A Composer's
@@ -824,7 +824,7 @@ impl SessionManager {
 
     /// Claude Code could not find the conversation it was asked to resume, for example because the
     /// account or config folder it runs with is not the one the chat began under. The chat goes on
-    /// in a new session that is told what was said, from the messages Circles kept. The message
+    /// in a new session that is told what was said, from the messages Amplify kept. The message
     /// that failed is left out, since the person sends it again.
     fn start_session_over(&self, session_id: &str) {
         let mut rows: Vec<(String, String, serde_json::Value)> = self
@@ -970,7 +970,7 @@ impl SessionManager {
             Event::ControlRequest(control) => match &control.kind {
                 ControlKind::CanUseTool { .. } => self.handle_permission(session_id, live, control),
                 ControlKind::Other(subtype) => {
-                    let reason = format!("Circles does not handle the \"{subtype}\" request.");
+                    let reason = format!("Amplify does not handle the \"{subtype}\" request.");
                     if let Ok(line) = live.process.reject_control(&control.request_id, &reason) {
                         self.record_sent(session_id, "sent:control_response", &line);
                     }
@@ -1085,7 +1085,7 @@ impl SessionManager {
                 session_id,
                 None,
                 &[system_note(
-                    "Circles stopped while this chat was working. Send a message to continue.",
+                    "Amplify stopped while this chat was working. Send a message to continue.",
                     true,
                 )],
             );
@@ -1272,7 +1272,7 @@ mod tests {
             workspace_id: ws.into(),
             project_id: "p".into(),
             cwd: dir.join(ws),
-            env: vec![("CIRCLES_PORT".into(), "55010".into())],
+            env: vec![("AMPLIFY_PORT".into(), "55010".into())],
         };
         let (ctx, ctx2) = (ctx_for("w1"), ctx_for("w2"));
         Fx {
@@ -2178,7 +2178,7 @@ mod tests {
         assert!(note.content["text"]
             .as_str()
             .unwrap()
-            .contains("Circles stopped"));
+            .contains("Amplify stopped"));
         assert_eq!(fx.manager.recover_after_restart().unwrap(), 0);
         // Sending a message continues the chat.
         fx.manager
@@ -2440,8 +2440,8 @@ mod tests {
             .unwrap();
         settle(&fx, &session.id, SessionStatus::Idle).await;
         let env = log(&fx)[0]["env"].clone();
-        assert_eq!(env["CIRCLES_PORT"], "55010");
-        assert_eq!(env["CIRCLES_SESSION_ID"], session.id.as_str());
+        assert_eq!(env["AMPLIFY_PORT"], "55010");
+        assert_eq!(env["AMPLIFY_SESSION_ID"], session.id.as_str());
     }
 
     #[tokio::test]

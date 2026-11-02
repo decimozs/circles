@@ -1,6 +1,6 @@
-import type { ChangeKind } from "@circles/bindings/ChangeKind";
-import type { Checkpoint } from "@circles/bindings/Checkpoint";
-import { Button } from "@circles/ui/components/button";
+import type { ChangeKind } from "@amplify/bindings/ChangeKind";
+import type { Checkpoint } from "@amplify/bindings/Checkpoint";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { cn } from "@amplify/ui/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon, Undo2Icon } from "lucide-react";
 import { useState } from "react";

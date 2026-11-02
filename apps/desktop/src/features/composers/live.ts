@@ -1,4 +1,4 @@
-import type { Workspace } from "@circles/bindings/Workspace";
+import type { Workspace } from "@amplify/bindings/Workspace";
 import type { FleetGroup } from "./composer-panel";
 
 export type LiveState = "waiting" | "working" | "idle";

@@ -1,4 +1,4 @@
-import type { UsageSummary } from "@circles/bindings/UsageSummary";
+import type { UsageSummary } from "@amplify/bindings/UsageSummary";
 import { Breakdown, type Metric } from "./breakdown";
 import { DailyChart } from "./daily-chart";
 import { compact, fillDays, money, type RangeId, sinceFor } from "./format";

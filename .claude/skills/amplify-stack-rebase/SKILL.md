@@ -1,14 +1,14 @@
 ---
-name: circles-stack-rebase
+name: amplify-stack-rebase
 description: >-
-  Rebase the open Circles PR branches into one linear stack on the latest origin/main. Use when the
+  Rebase the open Amplify PR branches into one linear stack on the latest origin/main. Use when the
   user asks to "stack these PRs", "restack", "rebase the stack onto main", after main moved or a PR
-  merged, and before opening a PR when other PRs are open (circles-create-pr calls it). Always
+  merged, and before opening a PR when other PRs are open (amplify-create-pr calls it). Always
   refreshes origin/main first. Every PR's base stays main. Plans first; force-pushes and PR base
   edits only after explicit approval.
 ---
 
-# circles-stack-rebase
+# amplify-stack-rebase
 
 Make the open PR branches one clean chain on the latest `main`, then push each with a lease. `main` is
 protected and is never pushed to. The owner merges the **tip once** with a merge commit, so the PRs
@@ -24,9 +24,9 @@ below it close by themselves and the branches above a merged PR need no restack.
 - **Force-push only with an explicit lease**: `--force-with-lease=<branch>:<live sha>`. Never bare
   `--force`. Never to `main`.
 - **Always start by refreshing `main`**, every run: it is force-refreshed with a leading `+`.
-- **Isolate.** Work in `/tmp/circles-stack` (a detached worktree), not the user's checkout. Stop on the
+- **Isolate.** Work in `/tmp/amplify-stack` (a detached worktree), not the user's checkout. Stop on the
   first collision signal: the HEAD sha changed under you, or a remote tip differs from the plan.
-- **Checks per level** before each push, for what changed (see `circles-atomic-commit`).
+- **Checks per level** before each push, for what changed (see `amplify-atomic-commit`).
 - **Never** merge, enable auto-merge, approve, or change Jira from here.
 
 ## 1. Preflight
@@ -51,7 +51,7 @@ it is not simply ascending.
 ## 3. Restack
 
 ```bash
-git worktree add --detach /tmp/circles-stack "$MAIN" && cd /tmp/circles-stack
+git worktree add --detach /tmp/amplify-stack "$MAIN" && cd /tmp/amplify-stack
 # save the old remote tips before touching anything
 for B in "${BRANCHES[@]}"; do echo "$B $(git rev-parse origin/$B)"; done
 ```
@@ -94,10 +94,10 @@ Re-check the live remote tip right before each push and abort if it moved.
 Every PR targets `main`:
 
 ```bash
-gh api -X PATCH repos/decimozs/circles/pulls/<N> -f base=main
+gh api -X PATCH repos/decimozs/amplify/pulls/<N> -f base=main
 ```
 
-Then `git worktree remove /tmp/circles-stack --force && git worktree prune`.
+Then `git worktree remove /tmp/amplify-stack --force && git worktree prune`.
 
 ## Topology helper
 

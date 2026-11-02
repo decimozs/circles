@@ -10,8 +10,8 @@ C1.
 
 ## In scope
 - **Composer definition:** name, instructions, allowed tools, allowed projects, limits. Stored in the DB.
-- **MCP adapter:** the Circles binary has a tool-server mode. Claude Code starts it with `--mcp-config`. It forwards each tool call to the running app over a private socket (mode `0600`, per-run token) and returns the result. It exposes only the tools the Composer allows.
-- **Run engine:** starts a Claude Code process for the Composer, in a scratch folder with no repository, with no file tools and only the Circles tools. Stores every step.
+- **MCP adapter:** the Amplify binary has a tool-server mode. Claude Code starts it with `--mcp-config`. It forwards each tool call to the running app over a private socket (mode `0600`, per-run token) and returns the result. It exposes only the tools the Composer allows.
+- **Run engine:** starts a Claude Code process for the Composer, in a scratch folder with no repository, with no file tools and only the Amplify tools. Stores every step.
 - **Run log and resume:** steps are written as they happen. After a restart a run shows as interrupted, and the person can resume it. A step that was mid-call is reconciled from the audit log, never repeated blindly.
 - **Autonomy:** each tool of a Composer is `ask`, `allow` or `off`, with safe defaults. A tool that asks shows an approval card, which reuses the permission card. The Details tab shows the Composer's autonomy at a glance and warns when an `external` or `destructive` tool is allowed.
 - **UI:** as described in `ui.md`: a Composers nav item below Create, the Composers home, a Composers group in the sidebar laid out like projects (runs listed under each Composer, pinning supported), the run page with the chat and a stop button, the Steps and Details tabs in the right pane, and a create and edit dialog. Routes `/composers`, `/composer/:id`, `/composer/:id/run/:runId`.

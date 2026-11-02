@@ -1,6 +1,6 @@
-import type { SkillDetail } from "@circles/bindings/SkillDetail";
-import type { SkillList } from "@circles/bindings/SkillList";
-import type { SkillRow } from "@circles/bindings/SkillRow";
+import type { SkillDetail } from "@amplify/bindings/SkillDetail";
+import type { SkillList } from "@amplify/bindings/SkillList";
+import type { SkillRow } from "@amplify/bindings/SkillRow";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { backend } from "@/test/backend";
@@ -30,10 +30,10 @@ function row(over: Partial<SkillRow> = {}): SkillRow {
 
 describe("searching and grouping", () => {
   it("understands words and key:value terms", () => {
-    expect(parseQuery("short group:project project:circles source:~/.claude")).toEqual({
+    expect(parseQuery("short group:project project:amplify source:~/.claude")).toEqual({
       words: ["short"],
       group: "project",
-      project: "circles",
+      project: "amplify",
       source: "~/.claude",
     });
   });
@@ -44,7 +44,7 @@ describe("searching and grouping", () => {
       name: "pr-title",
       description: "Titles of pull requests.",
       group: "project",
-      source: "circles",
+      source: "amplify",
       project_id: "p1",
       files: 2,
       model_invocable: false,
@@ -54,7 +54,7 @@ describe("searching and grouping", () => {
     expect(hits("")).toEqual(["caveman", "pr-title"]);
     expect(hits("titles")).toEqual(["pr-title"]);
     expect(hits("group:project")).toEqual(["pr-title"]);
-    expect(hits("project:circles")).toEqual(["pr-title"]);
+    expect(hits("project:amplify")).toEqual(["pr-title"]);
     expect(hits("project:nothing")).toEqual([]);
     expect(hits("", { ...NO_FILTERS, model: "no" })).toEqual(["pr-title"]);
     expect(hits("", { ...NO_FILTERS, files: true })).toEqual(["pr-title"]);
@@ -139,7 +139,7 @@ describe("the Skills page", () => {
       row({
         name: "pr-title",
         group: "project",
-        source: "circles",
+        source: "amplify",
         project_id: "p1",
         model_invocable: false,
       }),
@@ -149,7 +149,7 @@ describe("the Skills page", () => {
       "title",
       "Also in ~/.claude-work",
     );
-    for (const group of ["Yours", "Shared", "circles"]) {
+    for (const group of ["Yours", "Shared", "amplify"]) {
       expect(screen.getByRole("region", { name: group })).toBeInTheDocument();
     }
     expect(screen.getByText("Manual only")).toBeInTheDocument();
@@ -215,7 +215,7 @@ describe("the Skills page", () => {
   });
 
   it("warns that a project's skill comes from a repository", async () => {
-    const r = row({ name: "pr-title", group: "project", source: "circles", project_id: "p1" });
+    const r = row({ name: "pr-title", group: "project", source: "amplify", project_id: "p1" });
     seed([r]);
     const { user } = renderApp("/skills");
     await user.click(await screen.findByRole("button", { name: "pr-title" }));
@@ -260,19 +260,19 @@ describe("what can be done with a skill", () => {
 
   it("builds the GitHub address of a project's skill, and only for a skill inside the project", () => {
     const p = project({
-      path: "/work/circles",
-      remote_url: "git@github.com:decimozs/circles.git",
+      path: "/work/amplify",
+      remote_url: "git@github.com:decimozs/amplify.git",
       default_branch: "main",
     });
-    expect(githubUrl(p, "/work/circles/.claude/skills/circles-pr-title")).toBe(
-      "https://github.com/decimozs/circles/tree/main/.claude/skills/circles-pr-title",
+    expect(githubUrl(p, "/work/amplify/.claude/skills/amplify-pr-title")).toBe(
+      "https://github.com/decimozs/amplify/tree/main/.claude/skills/amplify-pr-title",
     );
     expect(
-      githubUrl({ ...p, remote_url: "https://github.com/decimozs/circles" }, "/work/circles/a b"),
-    ).toBe("https://github.com/decimozs/circles/tree/main/a%20b");
+      githubUrl({ ...p, remote_url: "https://github.com/decimozs/amplify" }, "/work/amplify/a b"),
+    ).toBe("https://github.com/decimozs/amplify/tree/main/a%20b");
     expect(githubUrl(p, "/elsewhere/skill")).toBeNull();
-    expect(githubUrl({ ...p, remote_url: "git@gitlab.com:a/b.git" }, "/work/circles/x")).toBeNull();
-    expect(githubUrl({ ...p, remote_url: null }, "/work/circles/x")).toBeNull();
-    expect(githubUrl(undefined, "/work/circles/x")).toBeNull();
+    expect(githubUrl({ ...p, remote_url: "git@gitlab.com:a/b.git" }, "/work/amplify/x")).toBeNull();
+    expect(githubUrl({ ...p, remote_url: null }, "/work/amplify/x")).toBeNull();
+    expect(githubUrl(undefined, "/work/amplify/x")).toBeNull();
   });
 });

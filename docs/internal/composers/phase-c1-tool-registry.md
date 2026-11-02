@@ -3,7 +3,7 @@
 > **Built.** What it delivered, and what is still open, is in [status.md](status.md).
 
 ## Goal
-One typed, permissioned list of Circles actions, usable without any model.
+One typed, permissioned list of Amplify actions, usable without any model.
 
 ## Depends on
 C0.

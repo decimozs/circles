@@ -1,13 +1,13 @@
-import type { ClaudeAccount } from "@circles/bindings/ClaudeAccount";
-import type { GithubAccounts } from "@circles/bindings/GithubAccounts";
-import { Badge } from "@circles/ui/components/badge";
-import { Button } from "@circles/ui/components/button";
+import type { ClaudeAccount } from "@amplify/bindings/ClaudeAccount";
+import type { GithubAccounts } from "@amplify/bindings/GithubAccounts";
+import { Badge } from "@amplify/ui/components/badge";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
+} from "@amplify/ui/components/dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDownIcon, Loader2Icon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -123,7 +123,7 @@ export function GithubAccountCard() {
     <AccountCard
       name="GitHub"
       icon={<SiGithub aria-hidden="true" className="size-6" />}
-      description="Lets Circles list and clone your repositories, and open, check and merge pull requests, through the GitHub CLI. Circles never stores a token."
+      description="Lets Amplify list and clone your repositories, and open, check and merge pull requests, through the GitHub CLI. Amplify never stores a token."
       state={state}
       details={
         active
@@ -218,7 +218,7 @@ export function ClaudeAccountCard() {
     <AccountCard
       name="Claude"
       icon={<ClaudeIcon className="size-7" />}
-      description="Runs your agents through Claude Code, with your own Claude subscription. Circles never sees your login."
+      description="Runs your agents through Claude Code, with your own Claude subscription. Amplify never sees your login."
       state={state}
       details={data?.signed_in ? claudeDetails(data) : undefined}
       hint={hint}

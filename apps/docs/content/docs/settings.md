@@ -11,9 +11,9 @@ Settings are TOML files in three layers. A later layer wins over an earlier one:
 
 | Layer | File | For |
 |---|---|---|
-| User | `~/Library/Application Support/circles/settings.toml` | Everything on this Mac. |
-| Project (shared) | `<repository>/.circles/settings.toml` | Settings that belong to a repository. Commit it to share them. |
-| Local project | `~/Library/Application Support/circles/projects/<id>/settings.toml` | Settings for one repository on this Mac only. |
+| User | `~/Library/Application Support/amplify/settings.toml` | Everything on this Mac. |
+| Project (shared) | `<repository>/.amplify/settings.toml` | Settings that belong to a repository. Commit it to share them. |
+| Local project | `~/Library/Application Support/amplify/projects/<id>/settings.toml` | Settings for one repository on this Mac only. |
 
 The repository settings page has a switch, **Only me** or **Shared**, that chooses where a change is written. The Settings page has a button that opens any of the files. Settings files are watched, so an edit outside the app shows up in the page.
 
@@ -24,14 +24,14 @@ The repository settings page has a switch, **Only me** or **Shared**, that choos
 | Page | What it holds |
 |---|---|
 | General | The send key (Enter or Cmd+Enter), what a message sent while the agent works does (steer or queue), notifications and the completion sound, full disk access, and whether long pasted text becomes an attachment. |
-| Accounts | A card for the GitHub account the GitHub CLI uses, with a **Switch account** menu when several are signed in (what it shows is kept and checked again in the background every couple of minutes, and when you come back to the window), and a card for the Claude account Claude Code is signed in with, with its plan. Each says what to run when it is not signed in. Circles never holds either login. |
+| Accounts | A card for the GitHub account the GitHub CLI uses, with a **Switch account** menu when several are signed in (what it shows is kept and checked again in the background every couple of minutes, and when you come back to the window), and a card for the Claude account Claude Code is signed in with, with its plan. Each says what to run when it is not signed in. Amplify never holds either login. |
 | Appearance | Theme (light, dark or system), font size, density and Translucency. |
 | Default models | The model and effort a new chat starts with, and whether new chats start in plan mode. |
 | Git | The branch prefix, the branch naming rule, the merge strategy, and the commit author git will use. |
 
 ### Translucency
 
-Translucency (off by default) gives the window a macOS glass look. The sidebar shows a blurred view of what is behind the window, and menus, popovers, dialogs and the command palette are frosted, and the chat and other pages let a little of it through. The light theme shows less of the backdrop than the dark theme, because text on it must stay readable on a bright wallpaper. The code editors and terminals keep their own solid colours. It uses Liquid Glass on macOS 26 or newer and the system sidebar material on older versions. Turn it on and off in Settings > Appearance; it applies at once. If macOS is set to reduce transparency (System Settings > Accessibility > Display), Circles keeps the solid colours and nothing blurs. It works on macOS only for now; on other systems the setting changes nothing yet.
+Translucency (off by default) gives the window a macOS glass look. The sidebar shows a blurred view of what is behind the window, and menus, popovers, dialogs and the command palette are frosted, and the chat and other pages let a little of it through. The light theme shows less of the backdrop than the dark theme, because text on it must stay readable on a bright wallpaper. The code editors and terminals keep their own solid colours. It uses Liquid Glass on macOS 26 or newer and the system sidebar material on older versions. Turn it on and off in Settings > Appearance; it applies at once. If macOS is set to reduce transparency (System Settings > Accessibility > Display), Amplify keeps the solid colours and nothing blurs. It works on macOS only for now; on other systems the setting changes nothing yet.
 
 **Agents and environment**
 
@@ -39,7 +39,7 @@ Translucency (off by default) gives the window a macOS glass look. The sidebar s
 |---|---|
 | Agents | The `claude` to use, a check of its version, the default permission mode, extra arguments for every Claude Code start, the model for side questions and whether they may read files, and whether chats may ask with cards. |
 | Smart titles | Naming new chats, suggesting the next message and an example for a new Composer's first message. They use Claude Haiku through Claude Code, which spends a little of your Claude usage. |
-| Environment | Environment variables set for every agent and terminal, and for the calls Circles makes to Claude Code itself (titles, drafts, Improve, Learn and the Claude card). Values are hidden and never logged. |
+| Environment | Environment variables set for every agent and terminal, and for the calls Amplify makes to Claude Code itself (titles, drafts, Improve, Learn and the Claude card). Values are hidden and never logged. |
 | Composers | Pause and stop, the daily cap of runs started on their own, notifications, the menu bar, open at login, keep awake, and cards. |
 | Integrations | The Jira connection. See [Jira](./jira.md). |
 
@@ -59,7 +59,7 @@ files_to_copy = [".env", ".env.local"]
 
 [scripts]
 setup = "pnpm install"
-run = "pnpm dev --port $CIRCLES_PORT"
+run = "pnpm dev --port $AMPLIFY_PORT"
 archive = "./scripts/cleanup.sh"
 run_mode = "concurrent"   # or "nonconcurrent"
 
@@ -83,4 +83,4 @@ Claude Code keeps its login in a config folder, `~/.claude` by default. If you h
 |---|---|
 | `CLAUDE_CONFIG_DIR` | `/Users/<you>/.claude-work` |
 
-New chats, Composer runs, titles, drafts, Improve, Learn and the Claude card in Settings > Accounts then work as that account. A chat that began under the other account cannot be resumed by Claude Code, which only finds conversations in the folder it runs with. Circles says so, and your next message continues in a new session that is told what was said earlier. To use it for one repository only, put the variable in that repository's settings file under `[environment_variables]`, as **Only me**: a shared file would commit your folder path. Terminals inside Circles get the variable too, so `claude` there uses it as well.
+New chats, Composer runs, titles, drafts, Improve, Learn and the Claude card in Settings > Accounts then work as that account. A chat that began under the other account cannot be resumed by Claude Code, which only finds conversations in the folder it runs with. Amplify says so, and your next message continues in a new session that is told what was said earlier. To use it for one repository only, put the variable in that repository's settings file under `[environment_variables]`, as **Only me**: a shared file would commit your folder path. Terminals inside Amplify get the variable too, so `claude` there uses it as well.

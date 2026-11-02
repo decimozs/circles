@@ -1,6 +1,6 @@
-import type { Checkpoint } from "@circles/bindings/Checkpoint";
-import type { Message } from "@circles/bindings/Message";
-import type { RevertPreview } from "@circles/bindings/RevertPreview";
+import type { Checkpoint } from "@amplify/bindings/Checkpoint";
+import type { Message } from "@amplify/bindings/Message";
+import type { RevertPreview } from "@amplify/bindings/RevertPreview";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { useChat } from "@/stores/chat";

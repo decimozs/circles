@@ -33,6 +33,43 @@ dependencies = [
 ]
 
 [[package]]
+name = "amplify"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "base64 0.23.1",
+ "dirs 7.0.0",
+ "ignore",
+ "libc",
+ "notify",
+ "notify-debouncer-mini",
+ "portable-pty",
+ "rand 0.10.3",
+ "reqwest",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-autostart",
+ "tauri-plugin-dialog",
+ "tauri-plugin-notification",
+ "tauri-plugin-opener",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "toml 1.1.7+spec-1.1.0",
+ "toml_edit 0.25.16+spec-1.1.0",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "ts-rs",
+ "ulid",
+ "uuid",
+]
+
+[[package]]
 name = "android_system_properties"
 version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -551,43 +588,6 @@ dependencies = [
  "num-traits",
  "serde",
  "windows-link",
-]
-
-[[package]]
-name = "circles"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "base64 0.23.1",
- "dirs 7.0.0",
- "ignore",
- "libc",
- "notify",
- "notify-debouncer-mini",
- "portable-pty",
- "rand 0.10.3",
- "reqwest",
- "rusqlite",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "tauri",
- "tauri-build",
- "tauri-plugin-autostart",
- "tauri-plugin-dialog",
- "tauri-plugin-notification",
- "tauri-plugin-opener",
- "tempfile",
- "thiserror 2.0.21",
- "tokio",
- "toml 1.1.7+spec-1.1.0",
- "toml_edit 0.25.16+spec-1.1.0",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "ts-rs",
- "ulid",
- "uuid",
 ]
 
 [[package]]

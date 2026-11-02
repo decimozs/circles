@@ -1,5 +1,5 @@
-import type { FilePair } from "@circles/bindings/FilePair";
-import type { PrFiles } from "@circles/bindings/PrFiles";
+import type { FilePair } from "@amplify/bindings/FilePair";
+import type { PrFiles } from "@amplify/bindings/PrFiles";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { backend } from "@/test/backend";

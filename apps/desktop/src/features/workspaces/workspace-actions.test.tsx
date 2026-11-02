@@ -111,7 +111,7 @@ describe("Workspace page", () => {
 
     const dialog = await screen.findByRole("dialog", { name: "Uncommitted changes" });
     expect(within(dialog).getByText(/1 uncommitted change/)).toBeInTheDocument();
-    expect(within(dialog).getByText(/WIP: archived from Circles/)).toBeInTheDocument();
+    expect(within(dialog).getByText(/WIP: archived from Amplify/)).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Commit and archive" }));
     await waitFor(() =>
       expect(backend.callsTo("workspace_archive")).toEqual([

@@ -21,7 +21,7 @@ Also decide: does sign-in gate the app, or is it optional? Local features stay u
 
 ## In scope
 - Better Auth server with the email and password plugin and three social providers (Google, GitHub, Apple).
-- Tauri client flow: system browser for OAuth, return via a `circles://auth/callback` deep link (`tauri-plugin-deep-link`), session stored in the macOS Keychain (not in plain files).
+- Tauri client flow: system browser for OAuth, return via a `amplify://auth/callback` deep link (`tauri-plugin-deep-link`), session stored in the macOS Keychain (not in plain files).
 - Sign-in and sign-up screens in the app theme, forgot-password and email verification flows.
 - Account settings page: profile, linked providers, sign out, delete account.
 - Sidebar header and settings account page show the user, falling back to the local machine name when signed out.
@@ -34,7 +34,7 @@ Sync of workspaces or chats, teams, billing.
 - Auth service (location depends on the decision), client integration, deep-link handler, Keychain storage, account UI.
 
 ## Technical notes
-- Register the `circles` URL scheme in `tauri.conf.json`.
+- Register the `amplify` URL scheme in `tauri.conf.json`.
 - Provider setup per environment: Google and GitHub OAuth apps, Apple Services ID and key.
 - Use PKCE where supported. Validate state and nonce. Never put tokens in logs or URLs shown to the user.
 - Rate-limit sign-in endpoints and require verified email for password accounts.

@@ -6,7 +6,7 @@ Status: P0 (written audit), P1, P2, P3 and the unsigned parts of P4 and P5 are b
 
 ## Goal
 
-Someone who installs Circles for the first time is walked through a **Setup** screen with a
+Someone who installs Amplify for the first time is walked through a **Setup** screen with a
 checklist: what the app needs, what it would like, and every macOS permission it may ask for, each
 with a status and a button that does or explains the next step. When it is done the app works,
 and nothing surprising appears later in the middle of a task.
@@ -53,8 +53,8 @@ A footer shows "Copy diagnostics" for a bug report, and "Skip for now".
 - **Files and folders (TCC):** the first read of Desktop, Documents, Downloads or a removable
   volume prompts. Row 6 triggers those prompts on purpose, during setup, with an explanation.
 - **Notifications:** today notifications go through `osascript`, so they show as coming from
-  Script Editor and cannot be allowed or denied for Circles. The plan is to move them to the native
-  notification API through Tauri's notification plugin, so Circles gets its own permission entry
+  Script Editor and cannot be allowed or denied for Amplify. The plan is to move them to the native
+  notification API through Tauri's notification plugin, so Amplify gets its own permission entry
   and a test button. This needs the signed app.
 - **Keychain:** a prompt appears per binary signature. A signed, stable build makes "Always Allow"
   last across updates, which the unsigned dev build cannot do.
@@ -76,7 +76,7 @@ A footer shows "Copy diagnostics" for a bug report, and "Skip for now".
   runs the model check and the test suites first.
 - **A first-launch guide** for an unsigned build (right-click, Open), kept in
   `docs/troubleshooting.md`, for as long as there is no certificate.
-- **Uninstall and reset:** documented paths (`~/Library/Application Support/circles`, the Keychain
+- **Uninstall and reset:** documented paths (`~/Library/Application Support/amplify`, the Keychain
   item, the login item), and the existing "Reset" in Settings.
 
 ## Phases
@@ -109,7 +109,7 @@ Order: P0 first. P1 and P3 can go ahead of the Apple account. P4 needs the accou
    package is unsigned and every user has to right-click, Open.
 2. **Where do updates come from?** GitHub Releases (free, simple) or your own host.
 3. **The 270 MB model and updates:** ship it inside every update (simple, large), or keep it in
-   `~/Library/Application Support/circles/models/`, copied from the app once and only replaced when
+   `~/Library/Application Support/amplify/models/`, copied from the app once and only replaced when
    the model changes. The second makes updates small, and still needs no download for a new user.
    Recommended: the second.
 4. **Block on Claude Code sign-in** (recommended), or let people in without it and show the
@@ -122,10 +122,10 @@ Order: P0 first. P1 and P3 can go ahead of the Apple account. P4 needs the accou
 1. **No Apple Developer account for now.** The app is downloaded from the web, unsigned, and the
    README and troubleshooting say right-click, Open (and the `xattr` command).
 2. **Updates:** GitHub Releases, when there is a repository to publish to. Not built.
-3. **The model:** kept in `~/Library/Application Support/circles/models/`, copied once from the
+3. **The model:** kept in `~/Library/Application Support/amplify/models/`, copied once from the
    app, so a later update that does not change the model does not have to bring it again.
 4. **Claude Code sign-in blocks** the first project, as the plan recommended.
-5. **Notifications:** sent by Circles itself, with a script as a fallback.
+5. **Notifications:** sent by Amplify itself, with a script as a fallback.
 
 ## Built (2026-10-11)
 
@@ -133,7 +133,7 @@ Order: P0 first. P1 and P3 can go ahead of the Apple account. P4 needs the accou
 - **P1:** `commands/setup.rs`: `setup_status` (rows with state, reason, fix and action) and
   `setup_action` (`install_git`, `open_terminal_claude`, `test_notification`, `probe_folders`,
   `open_full_disk`, `test_model`). Tested with every state of git, Claude Code and gh.
-- **P2:** the Setup checklist replaces the welcome dialog: "What Circles needs" and "Nice to have",
+- **P2:** the Setup checklist replaces the welcome dialog: "What Amplify needs" and "Nice to have",
   each row with a state, a reason, a command to copy and a button, re-checked when the window gets
   focus again, "Add your first project" held back until the required rows are ready, "Skip for
   now" and "Copy diagnostics" kept. Re-run from Settings, Advanced, Show again.
@@ -150,7 +150,7 @@ Order: P0 first. P1 and P3 can go ahead of the Apple account. P4 needs the accou
   native code and a signed app.
 - **Not signed, not notarised.** Every first launch needs right-click, Open. The Keychain's
   "Always Allow" will not last across rebuilds, and an unsigned notification may not be shown as
-  Circles on every macOS version.
+  Amplify on every macOS version.
 - **No universal build.** This Mac has no second Rust target (`rustup` is missing), so Intel was
   not built. llama.cpp for Intel is untried.
 - **No updater.** It needs a repository to publish to, a signing key kept outside the repo, and

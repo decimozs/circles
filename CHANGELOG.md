@@ -14,6 +14,7 @@
 - A workspace a Composer made but started no agent in showed a blank pane. It now says so and offers "Start a chat".
 
 ### Changed
+- Circles is now called Amplify: the window, menus, guide, website, packages and the app's identifier. Nothing you made is lost. The data folder (`~/Library/Application Support/circles`, with the database, settings and Jira login) is moved to `amplify` the first time the new version starts. Workspaces and clones stay in `~/circles` if you have that folder, and new installs use `~/amplify`. A repository's `.circles` folder (settings and shared Composers) is still read until it has an `.amplify` folder. Scripts get the `CIRCLES_` variables as well as the new `AMPLIFY_` ones. macOS sees the renamed app as a new one, so grant Full Disk Access and notifications again and turn Start at login on again. See [Troubleshooting](https://github.com/decimozs/amplify/blob/main/apps/docs/content/docs/troubleshooting.md).
 - A workspace's top bar shows its branch, such as `alfa-marlon/21lsb`, as a small badge beside the title.
 - The Git graph opens as wide as the file view. A Composer's run panel is a little narrower, and has no Fleet graph row while nothing runs.
 - The Mac's name and its menu are gone from the top of the sidebar and of Settings. Settings, Usage and Keyboard shortcuts stay in the sidebar footer, and the theme is chosen in Settings > Appearance.
@@ -27,14 +28,14 @@
 
 ### Added
 - The pull request list and an opened pull request show what was fetched last time at once, with its age, and update in the background. Files you opened in a pull request are kept too, so they open at once next time. The repositories offered when adding a project, and the GitHub account card in Settings, also open at once and update in the background. Settings > Advanced can clear these copies.
-- Usage opens at once: the numbers are kept in Circles, so only what is new is read, in the background, and they keep the history Claude Code deletes. The page says how old the numbers are.
+- Usage opens at once: the numbers are kept in Amplify, so only what is new is read, in the background, and they keep the history Claude Code deletes. The page says how old the numbers are.
 - Pull requests: a sidebar page that lists the pull requests of your repositories, grouped by what needs your review, with search, sort and filters. Open one beside the list to read its summary and timeline and to see its changes file by file.
 - Usage: the button at the bottom of the sidebar, where Add project was, shows tokens and estimated cost of Claude Code over 24 hours to 90 days, by model and by day, and your plan limits. Add project is still in Create, the command palette and Cmd+Option+A.
 - Branch naming rule per project (Settings, Git, `branch_pattern`, for example `{ticket}-{slug}`): Composers name branches by it, and `list_projects` shows it to them.
 - Project skills: agents in every workspace are told about `.claude/skills`, `.agents/skills`, `.agent/skills`, `AGENTS.md` and `CLAUDE.md`, and a Composer no longer reads your user level instructions.
 - Cards from agents: a Composer (and, if switched on, any chat) can show a small checklist, form or plan in the chat and read your answer.
 - Side questions: `/btw` (or ⌘⇧B) asks a quick question about a chat and answers in a pane above the message box, without changing the chat or interrupting the agent.
-- Smart chat titles: Claude Haiku, through Claude Code, names new chats, and can suggest the next message as the input placeholder. It spends a little of your Claude usage and sends the start of your first message to Anthropic, and can be switched off in Settings. There is no model inside Circles and nothing to download when building it.
+- Smart chat titles: Claude Haiku, through Claude Code, names new chats, and can suggest the next message as the input placeholder. It spends a little of your Claude usage and sends the start of your first message to Anthropic, and can be switched off in Settings. There is no model inside Amplify and nothing to download when building it.
 - Sign in with Atlassian: connect Jira in the browser instead of pasting a token. The API token stays as a fallback.
 - Jira Cloud integration: connect in Settings, Integrations (token in the Keychain). Every chat can search and read issues, and change them after a permission prompt. Composers get a Jira switch, a choice of repositories, and a Jira trigger.
 - Local desktop app that runs Claude Code agents in parallel, each in its own git worktree.

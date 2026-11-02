@@ -17,7 +17,7 @@ Results of the phase 15 audit. "Verified" means checked by an automated test or 
 | Secrets in settings UI | Environment variable values are masked and are never logged. Only the key path of a changed setting is logged. |
 | Diagnostics | The "copy diagnostics" report passes through the same redactor. |
 | Bypass mode | Off by default. The settings page and the first-run screen both warn about it. |
-| Deep links | Circles registers no URL scheme and handles no deep links, so there is no input to validate. |
+| Deep links | Amplify registers no URL scheme and handles no deep links, so there is no input to validate. |
 | Updater keys | No updater is configured yet. Keys must be generated and kept outside the repository when it is. |
 
 ## Crash and recovery
@@ -80,11 +80,11 @@ a very large diff, terminal throughput. Record the numbers here when measured.
   127.0.0.1 only, which serves one callback at a time, ignores any other path or wrong `state`, and
   stops after five minutes or Cancel. Authorization and token addresses must be HTTPS. The scopes
   never include delete or manage. Access and refresh tokens are only in that file, and not in
-  logs or `Debug`. Tools of Atlassian that Circles has no mapping for cannot be reached.
+  logs or `Debug`. Tools of Atlassian that Amplify has no mapping for cannot be reached.
 
 ## Smart titles
 
-- The model runs inside the Circles process on the CPU. There is no server, no port and no network
+- The model runs inside the Amplify process on the CPU. There is no server, no port and no network
   call. A different provider (Claude Haiku) is a setting that is off unless chosen, and says in the
   settings that it sends text to Anthropic.
 - Text given to a model is cut (1,500 characters for a title, 600 and 900 for a suggestion) and,

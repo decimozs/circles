@@ -1,6 +1,6 @@
-# Circles: Phase Plan
+# Amplify: Phase Plan
 
-Circles is a local-first desktop app (Tauri 2) that runs Claude Code agents in parallel, each in an isolated git worktree workspace. It clones the concepts of Conductor, locally only.
+Amplify is a local-first desktop app (Tauri 2) that runs Claude Code agents in parallel, each in an isolated git worktree workspace. It clones the concepts of Conductor, locally only.
 
 Each phase is a separate unit of work. After a phase is done, stop and wait for review before starting the next one. Nothing is committed or pushed unless the owner asks.
 
@@ -8,7 +8,7 @@ Each phase is a separate unit of work. After a phase is done, stop and wait for 
 
 | Topic | Decision |
 |---|---|
-| Name | Circles |
+| Name | Amplify |
 | Shell | Tauri 2, macOS first |
 | Frontend | React, TypeScript, Vite, Tailwind, shadcn/ui |
 | Theme | light, dark, system (shadcn ThemeProvider, `.dark` class) |
@@ -25,11 +25,11 @@ Each phase is a separate unit of work. After a phase is done, stop and wait for 
 
 | What | Where |
 |---|---|
-| Worktrees | `~/circles/workspaces/<project>/<city>` |
-| App DB | `~/Library/Application Support/circles/circles.db` (SQLite) |
-| User config | `~/Library/Application Support/circles/settings.toml` |
-| Project config | `<repo>/.circles/settings.toml` (shareable) |
-| Local project override | `~/Library/Application Support/circles/projects/<id>/settings.toml` |
+| Worktrees | `~/amplify/workspaces/<project>/<city>` |
+| App DB | `~/Library/Application Support/amplify/amplify.db` (SQLite) |
+| User config | `~/Library/Application Support/amplify/settings.toml` |
+| Project config | `<repo>/.amplify/settings.toml` (shareable) |
+| Local project override | `~/Library/Application Support/amplify/projects/<id>/settings.toml` |
 | Private workspace notes | `<worktree>/.context/` (never committed) |
 | Checkpoints | private git refs `refs/circles/checkpoints/<workspace>/<turn>` |
 

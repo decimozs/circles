@@ -1,13 +1,13 @@
-import type { FsEntry } from "@circles/bindings/FsEntry";
+import type { FsEntry } from "@amplify/bindings/FsEntry";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "@circles/ui/components/context-menu";
-import { Input } from "@circles/ui/components/input";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/context-menu";
+import { Input } from "@amplify/ui/components/input";
+import { cn } from "@amplify/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRightIcon, EyeIcon, EyeOffIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";

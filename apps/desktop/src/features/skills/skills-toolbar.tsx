@@ -1,5 +1,5 @@
-import type { Project } from "@circles/bindings/Project";
-import { Button } from "@circles/ui/components/button";
+import type { Project } from "@amplify/bindings/Project";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,9 +9,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Input } from "@circles/ui/components/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@circles/ui/components/popover";
+} from "@amplify/ui/components/dropdown-menu";
+import { Input } from "@amplify/ui/components/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@amplify/ui/components/popover";
 import {
   ArrowDownUpIcon,
   FilterIcon,

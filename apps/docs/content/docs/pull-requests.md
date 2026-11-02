@@ -3,7 +3,7 @@ title: "Pull requests"
 description: "Browse, read and draft pull requests, and see their checks and merge state."
 ---
 
-Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in. It never stores a token. Pushing uses your existing git credentials.
+Amplify uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in. It never stores a token. Pushing uses your existing git credentials.
 
 ## Browsing pull requests
 
@@ -14,10 +14,10 @@ Circles uses the GitHub CLI (`gh`) for pull requests, so it needs `gh` signed in
 - **Each row:** state (open, draft, merged, closed), number, title, checks, review state, author, branch, size (`+added -removed`) and when it last changed.
 - **Search:** plain words match the title, branch, author and repository. `#123` finds a number. `label:bug`, `author:ana`, `repo:backend`, `branch:feat/`, `is:draft`, `is:mine`, `review:approved` and `checks:failing` narrow it. Put quotes around a value with spaces: `label:"good first issue"`.
 - **Sort and Filters:** sort by activity, age or size. Filters choose open, merged, closed or all, hide or show drafts, and filter by checks and review.
-- **Opens at once:** Circles keeps a copy of what GitHub said, so the list and an opened pull request show immediately with **Updated 4 min ago** and are fetched again in the background. They change on screen when the new answer arrives. The refresh button asks GitHub right away. A repository you have not looked at before waits for GitHub the first time.
+- **Opens at once:** Amplify keeps a copy of what GitHub said, so the list and an opened pull request show immediately with **Updated 4 min ago** and are fetched again in the background. They change on screen when the new answer arrives. The refresh button asks GitHub right away. A repository you have not looked at before waits for GitHub the first time.
 - **If a repository cannot be asked** (for example `gh` is not signed in for it), its name and the fix are shown above the list, and the other repositories still show.
 
-Choosing a pull request opens it beside the list, in a tab. The tabs are in the top bar. Open several and switch between them. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open, and the line between them can be dragged to make the pane wider or narrower, as with the sidebars. Circles remembers the width.
+Choosing a pull request opens it beside the list, in a tab. The tabs are in the top bar. Open several and switch between them. The **+** beside the tabs lets you pick another, and the x closes one. The list narrows to a column while something is open, and the line between them can be dragged to make the pane wider or narrower, as with the sidebars. Amplify remembers the width.
 
 ### In a tab
 
@@ -25,15 +25,15 @@ Choosing a pull request opens it beside the list, in a tab. The tabs are in the 
 - **Summary:** who reviews (who approved, who asked for changes, who was asked and has not answered), labels, the description as formatted text, the checks (open the list to see each one and its link) and the comments. A branch that cannot be merged because of conflicts says so.
 - **Timeline:** the opening, every commit, review and comment, and the merge, newest first. The button at the top reverses the order.
 
-- **Code:** the files the pull request changes, each with its status (added, modified, deleted, renamed), its size and a **Viewed** box. Open a file to see it before and after in a diff editor, side by side or in one column. Two files can be open at once. Marking a file as viewed puts it away and counts it, and Circles remembers that until the branch gets a new commit. A binary file or one that is too large says so; open the pull request on GitHub to see it.
+- **Code:** the files the pull request changes, each with its status (added, modified, deleted, renamed), its size and a **Viewed** box. Open a file to see it before and after in a diff editor, side by side or in one column. Two files can be open at once. Marking a file as viewed puts it away and counts it, and Amplify remembers that until the branch gets a new commit. A binary file or one that is too large says so; open the pull request on GitHub to see it.
 
-Files and what they said are kept too, and they never need fetching again: a commit does not change, so a file you opened once, or the list of files at one tip of a branch, opens at once the next time, also after Circles restarts. A new commit on the branch is a new set of files and is fetched once.
+Files and what they said are kept too, and they never need fetching again: a commit does not change, so a file you opened once, or the list of files at one tip of a branch, opens at once the next time, also after Amplify restarts. A new commit on the branch is a new set of files and is fetched once.
 
-Circles reads the files from your own copy of the repository when it already has the commits, and from GitHub when not. It does not fetch into your repository.
+Amplify reads the files from your own copy of the repository when it already has the commits, and from GitHub when not. It does not fetch into your repository.
 
-The copies are kept in Circles' own data folder, as the rest of your workspace records are. A copy goes after 90 days unused, and when GitHub says a repository is not there or not allowed. **Settings > Advanced > Clear cached data** deletes them all; they are fetched again when needed.
+The copies are kept in Amplify' own data folder, as the rest of your workspace records are. A copy goes after 90 days unused, and when GitHub says a repository is not there or not allowed. **Settings > Advanced > Clear cached data** deletes them all; they are fetched again when needed.
 
-Pictures inside a description or comment are not shown. Circles only loads avatars from GitHub, so open the pull request on GitHub to see them.
+Pictures inside a description or comment are not shown. Amplify only loads avatars from GitHub, so open the pull request on GitHub to see them.
 
 ## The next step
 
@@ -52,9 +52,9 @@ The pull request number shows as a chip (`#123`) that opens it on GitHub. **Fix 
 
 ## Creating one
 
-**Create PR** opens a dialog with a title and a description. **Draft with Claude** writes both from the commits and the changes, with no tools and no chat. It reads the repository's pull request template and convention files and follows them: it fills in the template and keeps its headings, and follows what the files say about titles. See [Projects](./projects.md). Preview the description as Markdown, edit it, and create. Lines that credit a tool, such as "Generated with" or a `Co-Authored-By: Claude` trailer, are removed from the draft. Circles pushes the branch, creates the pull request with `gh pr create` and remembers its number.
+**Create PR** opens a dialog with a title and a description. **Draft with Claude** writes both from the commits and the changes, with no tools and no chat. It reads the repository's pull request template and convention files and follows them: it fills in the template and keeps its headings, and follows what the files say about titles. See [Projects](./projects.md). Preview the description as Markdown, edit it, and create. Lines that credit a tool, such as "Generated with" or a `Co-Authored-By: Claude` trailer, are removed from the draft. Amplify pushes the branch, creates the pull request with `gh pr create` and remembers its number.
 
-**Commit with Claude** groups your uncommitted changes into atomic commits: each is one logical change with a short message, and every file goes in exactly one commit. It follows the commit messages the repository's files describe. Claude only proposes the grouping, and Circles runs the git commands. You can also commit everything at once with a message you write.
+**Commit with Claude** groups your uncommitted changes into atomic commits: each is one logical change with a short message, and every file goes in exactly one commit. It follows the commit messages the repository's files describe. Claude only proposes the grouping, and Amplify runs the git commands. You can also commit everything at once with a message you write.
 
 ## The Checks tab
 

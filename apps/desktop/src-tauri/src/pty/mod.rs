@@ -523,12 +523,12 @@ mod tests {
         let dir = std::fs::canonicalize(tempfile::tempdir().unwrap().keep()).unwrap();
         let sink = Arc::new(Collect::default());
         let mut s = spec(Some(
-            "pwd; echo port=$CIRCLES_PORT name=$CIRCLES_WORKSPACE_NAME term=$TERM",
+            "pwd; echo port=$AMPLIFY_PORT name=$AMPLIFY_WORKSPACE_NAME term=$TERM",
         ));
         s.cwd = dir.clone();
         s.env = vec![
-            ("CIRCLES_PORT".into(), "55010".into()),
-            ("CIRCLES_WORKSPACE_NAME".into(), "algiers".into()),
+            ("AMPLIFY_PORT".into(), "55010".into()),
+            ("AMPLIFY_WORKSPACE_NAME".into(), "algiers".into()),
         ];
         Pty::spawn(&env(), None, s, Some(sink.clone())).unwrap();
         wait_until("exit", || sink.exit().is_some()).await;
@@ -542,8 +542,8 @@ mod tests {
 
     #[tokio::test]
     async fn the_login_environment_replaces_the_app_environment() {
-        std::env::set_var("CIRCLES_LEAK_CHECK", "leaked");
-        let (_pty, sink) = run("echo leak=${CIRCLES_LEAK_CHECK:-clean}").await;
+        std::env::set_var("AMPLIFY_LEAK_CHECK", "leaked");
+        let (_pty, sink) = run("echo leak=${AMPLIFY_LEAK_CHECK:-clean}").await;
         wait_until("exit", || sink.exit().is_some()).await;
         assert!(sink.text().contains("leak=clean"), "{}", sink.text());
     }

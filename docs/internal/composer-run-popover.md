@@ -54,7 +54,7 @@ of this popover.
 - **The pane is gone for Composers.** `app-shell.tsx` shows the right pane only on workspace pages;
   `RightPanel` loses its Composer branch; the Composer's width and open state are no longer
   remembered.
-- **The popover** is the existing `Popover` from `@circles/ui`, about 22rem wide, opening below the
+- **The popover** is the existing `Popover` from `@amplify/ui`, about 22rem wide, opening below the
   button and aligned to its right edge, with a maximum height and its own scroll for a long run.
 - **Which run.** The active run's tab, as the pane does now (`useFleet(composer.id, runId)`).
 - **Rows** are the reference's: icon, label, optional chevron that opens a small menu (editor list,
@@ -176,7 +176,7 @@ its own.
 - **A run with many workspaces** makes a long popover. Blocks are collapsed to one line (name, status,
   changes) past the first three, and expand on click.
 - **The screenshot is from another product.** The rows are matched in order and wording; colours
-  and sizes come from Circles' own tokens, not from the image.
+  and sizes come from Amplify' own tokens, not from the image.
 
 ## Questions for you
 

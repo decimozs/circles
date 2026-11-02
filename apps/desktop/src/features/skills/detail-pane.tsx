@@ -1,5 +1,5 @@
-import type { SkillDetail } from "@circles/bindings/SkillDetail";
-import { cn } from "@circles/ui/utils";
+import type { SkillDetail } from "@amplify/bindings/SkillDetail";
+import { cn } from "@amplify/ui/utils";
 import { FileTextIcon, Loader2Icon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { CopyButton, Markdown } from "@/features/chat/markdown";

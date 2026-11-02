@@ -1,4 +1,4 @@
-import type { GraphCommit } from "@circles/bindings/GraphCommit";
+import type { GraphCommit } from "@amplify/bindings/GraphCommit";
 import { describe, expect, it } from "vitest";
 import { layoutGraph } from "./layout";
 

@@ -3,7 +3,7 @@ title: "Composers"
 description: "A manager agent that starts workspaces and agents for you, and how to follow its run."
 ---
 
-A Composer is a manager agent. You give it a goal in plain words, and it uses Circles' own actions to look at your projects, create workspaces, start coding agents in them, follow their progress and open pull requests. It does not edit code itself: the agents it starts do.
+A Composer is a manager agent. You give it a goal in plain words, and it uses Amplify' own actions to look at your projects, create workspaces, start coding agents in them, follow their progress and open pull requests. It does not edit code itself: the agents it starts do.
 
 ## Making one
 
@@ -61,13 +61,13 @@ A Composer can start by itself:
 - **Schedules:** daily at a time, or every N minutes.
 - **Triggers:** a new pull request, a failing check, or a Jira query.
 
-Anything set to ask waits as an approval. Runs started this way show a clock icon in the sidebar. They are capped per day (Settings > Composers, 20 by default) and a trigger that fails five times in a row is switched off. A run missed while Circles was closed still starts if it is under 12 hours late, once. GitHub is asked about each trigger every 2 minutes, and the first look only records what exists, so old pull requests start nothing.
+Anything set to ask waits as an approval. Runs started this way show a clock icon in the sidebar. They are capped per day (Settings > Composers, 20 by default) and a trigger that fails five times in a row is switched off. A run missed while Amplify was closed still starts if it is under 12 hours late, once. GitHub is asked about each trigger every 2 minutes, and the first look only records what exists, so old pull requests start nothing.
 
-Settings > Composers lets Circles keep running in the menu bar, open at login and keep the Mac awake during such runs, and notify you when something waits.
+Settings > Composers lets Amplify keep running in the menu bar, open at login and keep the Mac awake during such runs, and notify you when something waits.
 
 ## Sharing a Composer
 
-A repository can keep Composers in `.circles/composers/*.toml` with a `name`, `instructions` and optionally `tools` and `[limits]`. They appear under "In your repositories" on the Composers home, and you can add them to your own. Autonomy is never read from a file, so a shared file cannot make a Composer more powerful than your settings allow.
+A repository can keep Composers in `.amplify/composers/*.toml` with a `name`, `instructions` and optionally `tools` and `[limits]`. They appear under "In your repositories" on the Composers home, and you can add them to your own. Autonomy is never read from a file, so a shared file cannot make a Composer more powerful than your settings allow.
 
 ## How safe is it
 

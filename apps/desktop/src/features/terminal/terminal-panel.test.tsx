@@ -8,7 +8,7 @@ import { FakeSearchAddon, FakeTerminal } from "@/test/xterm-mock";
 
 const web = {
   name: "web",
-  command: "pnpm dev --port $CIRCLES_PORT",
+  command: "pnpm dev --port $AMPLIFY_PORT",
   default: true,
   icon: "server",
 };
@@ -161,11 +161,11 @@ describe("Terminal panel", () => {
     });
 
     it("explains how to add a run script when there is none", async () => {
-      backend.on("project_open_settings", "/code/roster/.circles/settings.toml");
+      backend.on("project_open_settings", "/code/roster/.amplify/settings.toml");
       const { user, panel } = await openWorkspace();
       await user.click(tabNamed(panel(), "Run"));
       expect(await screen.findByText("No run script yet.")).toBeInTheDocument();
-      await user.click(screen.getByRole("button", { name: /Open \.circles\/settings\.toml/ }));
+      await user.click(screen.getByRole("button", { name: /Open \.amplify\/settings\.toml/ }));
       await waitFor(() =>
         expect(backend.callsTo("project_open_settings")).toEqual([{ projectId: "p1" }]),
       );
@@ -695,7 +695,7 @@ describe("Quit confirmation", () => {
     await screen.findByRole("main");
     act(() => emitBackendEvent("app:confirm-quit", 2));
 
-    const dialog = await screen.findByRole("dialog", { name: "Quit Circles?" });
+    const dialog = await screen.findByRole("dialog", { name: "Quit Amplify?" });
     expect(dialog).toHaveTextContent("2 processes are still running");
     await user.click(within(dialog).getByRole("button", { name: "Quit and stop everything" }));
     await waitFor(() => expect(backend.callsTo("app_quit")).toHaveLength(1));
@@ -706,11 +706,11 @@ describe("Quit confirmation", () => {
     const { user } = renderApp("/");
     await screen.findByRole("main");
     act(() => emitBackendEvent("app:confirm-quit", 1));
-    const dialog = await screen.findByRole("dialog", { name: "Quit Circles?" });
+    const dialog = await screen.findByRole("dialog", { name: "Quit Amplify?" });
     expect(dialog).toHaveTextContent("1 process is still running");
     await user.click(within(dialog).getByRole("button", { name: "Keep running" }));
     await waitFor(() =>
-      expect(screen.queryByRole("dialog", { name: "Quit Circles?" })).not.toBeInTheDocument(),
+      expect(screen.queryByRole("dialog", { name: "Quit Amplify?" })).not.toBeInTheDocument(),
     );
     expect(backend.callsTo("app_quit")).toHaveLength(0);
   });

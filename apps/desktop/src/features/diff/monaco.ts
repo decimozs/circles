@@ -40,7 +40,7 @@ function withAlpha(color: string, alpha: string): string {
 /** Monaco's colours, taken from the app's tokens so the editor follows light and dark. */
 export function applyTheme(monaco: MonacoApi) {
   const dark = document.documentElement.classList.contains("dark");
-  monaco.editor.defineTheme("circles", {
+  monaco.editor.defineTheme("amplify", {
     base: dark ? "vs-dark" : "vs",
     inherit: true,
     rules: [],
@@ -64,7 +64,7 @@ export function applyTheme(monaco: MonacoApi) {
       "diffEditorGutter.removedLineBackground": cssColor("--diff-remove-bg"),
     },
   });
-  monaco.editor.setTheme("circles");
+  monaco.editor.setTheme("amplify");
 }
 
 /**

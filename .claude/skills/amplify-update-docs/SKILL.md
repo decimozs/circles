@@ -1,13 +1,13 @@
 ---
-name: circles-update-docs
+name: amplify-update-docs
 description: >-
-  Make sure the Circles docs match a change. Use before committing or opening a PR, when the user
-  runs /circles-update-docs, or asks to "update the docs", "check the docs" or "does this need docs".
+  Make sure the Amplify docs match a change. Use before committing or opening a PR, when the user
+  runs /amplify-update-docs, or asks to "update the docs", "check the docs" or "does this need docs".
   It maps the diff to the user guide pages, the CHANGELOG, the troubleshooting page and the
   internal docs, edits what is stale, and reports what it checked and what it left alone.
 ---
 
-# circles-update-docs
+# amplify-update-docs
 
 The user guide is a website (Fumadocs, in `apps/docs`) whose pages are Markdown in
 `apps/docs/content/docs/`. It describes what the app does today, for a person using it. A change that
@@ -28,7 +28,7 @@ Docs are needed when the change does any of these:
 
 - adds, removes, renames or moves a screen, tab, button, menu item, setting or shortcut
 - changes a default, a limit, a message the user reads, or when something happens
-- changes what Circles sends to Claude, GitHub, Jira or Anthropic, or what it stores
+- changes what Amplify sends to Claude, GitHub, Jira or Anthropic, or what it stores
 - adds a new way something can fail, or removes one (troubleshooting)
 - changes setup, install, build or release steps
 
@@ -76,9 +76,9 @@ the order of the sidebar. A removed page leaves no dead links:
 
 ## 5. Verify
 
-- Run `pnpm --filter @circles/docs check`. It fails on a missing title, a `<` or `{` outside code, a link
+- Run `pnpm --filter @amplify/docs check`. It fails on a missing title, a `<` or `{` outside code, a link
   that would be broken on the site, an anchor that does not exist and a page missing from the order. For a
-  new page or a big change also run `pnpm --filter @circles/docs build`.
+  new page or a big change also run `pnpm --filter @amplify/docs build`.
 - Every setting key, command, shortcut and menu label you wrote exists in the code. Open the file.
 - Anything you could not confirm is written down as unconfirmed in the report; it is not guessed.
 
@@ -91,5 +91,5 @@ End with three lines:
 - **Not checked:** what you could not verify (for example behavior you did not see running).
 
 The docs change goes in the same commit as the code that caused it when it is small, or in its own
-`docs(...)` commit through `circles-atomic-commit` when it is large. The PR description's Changes
+`docs(...)` commit through `amplify-atomic-commit` when it is large. The PR description's Changes
 list names the docs files.

@@ -1,5 +1,5 @@
-import type { SkillGroup } from "@circles/bindings/SkillGroup";
-import type { SkillRow } from "@circles/bindings/SkillRow";
+import type { SkillGroup } from "@amplify/bindings/SkillGroup";
+import type { SkillRow } from "@amplify/bindings/SkillRow";
 
 export type SortId = "name" | "changed";
 
@@ -25,7 +25,7 @@ export function filtersSet(f: Filters): number {
 
 export type Parsed = { words: string[]; group?: string; project?: string; source?: string };
 
-/** `group:project`, `project:circles` and `source:~/.claude` narrow the list, and the rest of the
+/** `group:project`, `project:amplify` and `source:~/.claude` narrow the list, and the rest of the
  * words must each appear in the name or the description. */
 export function parseQuery(query: string): Parsed {
   const parsed: Parsed = { words: [] };

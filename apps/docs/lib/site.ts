@@ -1,7 +1,7 @@
 /** The name of the site, and the address it is served from. */
-export const siteName = "Circles";
+export const siteName = "Amplify";
 export const siteDescription =
-  "Circles runs Claude Code agents in parallel on your Mac, each in its own copy of your repository.";
+  "Amplify runs Claude Code agents in parallel on your Mac, each in its own copy of your repository.";
 
 type Env = Record<string, string | undefined>;
 

@@ -1,16 +1,16 @@
-import type { ScriptsInfo } from "@circles/bindings/ScriptsInfo";
-import type { Terminal } from "@circles/bindings/Terminal";
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
+import type { ScriptsInfo } from "@amplify/bindings/ScriptsInfo";
+import type { Terminal } from "@amplify/bindings/Terminal";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@circles/ui/components/tooltip";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@amplify/ui/components/tooltip";
+import { cn } from "@amplify/ui/utils";
 import {
   ChevronDownIcon,
   FileCogIcon,
@@ -90,7 +90,7 @@ function SetupEmpty({
           </p>
           <Button size="sm" variant="outline" onClick={() => openSettings(workspace.project_id)}>
             <FileCogIcon />
-            Open .circles/settings.toml
+            Open .amplify/settings.toml
           </Button>
         </>
       )}
@@ -113,11 +113,11 @@ function RunEmpty({
         <p className="text-sm text-muted-foreground">No run script yet.</p>
         <p className="max-w-xs text-xs text-muted-foreground">
           A run script starts your app for testing, for example{" "}
-          <code className="font-mono">pnpm dev --port $CIRCLES_PORT</code>.
+          <code className="font-mono">pnpm dev --port $AMPLIFY_PORT</code>.
         </p>
         <Button size="sm" variant="outline" onClick={() => openSettings(workspace.project_id)}>
           <FileCogIcon />
-          Open .circles/settings.toml
+          Open .amplify/settings.toml
         </Button>
       </div>
     );

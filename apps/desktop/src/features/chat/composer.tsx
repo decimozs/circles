@@ -1,7 +1,7 @@
-import type { Attachment } from "@circles/bindings/Attachment";
-import type { Session } from "@circles/bindings/Session";
-import { Button } from "@circles/ui/components/button";
-import { cn } from "@circles/ui/utils";
+import type { Attachment } from "@amplify/bindings/Attachment";
+import type { Session } from "@amplify/bindings/Session";
+import { Button } from "@amplify/ui/components/button";
+import { cn } from "@amplify/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowUpIcon, PaperclipIcon, SquareIcon, XIcon } from "lucide-react";
 import { type ClipboardEvent, type KeyboardEvent, useLayoutEffect, useRef, useState } from "react";

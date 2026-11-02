@@ -13,8 +13,8 @@ the same.
 
 ## Why not Claude Code's own `/btw`
 
-Claude Code's `/btw` draws an overlay on its terminal screen. Circles talks to it through its
-streaming interface, which has no screen, so there is no overlay to appear. Circles has to do the
+Claude Code's `/btw` draws an overlay on its terminal screen. Amplify talks to it through its
+streaming interface, which has no screen, so there is no overlay to appear. Amplify has to do the
 side question itself.
 
 ## Tested
@@ -79,7 +79,7 @@ Run with the real `claude` (2.1.295), in a scratch folder:
 - **A forked call can be slow on a huge chat.** The 60 s limit and Stop cover it.
 - **Another process per question.** It starts and ends with the question, nothing stays running.
 - **Claude Code changes its flags.** The runner is small and has one test that runs the real
-  program when `CIRCLES_REAL_CLAUDE` is set.
+  program when `AMPLIFY_REAL_CLAUDE` is set.
 
 ## Decisions for you
 

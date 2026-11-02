@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { GitPullRequestIcon, PlusIcon, XIcon } from "lucide-react";
 import { usePrs } from "./store";
 

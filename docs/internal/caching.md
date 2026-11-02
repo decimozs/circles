@@ -25,7 +25,7 @@ Measured on this Mac (971 transcripts, 790 MB, one of them 68 MB and growing as 
 
 What the code does today:
 
-1. **The scan cache lives in memory in the Rust process.** Each launch of Circles starts cold, so
+1. **The scan cache lives in memory in the Rust process.** Each launch of Amplify starts cold, so
    the first open of the dialog reads the whole history (4.6 s) behind a loading screen.
 2. **The result is cached per range and per environment in the React query cache.** Choosing
    another range, or another Claude folder, is a new key with no data, so the loading screen shows

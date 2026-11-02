@@ -25,7 +25,7 @@ pub fn all() -> Vec<ToolDef> {
     vec![
         ToolDef {
             name: "list_projects",
-            description: "List the projects in Circles: id, name, folder, base branch and number of live workspaces.",
+            description: "List the projects in Amplify: id, name, folder, base branch and number of live workspaces.",
             tier: Tier::Read,
             schema: schema(json!({}), &[]),
             repeat_safe: true,
@@ -261,7 +261,7 @@ pub fn all() -> Vec<ToolDef> {
         },
         ToolDef {
             name: "remove_project",
-            description: "Remove a project from Circles. Its repository on disk is not touched. It must have no live workspaces.",
+            description: "Remove a project from Amplify. Its repository on disk is not touched. It must have no live workspaces.",
             tier: Tier::Destructive,
             schema: schema(json!({ "project_id": id("The project.") }), &["project_id"]),
             repeat_safe: false,

@@ -43,7 +43,7 @@ pub struct AppState {
     pub terminals: Arc<Terminals>,
     /// Chats with Claude Code, one process per chat.
     pub sessions: Arc<SessionManager>,
-    /// Composers: manager agents that use Circles' tools.
+    /// Composers: manager agents that use Amplify' tools.
     pub composers: Arc<ComposerHub>,
     /// Cards agents show to ask for choices and details.
     pub genui: Arc<crate::genui::service::GenuiService>,

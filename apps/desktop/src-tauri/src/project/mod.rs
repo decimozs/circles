@@ -1,4 +1,4 @@
-//! Projects: the repositories Circles manages. Adding a project only records it. Nothing in
+//! Projects: the repositories Amplify manages. Adding a project only records it. Nothing in
 //! the repository changes, and removing a project never deletes the repository.
 
 use std::path::{Path, PathBuf};
@@ -24,7 +24,7 @@ pub struct Project {
     pub id: String,
     pub name: String,
     pub path: String,
-    /// The repository folder exists. False after it was moved or deleted outside Circles.
+    /// The repository folder exists. False after it was moved or deleted outside Amplify.
     pub path_exists: bool,
     pub default_branch: String,
     pub remote_url: Option<String>,
@@ -235,7 +235,7 @@ impl ProjectService {
         })
     }
 
-    /// Clones a GitHub repository into `~/circles/repos/` and adds it.
+    /// Clones a GitHub repository into `~/amplify/repos/` and adds it.
     pub async fn add_github(&self, reference: &str) -> AppResult<Project> {
         let (owner, name) = github::parse_repo_ref(reference)
             .ok_or_else(|| invalid("Enter a repository as owner/name or paste its GitHub URL."))?;
@@ -308,7 +308,7 @@ impl ProjectService {
         }))
     }
 
-    /// Creates a new repository in `~/circles/repos/<name>` with an initial commit.
+    /// Creates a new repository in `~/amplify/repos/<name>` with an initial commit.
     pub async fn quick_start(&self, name: &str) -> AppResult<Project> {
         let name = validate_repo_name(name)?;
         let dest = self.paths.repos_dir.join(name);
@@ -333,7 +333,7 @@ impl ProjectService {
         }
     }
 
-    /// Removes the project from Circles. The repository on disk is never touched.
+    /// Removes the project from Amplify. The repository on disk is never touched.
     pub fn remove(&self, id: &str) -> AppResult<()> {
         self.remove_with(id, false)
     }

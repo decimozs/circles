@@ -1,5 +1,5 @@
 //! A small MCP client over Streamable HTTP: JSON-RPC in a POST, the answer as JSON or as an event
-//! stream. Only what Circles needs: start a session, list tools, call a tool.
+//! stream. Only what Amplify needs: start a session, list tools, call a tool.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Mutex;
@@ -27,7 +27,7 @@ impl McpError {
             Self::SessionLost => "The connection to Atlassian was lost.".into(),
             Self::Network(e) => format!("Could not reach Atlassian: {e}"),
             Self::Protocol(e) => {
-                format!("Atlassian answered in a way Circles does not understand: {e}")
+                format!("Atlassian answered in a way Amplify does not understand: {e}")
             }
         }
     }
@@ -52,7 +52,7 @@ impl McpClient {
         let http = reqwest::Client::builder()
             .timeout(Duration::from_secs(60))
             .redirect(reqwest::redirect::Policy::none())
-            .user_agent("circles")
+            .user_agent("amplify")
             .build()
             .map_err(|e| McpError::Network(e.without_url().to_string()))?;
         Ok(Self {
@@ -165,7 +165,7 @@ impl McpClient {
             json!({
                 "protocolVersion": "2025-06-18",
                 "capabilities": {},
-                "clientInfo": { "name": "circles", "version": env!("CARGO_PKG_VERSION") },
+                "clientInfo": { "name": "amplify", "version": env!("CARGO_PKG_VERSION") },
             }),
         )
         .await?;

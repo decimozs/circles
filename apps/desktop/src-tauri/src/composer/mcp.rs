@@ -1,4 +1,4 @@
-//! The tool server Claude Code starts: Circles itself, run with `--circles-mcp`. It speaks MCP over
+//! The tool server Claude Code starts: Amplify itself, run with `--amplify-mcp`. It speaks MCP over
 //! stdin and stdout and passes every call to the running app over the private socket. It has no
 //! tools of its own and no access to anything else.
 
@@ -25,7 +25,7 @@ impl Backend for SocketBackend {
     fn request(&self, mut request: Value) -> Result<Value, String> {
         request["token"] = json!(self.token);
         request["session"] = json!(self.session);
-        ask(&self.socket, &request).map_err(|e| format!("Circles is not reachable: {e}"))
+        ask(&self.socket, &request).map_err(|e| format!("Amplify is not reachable: {e}"))
     }
 }
 
@@ -42,7 +42,7 @@ pub fn handle(line: &str, backend: &dyn Backend) -> Option<Value> {
                 .as_str()
                 .unwrap_or("2024-11-05"),
             "capabilities": { "tools": {} },
-            "serverInfo": { "name": "circles", "version": env!("CARGO_PKG_VERSION") },
+            "serverInfo": { "name": "amplify", "version": env!("CARGO_PKG_VERSION") },
         })),
         "ping" => Ok(json!({})),
         "tools/list" => match backend.request(json!({ "method": "list" })) {
@@ -92,12 +92,12 @@ pub fn handle(line: &str, backend: &dyn Backend) -> Option<Value> {
 /// Runs until stdin closes. Returns the exit code.
 pub fn run_stdio() -> i32 {
     let (Some(socket), Some(token), Some(session)) = (
-        std::env::var_os("CIRCLES_SOCKET"),
-        std::env::var("CIRCLES_TOKEN").ok(),
-        std::env::var("CIRCLES_SESSION_ID").ok(),
+        std::env::var_os("AMPLIFY_SOCKET"),
+        std::env::var("AMPLIFY_TOKEN").ok(),
+        std::env::var("AMPLIFY_SESSION_ID").ok(),
     ) else {
         eprintln!(
-            "circles --circles-mcp needs CIRCLES_SOCKET, CIRCLES_TOKEN and CIRCLES_SESSION_ID."
+            "amplify --amplify-mcp needs AMPLIFY_SOCKET, AMPLIFY_TOKEN and AMPLIFY_SESSION_ID."
         );
         return 2;
     };
@@ -151,7 +151,7 @@ mod tests {
     struct Down;
     impl Backend for Down {
         fn request(&self, _r: Value) -> Result<Value, String> {
-            Err("Circles is not reachable: gone".into())
+            Err("Amplify is not reachable: gone".into())
         }
     }
 
@@ -168,7 +168,7 @@ mod tests {
         .unwrap();
         assert_eq!(r["id"], 7);
         assert_eq!(r["result"]["protocolVersion"], "2025-03-26");
-        assert_eq!(r["result"]["serverInfo"]["name"], "circles");
+        assert_eq!(r["result"]["serverInfo"]["name"], "amplify");
         assert!(r["result"]["capabilities"]["tools"].is_object());
     }
 

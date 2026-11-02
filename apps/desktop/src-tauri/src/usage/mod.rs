@@ -1,7 +1,7 @@
 //! How much Claude Code has been used: tokens and an estimate of what they would cost on the API.
 //!
 //! The numbers come from Claude Code's own transcripts (`scan`), so they cover every conversation
-//! on this Mac, including those that were not started from Circles. Cost is estimated from list
+//! on this Mac, including those that were not started from Amplify. Cost is estimated from list
 //! prices (`prices`) and is not what a subscription is billed.
 
 pub mod prices;
@@ -57,7 +57,7 @@ pub struct UsageModel {
     #[ts(type = "number")]
     pub tokens: u64,
     pub messages: u32,
-    /// False when Circles has no price for the model: its tokens are counted, its cost is not.
+    /// False when Amplify has no price for the model: its tokens are counted, its cost is not.
     pub priced: bool,
 }
 

@@ -36,7 +36,7 @@ impl OAuthError {
             Self::Network(e) => format!("Could not reach Atlassian: {e}"),
             Self::Metadata(e) => format!("Atlassian's sign-in is not set up as expected: {e}"),
             Self::Registration(e) => format!(
-                "Atlassian did not accept Circles as an app ({e}). Your organisation may block it. You can use an API token instead."
+                "Atlassian did not accept Amplify as an app ({e}). Your organisation may block it. You can use an API token instead."
             ),
             Self::Denied(e) => format!("Sign-in was refused: {e}"),
             Self::Timeout => "Sign-in took too long. Try again.".into(),
@@ -72,7 +72,7 @@ pub fn client() -> Result<reqwest::Client, OAuthError> {
     reqwest::Client::builder()
         .timeout(Duration::from_secs(30))
         .redirect(reqwest::redirect::Policy::none())
-        .user_agent("circles")
+        .user_agent("amplify")
         .build()
         .map_err(net)
 }
@@ -218,7 +218,7 @@ pub fn pkce() -> (String, String) {
     (verifier, challenge)
 }
 
-/// Registers Circles as a public client for this redirect address.
+/// Registers Amplify as a public client for this redirect address.
 pub async fn register(
     http: &reqwest::Client,
     endpoint: &str,
@@ -227,7 +227,7 @@ pub async fn register(
     let response = http
         .post(endpoint)
         .json(&json!({
-            "client_name": "Circles",
+            "client_name": "Amplify",
             "redirect_uris": [redirect_uri],
             "grant_types": ["authorization_code", "refresh_token"],
             "response_types": ["code"],
@@ -280,8 +280,8 @@ pub fn authorize_url(
     Ok(url.to_string())
 }
 
-const DONE_PAGE: &str = "<!doctype html><meta charset=utf-8><title>Circles</title><body style=\"font:16px system-ui;margin:3rem\"><h2>You are signed in</h2><p>You can close this tab and go back to Circles.</p>";
-const FAILED_PAGE: &str = "<!doctype html><meta charset=utf-8><title>Circles</title><body style=\"font:16px system-ui;margin:3rem\"><h2>Sign-in did not finish</h2><p>Go back to Circles to see why.</p>";
+const DONE_PAGE: &str = "<!doctype html><meta charset=utf-8><title>Amplify</title><body style=\"font:16px system-ui;margin:3rem\"><h2>You are signed in</h2><p>You can close this tab and go back to Amplify.</p>";
+const FAILED_PAGE: &str = "<!doctype html><meta charset=utf-8><title>Amplify</title><body style=\"font:16px system-ui;margin:3rem\"><h2>Sign-in did not finish</h2><p>Go back to Amplify to see why.</p>";
 
 async fn respond(socket: &mut tokio::net::TcpStream, status: &str, body: &str) {
     let reply = format!(

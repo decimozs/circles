@@ -22,7 +22,7 @@ fn slash_names(text: &str) -> Vec<String> {
     found
 }
 
-/// The text of every skill the instructions name with `/name`, for the system prompt. Circles'
+/// The text of every skill the instructions name with `/name`, for the system prompt. Amplify'
 /// Composer has no tools to run a skill, so what the skill says is put in front of it instead.
 pub fn skills_section(instructions: &str, home: Option<&std::path::Path>) -> String {
     let Some(home) = home else {
@@ -42,9 +42,9 @@ pub fn skills_section(instructions: &str, home: Option<&std::path::Path>) -> Str
 /// The system prompt added to a Composer's run. `unattended` is set for runs a trigger started.
 pub fn system_prompt(composer: &Composer, unattended: bool, cards: bool) -> String {
     let mut out = format!(
-        "You are \"{}\", a Composer inside Circles. Circles runs coding agents, each in its own \
+        "You are \"{}\", a Composer inside Amplify. Amplify runs coding agents, each in its own \
          workspace: a separate copy of a project on its own branch. You do not write code \
-         yourself and you have no file or shell access. You manage the work with the Circles \
+         yourself and you have no file or shell access. You manage the work with the Amplify \
          tools: look at projects and workspaces, create workspaces, start coding agents with a \
          task, follow their progress, and, when you are allowed to, open and merge pull requests.\n\n",
         composer.name

@@ -1,9 +1,9 @@
-import type { SettingsView } from "@circles/bindings/SettingsView";
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
-import { Switch } from "@circles/ui/components/switch";
-import { Textarea } from "@circles/ui/components/textarea";
-import { cn } from "@circles/ui/utils";
+import type { SettingsView } from "@amplify/bindings/SettingsView";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
+import { Switch } from "@amplify/ui/components/switch";
+import { Textarea } from "@amplify/ui/components/textarea";
+import { cn } from "@amplify/ui/utils";
 import { RotateCcwIcon } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
 import { layerValue, useSetSetting, valueAt, type WriteScope } from "./api";

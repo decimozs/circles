@@ -224,12 +224,12 @@ mod tests {
     #[test]
     fn branch_checked_out_names_the_worktree() {
         let e = classify(
-            "fatal: 'feature' is already checked out at '/Users/x/circles/workspaces/p/oslo'",
+            "fatal: 'feature' is already checked out at '/Users/x/amplify/workspaces/p/oslo'",
         );
         assert_eq!(e.kind, GitErrorKind::BranchCheckedOut);
         assert_eq!(
             e.path.as_deref(),
-            Some("/Users/x/circles/workspaces/p/oslo")
+            Some("/Users/x/amplify/workspaces/p/oslo")
         );
         let e = classify("fatal: 'feature' is already used by worktree at '/tmp/w'");
         assert_eq!(e.kind, GitErrorKind::BranchCheckedOut);

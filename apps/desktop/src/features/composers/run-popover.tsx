@@ -1,13 +1,13 @@
-import type { Composer } from "@circles/bindings/Composer";
-import { Button } from "@circles/ui/components/button";
+import type { Composer } from "@amplify/bindings/Composer";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "@circles/ui/components/popover";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@amplify/ui/components/popover";
+import { cn } from "@amplify/ui/utils";
 import {
   CheckIcon,
   ChevronDownIcon,

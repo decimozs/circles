@@ -54,8 +54,8 @@ use crate::state::AppState;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    // Claude Code starts Circles again as the tool server of a Composer. That is all it does then.
-    if std::env::args().any(|a| a == "--circles-mcp") {
+    // Claude Code starts Amplify again as the tool server of a Composer. That is all it does then.
+    if std::env::args().any(|a| a == "--amplify-mcp") {
         std::process::exit(composer::mcp::run_stdio());
     }
     tauri::Builder::default()
@@ -93,7 +93,7 @@ pub fn run() {
                 redactor.clone(),
                 &logging::level_from_settings(&paths.settings_file),
             )?;
-            tracing::info!(version = env!("CARGO_PKG_VERSION"), "circles starting");
+            tracing::info!(version = env!("CARGO_PKG_VERSION"), "amplify starting");
 
             let db = Arc::new(Db::open(&paths.db_file)?);
             let report = process::reap_orphans(&db, &process::SystemOps)?;
@@ -132,7 +132,7 @@ pub fn run() {
             app.state::<AppState>().terminals.start_persisting();
             {
                 let state = app.state::<AppState>();
-                // Notifications come from Circles itself when they can.
+                // Notifications come from Amplify itself when they can.
                 system::set_app(app.handle().clone());
                 // Cards agents show: events reach the window, and what waited before is over.
                 state

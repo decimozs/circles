@@ -1,6 +1,6 @@
 # Composers: Phase Plan
 
-A **Composer** is a manager agent inside Circles. You give it a goal, and it uses Circles' own actions to create projects and workspaces, start coding agents in them, watch their progress, and report back. The coding agents are the same Claude Code agents Circles already runs. The Composer decides what to start and when.
+A **Composer** is a manager agent inside Amplify. You give it a goal, and it uses Amplify' own actions to create projects and workspaces, start coding agents in them, watch their progress, and report back. The coding agents are the same Claude Code agents Amplify already runs. The Composer decides what to start and when.
 
 This is a plan, not built yet. It follows the same rules as `docs/phases/`: each phase is a separate unit of work, stop for review after each one, and nothing is committed or pushed unless the owner asks.
 
@@ -9,7 +9,7 @@ This is a plan, not built yet. It follows the same rules as `docs/phases/`: each
 | Topic | Proposal |
 |---|---|
 | Name | Composer (a definition) and Run (one execution of it) |
-| What it is | A tool-calling loop over Circles' own services. It does not edit files itself. |
+| What it is | A tool-calling loop over Amplify' own services. It does not edit files itself. |
 | Engine | The loop is written in Rust, inside the app. No LangGraph or other agent framework. |
 | Tools | One typed **tool registry** is the source of truth. Everything else is an adapter over it. |
 | Brain for now | **Claude only** (decided). Claude Code, given the registry through a small local MCP adapter. No API keys needed. |

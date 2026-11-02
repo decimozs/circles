@@ -10,7 +10,7 @@ C0 to C3 and C5 to C7 are built. C4 (other model providers) is deferred by decis
 | C1 | 21 typed tools in four tiers, one policy, one dispatcher, an audit log | `apps/desktop/src-tauri/src/tools/`, `composer/dispatch.rs`, `composer/runtime.rs` |
 | C2 | Composers with a hidden scratch workspace, runs as chats, the MCP helper and tool socket, approvals, create and edit dialog, sidebar group, Composer page and right pane | `apps/desktop/src-tauri/src/composer/`, `apps/desktop/src/features/composers/` |
 | C3 | Fleet tab, parent links and badges on workspaces, limits (steps, agents at once and in total, minutes, spend), stop one agent, stop all | same, plus `commands/composer.rs` |
-| C5 | Four templates, shared Composer files in `.circles/composers/*.toml` (import and export), notes kept between runs, run history (closed runs in the chat history) | `templates.ts`, `composer/shared.rs` |
+| C5 | Four templates, shared Composer files in `.amplify/composers/*.toml` (import and export), notes kept between runs, run history (closed runs in the chat history) | `templates.ts`, `composer/shared.rs` |
 | C6 | Schedules (daily time, every N minutes), pull request and failing-check triggers, daily cap, approvals inbox on the Composers home and a count on the sidebar item, notifications, menu bar item, keep awake, open at login, global pause | `composer/triggers.rs`, `awake.rs`, `tray.rs` |
 | C7 | Audit page with search and CSV export, kill switch (button, menu bar item, Cmd+Shift+.), hostile-input tests, defused fake closing tags, accessibility tests | `audit-page.tsx`, tests in `dispatch.rs` |
 
@@ -23,8 +23,8 @@ C0 to C3 and C5 to C7 are built. C4 (other model providers) is deferred by decis
 5. **Say no.** Ask it to archive that workspace. Press **Deny**. It says it was declined and does not try again.
 6. **Limits.** Edit the Composer: set "Agents at once" to 1 and ask for three agents. The second is refused with a reason until the first is done.
 7. **Pause and stop.** On the Composers home press **Pause Composers**, then ask for anything: every call is refused. Resume. Press Cmd+Shift+. while an agent works: after you confirm, the run and its agents stop.
-8. **Unattended.** In Details, add a schedule "every 5 minutes", then keep Circles open. A run starts by itself (it has a clock icon in the sidebar). Anything set to ask waits as an approval. In Settings > Composers, turn on "Keep running in the menu bar", restart Circles, close the window and see it keep going.
-9. **Shared file.** Put `.circles/composers/reviewer.toml` in a project (`name`, `instructions`, optionally `tools` and `[limits]`). It appears under "In your repositories" on the Composers home. Autonomy is never read from it.
+8. **Unattended.** In Details, add a schedule "every 5 minutes", then keep Amplify open. A run starts by itself (it has a clock icon in the sidebar). Anything set to ask waits as an approval. In Settings > Composers, turn on "Keep running in the menu bar", restart Amplify, close the window and see it keep going.
+9. **Shared file.** Put `.amplify/composers/reviewer.toml` in a project (`name`, `instructions`, optionally `tools` and `[limits]`). It appears under "In your repositories" on the Composers home. Autonomy is never read from it.
 10. **Audit.** Open the Audit log from the Composers home: every call, search and Export CSV.
 
 Tests: `scripts/test-all.sh`. The real-Claude checks cost a few cents and are off by default:
@@ -38,8 +38,8 @@ Things that work but are not what the plan promised, or not yet checked:
 2. **Per-project autonomy** is not built. Autonomy is per Composer. A Composer can only be limited to a list of projects.
 3. **Menu bar mode takes effect on the next start**, and closing the window then only hides it. The item uses the app icon, not a template image, so it may look heavy in the menu bar. Not seen on screen.
 4. **Open at login** uses the launch agent plugin. Not tried on a Mac that had never had it.
-5. **Keep awake** runs `caffeinate -i`. It stops when the run ends or Circles exits. A Mac with the lid closed still sleeps.
-6. **Schedules use the Mac's local time at the moment** and ignore daylight saving changes on the day they happen. A run missed while Circles was closed still starts if it is under 12 hours late, once.
+5. **Keep awake** runs `caffeinate -i`. It stops when the run ends or Amplify exits. A Mac with the lid closed still sleeps.
+6. **Schedules use the Mac's local time at the moment** and ignore daylight saving changes on the day they happen. A run missed while Amplify was closed still starts if it is under 12 hours late, once.
 7. **Trigger polling** asks GitHub every 2 minutes per trigger. The first look only records what exists, so old pull requests do not start runs. A failing-check trigger fires once per pull request and set of failing checks.
 8. **The tool server token** is in a file only this user can read (`composers/run/<run>.mcp.json`, mode 0600) and not on the command line. Another process of the same user can read it.
 9. **A call that is waiting for approval has no end** other than an answer, the run stopping, a pause, or the app restarting (then it expires). MCP's own timeout is set to 24 hours.

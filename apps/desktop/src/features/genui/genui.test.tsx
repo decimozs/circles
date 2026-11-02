@@ -1,5 +1,5 @@
-import type { Component } from "@circles/bindings/Component";
-import type { StoredCard } from "@circles/bindings/StoredCard";
+import type { Component } from "@amplify/bindings/Component";
+import type { StoredCard } from "@amplify/bindings/StoredCard";
 import { screen, waitFor, within } from "@testing-library/react";
 import axe from "axe-core";
 import { describe, expect, it } from "vitest";

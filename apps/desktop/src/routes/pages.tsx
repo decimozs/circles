@@ -1,11 +1,11 @@
-import type { AppInfo } from "@circles/bindings/AppInfo";
-import { Button } from "@circles/ui/components/button";
+import type { AppInfo } from "@amplify/bindings/AppInfo";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useParams } from "react-router";
 import { ChatPanel } from "@/features/chat/chat-panel";
@@ -137,7 +137,7 @@ export function DebugPage() {
               App
             </h2>
             <p>
-              Circles {info.version} on {info.platform} ({info.arch})
+              Amplify {info.version} on {info.platform} ({info.arch})
             </p>
             <p className="text-muted-foreground">
               Database schema v{info.db.schema_version}, journal mode {info.db.journal_mode}

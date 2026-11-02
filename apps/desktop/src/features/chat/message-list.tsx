@@ -1,6 +1,6 @@
-import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
-import type { PermissionRequest } from "@circles/bindings/PermissionRequest";
-import { cn } from "@circles/ui/utils";
+import type { PermissionDecision } from "@amplify/bindings/PermissionDecision";
+import type { PermissionRequest } from "@amplify/bindings/PermissionRequest";
+import { cn } from "@amplify/ui/utils";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDownIcon, Loader2Icon } from "lucide-react";
 import {

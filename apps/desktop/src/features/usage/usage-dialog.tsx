@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogTitle } from "@circles/ui/components/dialog";
-import { cn } from "@circles/ui/utils";
+import { Dialog, DialogContent, DialogTitle } from "@amplify/ui/components/dialog";
+import { cn } from "@amplify/ui/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon, RefreshCwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -21,7 +21,7 @@ const VIEWS: { id: View; label: string }[] = [
   { id: "limits", label: "Limits" },
 ];
 
-const REMEMBER = "circles.usage.range";
+const REMEMBER = "amplify.usage.range";
 
 function savedRange(): RangeId {
   try {

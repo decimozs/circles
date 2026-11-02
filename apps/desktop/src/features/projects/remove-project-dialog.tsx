@@ -1,5 +1,5 @@
-import type { Project } from "@circles/bindings/Project";
-import { Button } from "@circles/ui/components/button";
+import type { Project } from "@amplify/bindings/Project";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +7,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useRemoveProject } from "@/features/projects/api";
@@ -52,7 +52,7 @@ export function RemoveProjectDialog({
         <DialogHeader>
           <DialogTitle>Remove {project.name}?</DialogTitle>
           <DialogDescription>
-            Removes the project from Circles. Your repository is not touched.
+            Removes the project from Amplify. Your repository is not touched.
             <span className="mt-1 block font-mono text-xs break-all">{project.path}</span>
           </DialogDescription>
         </DialogHeader>
@@ -67,7 +67,7 @@ export function RemoveProjectDialog({
                 [
                   "keep",
                   "Keep the workspaces",
-                  "Circles stops showing them. Their folders stay on your Mac, with everything in them.",
+                  "Amplify stops showing them. Their folders stay on your Mac, with everything in them.",
                 ],
                 [
                   "delete",

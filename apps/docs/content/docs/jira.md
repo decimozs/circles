@@ -3,16 +3,16 @@ title: "Jira"
 description: "Let chats and Composers read and work with Jira Cloud."
 ---
 
-Circles can let every chat, and every Composer that you allow, read and work with Jira Cloud. Jira Server and Data Center are not supported.
+Amplify can let every chat, and every Composer that you allow, read and work with Jira Cloud. Jira Server and Data Center are not supported.
 
 ## Connecting
 
 Open Settings > Integrations and press **Connect Jira**.
 
-- **Sign in with Atlassian** opens your browser. Circles asks for Jira read, write and search access, plus offline access so the sign-in can be renewed. It never asks to delete or manage anything. If your account has several Jira sites, you pick one.
-- **Use an API token instead** takes a site (`name.atlassian.net`), your email and an API token. Circles checks them before saving. An API token has every permission of the account it belongs to, so a token of a dedicated or limited account is safer.
+- **Sign in with Atlassian** opens your browser. Amplify asks for Jira read, write and search access, plus offline access so the sign-in can be renewed. It never asks to delete or manage anything. If your account has several Jira sites, you pick one.
+- **Use an API token instead** takes a site (`name.atlassian.net`), your email and an API token. Amplify checks them before saving. An API token has every permission of the account it belongs to, so a token of a dedicated or limited account is safer.
 
-Either way, the secret is kept in a file of its own in Circles' data folder (`integration-secrets.json`), readable only by you, and not in the macOS Keychain, so macOS never asks for your password for it. It is never in a settings file, the database, a log or an export, and Claude never sees it: agents ask Circles, and Circles calls Jira. The Jira card shows the site, the account and whether the connection works. If a sign-in can no longer be renewed, it asks you to sign in again. **Disconnect** removes the saved sign-in from your Mac but does not revoke it at Atlassian. Revoke it at id.atlassian.com under connected apps if you want it gone there too.
+Either way, the secret is kept in a file of its own in Amplify' data folder (`integration-secrets.json`), readable only by you, and not in the macOS Keychain, so macOS never asks for your password for it. It is never in a settings file, the database, a log or an export, and Claude never sees it: agents ask Amplify, and Amplify calls Jira. The Jira card shows the site, the account and whether the connection works. If a sign-in can no longer be renewed, it asks you to sign in again. **Disconnect** removes the saved sign-in from your Mac but does not revoke it at Atlassian. Revoke it at id.atlassian.com under connected apps if you want it gone there too.
 
 Your organization can block the sign-in redirect or the app. Then use the API token form.
 

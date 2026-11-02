@@ -1,6 +1,6 @@
-import type { ActionResult } from "@circles/bindings/ActionResult";
-import type { SetupItem } from "@circles/bindings/SetupItem";
-import { Button } from "@circles/ui/components/button";
+import type { ActionResult } from "@amplify/bindings/ActionResult";
+import type { SetupItem } from "@amplify/bindings/SetupItem";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -8,8 +8,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { cn } from "@amplify/ui/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   CheckCircle2Icon,
@@ -102,7 +102,7 @@ function SetupRow({ item, onChanged }: { item: SetupItem; onChanged: () => void 
   );
 }
 
-/** Shown on the first launch: what Circles needs, what agents may do, and the first project. */
+/** Shown on the first launch: what Amplify needs, what agents may do, and the first project. */
 export function WelcomeDialog() {
   const done = useOnboarding((s) => s.done);
   const armed = useOnboarding((s) => s.armed);
@@ -147,7 +147,7 @@ export function WelcomeDialog() {
     <Dialog open={!done && armed} onOpenChange={() => {}}>
       <DialogContent showCloseButton={false} className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Welcome to Circles</DialogTitle>
+          <DialogTitle>Welcome to Amplify</DialogTitle>
           <DialogDescription>
             Run several coding agents side by side, each in its own copy of your repository.
             Everything stays on this Mac.
@@ -155,9 +155,9 @@ export function WelcomeDialog() {
         </DialogHeader>
 
         <div className="flex max-h-[55vh] flex-col gap-4 overflow-y-auto pr-1">
-          <section aria-label="What Circles needs">
+          <section aria-label="What Amplify needs">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium">What Circles needs</h3>
+              <h3 className="text-sm font-medium">What Amplify needs</h3>
               <Button
                 variant="ghost"
                 size="sm"
@@ -196,7 +196,7 @@ export function WelcomeDialog() {
           <div className="flex flex-col gap-2">
             <p>
               Agents run with your user's permissions. They can read and change files and run
-              commands on this Mac. Each works in its own workspace folder, and Circles asks before
+              commands on this Mac. Each works in its own workspace folder, and Amplify asks before
               risky steps unless you change that in Settings. Full access is off by default.
             </p>
             <label className="flex items-center gap-2 text-sm font-medium">

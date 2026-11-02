@@ -24,7 +24,7 @@ export const useCreatePrefs = create<CreatePrefs>()(
       set: (patch) => set(patch),
     }),
     {
-      name: "circles-create-prefs",
+      name: "amplify-create-prefs",
       partialize: (s) => ({
         projectId: s.projectId,
         model: s.model,

@@ -1,5 +1,5 @@
 //! Workspace lifecycle: create, archive, restore, rename, delete, sections, and the startup
-//! reconcile. A workspace is a git worktree on its own branch. Circles never deletes a branch
+//! reconcile. A workspace is a git worktree on its own branch. Amplify never deletes a branch
 //! or uncommitted work unless the user explicitly asks.
 
 use std::collections::{HashMap, HashSet};
@@ -329,10 +329,10 @@ impl WorkspaceService {
         });
     }
 
-    /// Makes commits in a repository that Circles cloned under the GitHub account that owns it.
+    /// Makes commits in a repository that Amplify cloned under the GitHub account that owns it.
     ///
     /// Git picks the author from `~/.gitconfig`, and a person with a work and a personal account
-    /// switches between them by folder. A clone in Circles' own folder matches neither, so it got
+    /// switches between them by folder. A clone in Amplify' own folder matches neither, so it got
     /// the default one, whichever account owned the repository. The identity is written to the
     /// repository's own config, which every workspace of it shares. A repository the person
     /// added from their own folder, or one that already sets an identity, is left alone.
@@ -526,7 +526,7 @@ impl WorkspaceService {
             .join(workspace_id)
     }
 
-    /// A path Circles created and may delete: inside `~/circles/workspaces`, no `..`.
+    /// A path Amplify created and may delete: inside `~/amplify/workspaces`, no `..`.
     fn is_managed(&self, path: &Path) -> bool {
         path.starts_with(&self.projects.paths.workspaces_dir)
             && path != self.projects.paths.workspaces_dir
@@ -1283,7 +1283,7 @@ impl WorkspaceService {
                     }
                     .into());
                 }
-                git.commit_all(&path, "WIP: archived from Circles").await?;
+                git.commit_all(&path, "WIP: archived from Amplify").await?;
                 self.add_event(id, "info", "Committed uncommitted changes before archiving");
             }
 
@@ -1480,7 +1480,7 @@ impl WorkspaceService {
         self.delete_inner(id, false, true).await
     }
 
-    /// Lets a workspace go without touching its folder. Circles stops tracking it, and the folder
+    /// Lets a workspace go without touching its folder. Amplify stops tracking it, and the folder
     /// stays on disk as the working copy it was, still a worktree of the repository.
     pub async fn release(&self, id: &str) -> AppResult<()> {
         let _workspace_lock = self.locks.acquire(id).await;
@@ -1522,7 +1522,7 @@ impl WorkspaceService {
         self.projects
             .db
             .write(|c| c.execute("DELETE FROM workspaces WHERE id = ?1", params![id]))?;
-        // Tidy up the project's folder under ~/circles/workspaces once it holds nothing. This
+        // Tidy up the project's folder under ~/amplify/workspaces once it holds nothing. This
         // only removes an empty directory, so it can never delete anything of value.
         if let Some(parent) = path.parent() {
             if self.is_managed(parent) {
@@ -1582,13 +1582,13 @@ impl WorkspaceService {
                         self.add_event(
                             &ws.id,
                             "warning",
-                            "Setup was interrupted when Circles quit. Run it again from the Setup tab.",
+                            "Setup was interrupted when Amplify quit. Run it again from the Setup tab.",
                         );
                         self.set_state(&ws.id, WorkspaceState::Ready, None)?;
                         report.recovered += 1;
                     }
                     WorkspaceState::Creating | WorkspaceState::SetupRunning => {
-                        self.mark_errored(&ws, "Setup was interrupted when Circles quit. Restore the workspace to try again.");
+                        self.mark_errored(&ws, "Setup was interrupted when Amplify quit. Restore the workspace to try again.");
                         report.errored += 1;
                     }
                     WorkspaceState::Working | WorkspaceState::Blocked => {
@@ -1876,7 +1876,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn a_clone_of_circles_commits_as_the_account_that_owns_it() {
+    async fn a_clone_of_amplify_commits_as_the_account_that_owns_it() {
         let fx = fixture().await;
         let repo = fx.svc.projects.paths.repos_dir.join("owned");
         repo_with_commit(&fx.svc.projects.git, &repo).await;
@@ -2476,7 +2476,7 @@ mod tests {
             .log(&fx.repo, &ws.branch, 1)
             .await
             .unwrap();
-        assert_eq!(log[0].subject, "WIP: archived from Circles");
+        assert_eq!(log[0].subject, "WIP: archived from Amplify");
 
         fx.svc.restore(&ws.id).await.unwrap();
         assert_eq!(
@@ -2825,7 +2825,7 @@ mod tests {
             .db
             .write(|c| c.execute("DELETE FROM kv", []))
             .unwrap();
-        assert_eq!(fx.svc.branch_prefix(&fx.repo).await, "circles");
+        assert_eq!(fx.svc.branch_prefix(&fx.repo).await, "amplify");
 
         sh(&fx.repo, &["config", "user.name", "Marlon Martin"]);
         assert_eq!(fx.svc.branch_prefix(&fx.repo).await, "marlon-martin");
@@ -3470,9 +3470,9 @@ mod tests {
 
         let (ctx, _) = fx.svc.context_for(&a.id).unwrap();
         let vars: std::collections::BTreeMap<_, _> = ctx.env.into_iter().collect();
-        assert_eq!(vars["CIRCLES_PORT"], pa.to_string());
-        assert_eq!(vars["CIRCLES_WORKSPACE_PATH"], a.path);
-        assert_eq!(vars["CIRCLES_ROOT_PATH"], fx.project.path);
+        assert_eq!(vars["AMPLIFY_PORT"], pa.to_string());
+        assert_eq!(vars["AMPLIFY_WORKSPACE_PATH"], a.path);
+        assert_eq!(vars["AMPLIFY_ROOT_PATH"], fx.project.path);
 
         fx.svc.archive(&a.id, true).await.unwrap();
         assert_eq!(
@@ -3495,7 +3495,7 @@ mod tests {
         let ws = fx.svc.create(&fx.project.id, None).await.unwrap();
         ports::release(&fx.svc.projects.db, &ws.id).unwrap();
         let (ctx, _) = fx.svc.context_for(&ws.id).unwrap();
-        assert!(ctx.env.iter().any(|(k, _)| k == "CIRCLES_PORT"));
+        assert!(ctx.env.iter().any(|(k, _)| k == "AMPLIFY_PORT"));
         assert!(ports::get(&fx.svc.projects.db, &ws.id).unwrap().is_some());
     }
 
@@ -3514,7 +3514,7 @@ mod tests {
         let fx = fixture().await;
         write_settings(
             &fx,
-            "[scripts]\nsetup = \"echo $CIRCLES_PORT $MY_VAR > setup-env.txt; echo installing\"\n[environment_variables]\nMY_VAR = \"custom\"\n",
+            "[scripts]\nsetup = \"echo $AMPLIFY_PORT $MY_VAR > setup-env.txt; echo installing\"\n[environment_variables]\nMY_VAR = \"custom\"\n",
         );
         let ws = fx.svc.create(&fx.project.id, None).await.unwrap();
         assert_eq!(
@@ -3650,7 +3650,7 @@ mod tests {
         write_settings(
             &fx,
             &format!(
-                "[scripts]\narchive = \"echo $CIRCLES_PORT $CIRCLES_WORKSPACE_NAME > {} && test -d \\\"$CIRCLES_WORKSPACE_PATH\\\"\"\n",
+                "[scripts]\narchive = \"echo $AMPLIFY_PORT $AMPLIFY_WORKSPACE_NAME > {} && test -d \\\"$AMPLIFY_WORKSPACE_PATH\\\"\"\n",
                 marker.display()
             ),
         );

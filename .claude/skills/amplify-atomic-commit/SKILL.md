@@ -1,7 +1,7 @@
 ---
-name: circles-atomic-commit
+name: amplify-atomic-commit
 description: >-
-  Use for EVERY commit in the Circles repo, including an explicit "commit this". Commits are atomic
+  Use for EVERY commit in the Amplify repo, including an explicit "commit this". Commits are atomic
   conventional-commit units: one logical change per commit, independently revertible, with a
   why-not-what body, the ticket key in the subject, exact-path staging, the personal identity and
   signature, and no Claude or Anthropic attribution. Use when about to commit,
@@ -9,7 +9,7 @@ description: >-
   green. It never pushes to main and never merges.
 ---
 
-# Circles atomic commits
+# Amplify atomic commits
 
 Every commit goes through this skill. If you reach for `git commit` outside it, stop and come back.
 One logical change per commit, each independently reviewable and revertible.
@@ -19,7 +19,7 @@ One logical change per commit, each independently reviewable and revertible.
 1. **A ticket, and not on `main`.** Every change has a ticket, even a small one, and its key is in
    the branch name (`<type>/<KEY-n>-<slug>`). `main` is protected: every change reaches it through a
    pull request. On `main`, or on a branch without a ticket key, stop: file the ticket with
-   `circles-jira-tickets`, then create the branch with `circles-pr-branch`.
+   `amplify-jira-tickets`, then create the branch with `amplify-pr-branch`.
 2. **Identity.** Run `git config user.name`, `git config user.email` and
    `git rev-parse --absolute-git-dir`. The repository lives under `~/Personal/`, so author and
    committer must be `decimozs <marlonadiguemartin548@gmail.com>`, the active `gh` account must be
@@ -31,13 +31,13 @@ One logical change per commit, each independently reviewable and revertible.
      `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`.
    - Docs and skills only (`docs/**`, `.claude/**`, `.github/**`, `*.md`): no code checks, but
      `pnpm lint` still runs because Biome covers JSON and YAML. Pages of the guide
-     (`apps/docs/content/**`) also run `pnpm --filter @circles/docs check`.
+     (`apps/docs/content/**`) also run `pnpm --filter @amplify/docs check`.
    Run them on the working tree before committing. A failing check is fixed first, not committed
    around. Quote the shortest decisive output when reporting.
 4. **Stay current without breaking the stack.** Refresh `main` with
    `git fetch origin +refs/heads/main:refs/remotes/origin/main`. If this branch sits above another
    open PR's branch, do not `git rebase origin/main` (it would replay the lower commits). Run
-   `circles-stack-rebase` instead.
+   `amplify-stack-rebase` instead.
 
 ## Rules
 
@@ -91,5 +91,5 @@ That is a local limitation, not a failure: confirm the commit has a `gpgsig` hea
 
 ## After committing
 
-- Pushing the branch is part of `circles-create-pr`. Never push to `main`; never merge.
+- Pushing the branch is part of `amplify-create-pr`. Never push to `main`; never merge.
 - A history rewrite of pushed commits needs `--force-with-lease` and the owner's approval.

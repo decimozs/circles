@@ -1,13 +1,13 @@
 # Jira conventions
 
 Every change in this repository has a ticket, even a small one. This file is where the tickets live
-and how they are named. The `circles-jira-tickets` skill reads and updates it.
+and how they are named. The `amplify-jira-tickets` skill reads and updates it.
 
 ## Project
 
 - Site: **not set yet**
 - Project key: **not set yet**
-- Never use the employer Atlassian tenant (`team-anervea`). Circles is a personal project.
+- Never use the employer Atlassian tenant (`team-anervea`). Amplify is a personal project.
 
 Until both are filled in, the only change that may be made without a ticket is the one that fills
 them in (see `CLAUDE.md`, bootstrap).

@@ -13,7 +13,7 @@ Confirmed against Atlassian, without signing in:
   `http://localhost:<port>/callback` (no secret).
 - The scopes are named `read:jira:agent-interface`, `write:jira:agent-interface`,
   `search:jira:agent-interface`, `delete:jira:agent-interface`, `manage:jira:agent-interface`, plus
-  `offline_access`. Circles asks for the first three and `offline_access`, never delete or manage.
+  `offline_access`. Amplify asks for the first three and `offline_access`, never delete or manage.
 - Not confirmed: that the browser sign-in itself completes for your organisation, the real tool list
   and argument names (the mapping uses the names from Atlassian's documentation and checks them
   against the live schema at runtime), and `127.0.0.1` as a redirect name.
@@ -31,9 +31,9 @@ It prints what it learns and writes the real tool schemas to `SPIKE_OUT`. Try
 
 ## Goal
 
-Connect becomes "Sign in with Atlassian": the browser opens, you approve, you are back in Circles.
+Connect becomes "Sign in with Atlassian": the browser opens, you approve, you are back in Amplify.
 No site, email or token to paste. The API-token form stays as a fallback ("Use an API token
-instead"). The ten Circles Jira tools keep their names, schemas, tiers and audit. Only where the
+instead"). The ten Amplify Jira tools keep their names, schemas, tiers and audit. Only where the
 call goes changes.
 
 ## What the research found
@@ -44,13 +44,13 @@ call goes changes.
 - **Sign-in:** OAuth 2.1 with PKCE (S256). The protected resource names an authorization server at
   `https://auth.atlassian.com/<id>` whose metadata lists a **dynamic client registration** endpoint
   (`.../dcr/register`), the `none` token auth method (public client, no secret) and `refresh_token`.
-  So Circles can register itself. Do not use the metadata at `mcp.atlassian.com/.well-known/...`:
+  So Amplify can register itself. Do not use the metadata at `mcp.atlassian.com/.well-known/...`:
   it is the older one. Follow the MCP spec: protected-resource metadata, then authorization server
   metadata.
 - **Redirect:** Atlassian says the server only allows `localhost` and partner domains, and org
   admins can allow or block domains for OAuth. A request to allow custom redirect URIs or your own
   OAuth app (ROVO-870) is open and unanswered. Reports exist of an org blocking `localhost` while
-  `127.0.0.1` worked, and of the reverse. **Nobody can tell from outside whether Circles' redirect
+  `127.0.0.1` worked, and of the reverse. **Nobody can tell from outside whether Amplify' redirect
   will be accepted for your organisation.** That is the main risk and why J7.0 is a spike.
 - **Atlassian's own OAuth app (3LO)** needs a client secret at the token step and no PKCE-only
   option is documented. A desktop app cannot keep a secret. Not used.
@@ -68,10 +68,10 @@ call goes changes.
 
 ## Design
 
-Keep the Circles tool layer. Do **not** pass Atlassian's tools straight to agents.
+Keep the Amplify tool layer. Do **not** pass Atlassian's tools straight to agents.
 
 ```
-Composer / chat  ->  Circles jira_* tool (tier, autonomy, audit, untrusted label)
+Composer / chat  ->  Amplify jira_* tool (tier, autonomy, audit, untrusted label)
                           |
                   JiraBackend (one trait)
                    |                      |
@@ -85,7 +85,7 @@ autonomy settings and the trigger keep working, and the REST fallback shares the
 
 Mapping (`jira_*` to Atlassian tool, arguments translated, `cloudId` added):
 
-| Circles | Atlassian |
+| Amplify | Atlassian |
 |---|---|
 | jira_search | searchJiraIssuesUsingJql |
 | jira_get_issue | getJiraIssue |
@@ -99,7 +99,7 @@ Mapping (`jira_*` to Atlassian tool, arguments translated, `cloudId` added):
 | jira_create_issue | createJiraIssue |
 
 The tool list is read from the server (`tools/list` with `?tools=all`) and each mapped tool's
-schema is checked at connect and at start-up. If Atlassian changed a tool, the Circles tool says
+schema is checked at connect and at start-up. If Atlassian changed a tool, the Amplify tool says
 so plainly ("Atlassian changed jira_search; use the API token instead") instead of sending a
 wrong call.
 
@@ -120,7 +120,7 @@ in J7 is worth building.
 `integrations/atlassian/oauth.rs`: discovery, dynamic registration (once, client id kept),
 PKCE, one-shot loopback listener on `127.0.0.1` (random port, `state` check, 5 minute timeout,
 closed after one request), code exchange, refresh before expiry, revoke on disconnect where
-supported. Tokens and client id in the Keychain (`circles` / `jira-oauth`). Scopes: read and
+supported. Tokens and client id in the Keychain (`amplify` / `jira-oauth`). Scopes: read and
 write for Jira, and offline access. Never delete or manage.
 Tests with a fake authorization server: good flow, wrong `state`, timeout, refresh, refresh
 refused (needs reconnect), token never in logs or `Debug`.
@@ -132,7 +132,7 @@ one retry on a dropped session, 429 handling. Tests with a fake server.
 
 ### J7.3 Backend trait and mapping
 Extract `JiraBackend` from today's `jira/tools.rs`. `RestBackend` is the current code. The new
-`AtlassianMcpBackend` follows the table. Results are normalised to the shapes the Circles tools
+`AtlassianMcpBackend` follows the table. Results are normalised to the shapes the Amplify tools
 return today so Composers and the trigger do not change. Everything still ends up wrapped as
 untrusted. `Integrations` picks the backend by how Jira was connected.
 Tests: the same tool tests run against both backends, using fakes.

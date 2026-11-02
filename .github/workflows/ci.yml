@@ -94,7 +94,7 @@ jobs:
         with:
           path: apps/desktop/node_modules/.vite
           key: vitest-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-      - run: pnpm --filter @circles/desktop exec vitest run --shard=${{ matrix.shard }}/3 --pool=threads
+      - run: pnpm --filter @amplify/desktop exec vitest run --shard=${{ matrix.shard }}/3 --pool=threads
 
   # The guide's website. Its check reports what its build does not: a missing title, text that the
   # build drops without a word, and links that would be broken. The build is the final test.
@@ -110,9 +110,9 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @circles/docs check
-      - run: pnpm --filter @circles/docs test
-      - run: pnpm --filter @circles/docs build
+      - run: pnpm --filter @amplify/docs check
+      - run: pnpm --filter @amplify/docs test
+      - run: pnpm --filter @amplify/docs build
 
   # One name for the whole frontend, so a branch rule asks for "frontend" and keeps working
   # however the work is split.

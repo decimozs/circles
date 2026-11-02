@@ -1,7 +1,7 @@
 # Phase 20: monorepo
 
 Status: steps 0 to 4 are done (baseline, workspace shell, desktop app moved to `apps/desktop`,
-`@circles/bindings`, `@circles/ui`), with the shared config (`@circles/config`, the pnpm catalog,
+`@amplify/bindings`, `@amplify/ui`), with the shared config (`@amplify/config`, the pnpm catalog,
 import boundaries, lefthook and CI). `apps/web` and `apps/mobile` are not created: they wait for the
 open questions below.
 
@@ -30,7 +30,7 @@ Findings while doing step 2, now fixed:
 
 ## Why
 
-Circles is one Tauri app today: React in `src/`, Rust in `src-tauri/`. A landing page and a mobile
+Amplify is one Tauri app today: React in `src/`, Rust in `src-tauri/`. A landing page and a mobile
 app are coming. They should share what is worth sharing (design tokens, UI components, the types the
 Rust side generates) without the desktop app being tangled into them, and without any feature of the
 desktop app changing.
@@ -40,7 +40,7 @@ step ends with the full suite green, and a step that cannot is not done.
 
 ## What is true today (facts the plan rests on)
 
-- One Rust crate `circles` (lib `circles_lib` + bin) in `src-tauri/`. `src-tauri/target` is about
+- One Rust crate `amplify` (lib `amplify_lib` + bin) in `src-tauri/`. `src-tauri/target` is about
   65 GB, mostly a compiled llama.cpp, so moving it carelessly costs a long rebuild.
 - ts-rs writes the TypeScript types to `src/lib/bindings` (157 files). The target comes from
   `.cargo/config.toml` (`TS_RS_EXPORT_DIR`). 69 frontend files import them as `@/lib/bindings/...`.
@@ -50,7 +50,7 @@ step ends with the full suite green, and a step that cannot is not done.
 - `src/styles/tokens.css` is the only place colours may be written. `pnpm check:tokens` greps `src`
   for raw colours, and `scripts/check-contrast.mjs` reads `tokens.css`.
 - `tauri.conf.json` runs `pnpm dev` / `pnpm build` and takes `../dist`.
-- Rust tests use `CARGO_MANIFEST_DIR` for `target/debug/circles` (`composer/launch.rs`,
+- Rust tests use `CARGO_MANIFEST_DIR` for `target/debug/amplify` (`composer/launch.rs`,
   `composer/server.rs`) and for the model (`smart/embedded.rs`).
 - Scripts with paths in them: `fetch-model.sh`, `check-model.sh`, `test-all.sh`, `release.sh`,
   `bump-version.mjs`; `biome.json` ignores `src-tauri/*`, `src/components/ui`, `src/lib/bindings`.
@@ -59,14 +59,14 @@ step ends with the full suite green, and a step that cannot is not done.
 ## Target layout
 
 ```
-circles/
+amplify/
   apps/
     desktop/            the app as it is: index.html, vite.config.ts, src/, src-tauri/
     web/                the landing page (new)
     mobile/             later
   packages/
-    ui/                 @circles/ui: tokens.css, base styles, shadcn components, cn()
-    bindings/           @circles/bindings: the generated types (ts-rs output)
+    ui/                 @amplify/ui: tokens.css, base styles, shadcn components, cn()
+    bindings/           @amplify/bindings: the generated types (ts-rs output)
   docs/  scripts/
   Cargo.toml            Rust workspace: members = ["apps/desktop/src-tauri"]
   pnpm-workspace.yaml   packages: apps/*, packages/*
@@ -75,7 +75,7 @@ circles/
 
 Not now, only when a second consumer exists:
 
-- **`crates/circles-core`** (the Rust logic split out of the Tauri crate). A mobile or CLI client
+- **`crates/amplify-core`** (the Rust logic split out of the Tauri crate). A mobile or CLI client
   would need it. Splitting it before then is risk with no user.
 - **Turborepo.** Plain `pnpm -r` scripts are enough for three apps. Add it when builds get slow.
 - **A shared `packages/app` with screens.** Desktop screens depend on Tauri IPC; the web and mobile
@@ -89,11 +89,11 @@ Everything below is decided up front so no step has to invent a convention.
 
 | What | Name | Why |
 |---|---|---|
-| Root package | `circles-monorepo`, `private: true` | Never published, never imported |
-| Apps | `@circles/desktop`, `@circles/web`, `@circles/mobile` | One scope, easy `pnpm --filter` |
-| Packages | `@circles/ui`, `@circles/bindings`, `@circles/config` | Same scope. `config` holds shared tsconfig presets |
-| Rust package | `circles` (unchanged), lib `circles_lib` (unchanged) | The MCP helper (`--circles-mcp`) and tests find the binary as `circles`. Renaming breaks both |
-| Future Rust crate | `circles-core` | Only when a second consumer exists |
+| Root package | `amplify-monorepo`, `private: true` | Never published, never imported |
+| Apps | `@amplify/desktop`, `@amplify/web`, `@amplify/mobile` | One scope, easy `pnpm --filter` |
+| Packages | `@amplify/ui`, `@amplify/bindings`, `@amplify/config` | Same scope. `config` holds shared tsconfig presets |
+| Rust package | `amplify` (unchanged), lib `amplify_lib` (unchanged) | The MCP helper (`--amplify-mcp`) and tests find the binary as `amplify`. Renaming breaks both |
+| Future Rust crate | `amplify-core` | Only when a second consumer exists |
 | Tauri `identifier`, product name | unchanged | Keeps the data folder, Keychain entries and notification permission |
 
 Every app and package implements the same script names (`dev`, `build`, `typecheck`, `lint`,
@@ -132,7 +132,7 @@ Every app and package implements the same script names (`dev`, `build`, `typeche
 - Per-app differences, if ever needed, go in a nested `biome.json` with `"extends": "//"`.
 - `.editorconfig` is unchanged and applies to the whole tree (Rust 4 spaces, the rest 2).
 - Import boundaries (step 5): a Biome `noRestrictedImports` override for `apps/web` and
-  `apps/mobile`, and for `packages/*`, forbidding `@circles/desktop`, `@tauri-apps/*` (in `ui` and
+  `apps/mobile`, and for `packages/*`, forbidding `@amplify/desktop`, `@tauri-apps/*` (in `ui` and
   `bindings`) and relative imports out of the package.
 
 ### Tests
@@ -146,7 +146,7 @@ Every app and package implements the same script names (`dev`, `build`, `typeche
 
 - `packages/ui/src/styles/tokens.css` is the only place a colour is written. `check:tokens` and
   `check:contrast` move with it and fail loudly when the path is wrong.
-- Apps import `@circles/ui/styles.css`, and Tailwind v4 finds the package's classes with an `@source`
+- Apps import `@amplify/ui/styles.css`, and Tailwind v4 finds the package's classes with an `@source`
   line. Fonts (`@fontsource-variable/*`) stay in the app, so the web page can choose its own.
 
 ### Rust
@@ -225,22 +225,22 @@ Each step is its own commit, with all checks green, and can be undone alone.
 2. **Move the desktop app.** `git mv` `src`, `src-tauri`, `index.html`, `vite.config.ts`,
    `tsconfig*.json`, `components.json`, `public` into `apps/desktop/`. Then, in this order:
    - `mv src-tauri/target target` to the repository root and set the Cargo target to it, so the
-     compiled llama.cpp is reused (only the `circles` crate itself rebuilds).
+     compiled llama.cpp is reused (only the `amplify` crate itself rebuilds).
    - `.cargo/config.toml`: `TS_RS_EXPORT_DIR` relative to the new place.
    - `tauri.conf.json`: `beforeDevCommand: pnpm --filter desktop dev`, `frontendDist` adjusted.
    - The three Rust tests that read `CARGO_MANIFEST_DIR/target/...` use `CARGO_TARGET_DIR` or the
      workspace root instead.
    - `package.json` scripts, `biome.json` ignores, `scripts/*`, `docs/*` paths.
    Gate: the whole suite, plus `pnpm tauri dev` opens and runs a chat.
-3. **Extract `@circles/bindings`.** Point ts-rs at `packages/bindings/src`, add an `index`
-   re-export, and rewrite the 69 imports from `@/lib/bindings/X` to `@circles/bindings/X` with one
+3. **Extract `@amplify/bindings`.** Point ts-rs at `packages/bindings/src`, add an `index`
+   re-export, and rewrite the 69 imports from `@/lib/bindings/X` to `@amplify/bindings/X` with one
    codemod. Gate: typecheck and tests.
-4. **Extract `@circles/ui`.** Move `components/ui`, `lib/utils.ts`, `styles/tokens.css` and
+4. **Extract `@amplify/ui`.** Move `components/ui`, `lib/utils.ts`, `styles/tokens.css` and
    `styles/globals.css` into `packages/ui`. Rewrite the 62 + 42 imports with a codemod. Keep Tailwind
    scanning the package (`@source`), keep `components.json` pointing at the package so `shadcn add`
    still works, and keep `check:tokens` and `check:contrast` running over the package. Gate:
    typecheck, tests, token and contrast checks, and a build that has the same CSS size.
-5. **Add `apps/web`** (landing page) consuming `@circles/ui`. It must not import anything from
+5. **Add `apps/web`** (landing page) consuming `@amplify/ui`. It must not import anything from
    `apps/desktop`. Add a lint rule (Biome `noRestrictedImports`, or a dependency check script) that
    fails when one app imports another.
 6. **Root scripts and CI.** `pnpm -r test|typecheck|lint`, one `scripts/test-all.sh` for both
@@ -258,18 +258,18 @@ Each step is its own commit, with all checks green, and can be undone alone.
 | Tests that find the binary or model by path | The three `CARGO_MANIFEST_DIR` uses are fixed in step 2 and covered by running the full suite |
 | Tauri dev and build stop finding the frontend | Checked by hand in step 2: `tauri dev`, and `tauri build --debug` |
 | Colour rule bypassed once tokens move | `check:tokens` and `check:contrast` are pointed at `packages/ui` in step 4, and fail if the path is missing |
-| Updater, signing, bundle identifier | None changes. `identifier` and the product name stay. Data in `~/Library/Application Support/circles` is untouched |
+| Updater, signing, bundle identifier | None changes. `identifier` and the product name stay. Data in `~/Library/Application Support/amplify` is untouched |
 | Shared package pulls Tauri code into the web app | `packages/ui` may not depend on `@tauri-apps/*`. The import-boundary rule in step 5 enforces it |
 | `shadcn add` writes to the wrong place | `components.json` aliases point at `packages/ui`, tested once by adding and removing a component |
 
 ## Open questions (they change steps 5 to 7, not 0 to 4)
 
 1. **What is mobile?** A remote control for the desktop app (needs the desktop to expose a secure
-   local or relayed API, which Circles does not have: it is local-only by design), or a standalone
-   app? Stack: Expo / React Native, or Tauri mobile? This decides whether `circles-core` is ever
+   local or relayed API, which Amplify does not have: it is local-only by design), or a standalone
+   app? Stack: Expo / React Native, or Tauri mobile? This decides whether `amplify-core` is ever
    extracted.
 2. **Landing page stack:** Astro, Next, or Vite + React? Astro is the lightest and still consumes
-   `@circles/ui` through React islands.
+   `@amplify/ui` through React islands.
 3. **Versioning:** one version for everything (current `bump-version.mjs`), or per app?
 
 ## Recommendation

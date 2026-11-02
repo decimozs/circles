@@ -5,12 +5,12 @@ Status: phases 1 to 4 are built. Phase 5 (connect Vercel, add the address to the
 The user guide moves to a website built with [Fumadocs](https://www.fumadocs.dev/docs), in `apps/docs`.
 The website is where the guide lives and is read. On GitHub the repository's README gives the address of the
 site instead of the pages. The `docs/` folder stays at the root for what still needs it: `docs/internal/`
-(plans, audits, the threat model, the release checklist), which is for people working on Circles and stays
+(plans, audits, the threat model, the release checklist), which is for people working on Amplify and stays
 out of the site, and a short `docs/README.md` that says where the guide is.
 
 The repository is **public**, so the guide's pages and `docs/internal/` can already be read on GitHub by
 anyone. The site shows "view on GitHub" and "edit" links to the page's own file for that reason. Keeping
-`docs/internal/` off the site is about audience (it is for people working on Circles), not about hiding it.
+`docs/internal/` off the site is about audience (it is for people working on Amplify), not about hiding it.
 
 ## What Fumadocs needs (checked on its site)
 
@@ -60,7 +60,7 @@ The reading order in the old `docs/README.md` becomes the sidebar order in `meta
 
 ## The app
 
-- `apps/docs`, package `@circles/docs`, Next.js with Fumadocs UI and Fumadocs MDX, in the pnpm workspace
+- `apps/docs`, package `@amplify/docs`, Next.js with Fumadocs UI and Fumadocs MDX, in the pnpm workspace
   (`apps/*` is already in it), using the `catalog:` versions for React, TypeScript, Tailwind and Biome so they
   stay the same everywhere.
 - Hosted on Vercel, which builds Next.js natively, so no static export is needed and Fumadocs' server
@@ -68,7 +68,7 @@ The reading order in the old `docs/README.md` becomes the sidebar order in `meta
 - Search: Fumadocs' built-in search, which needs no service.
 - It does not use `packages/ui` (the desktop app's design system) and `check:tokens` and `check:contrast`
   stay scoped to the desktop app.
-- Look: Fumadocs' default theme first. Circles' colours and the Inter and JetBrains Mono fonts can be set
+- Look: Fumadocs' default theme first. Amplify' colours and the Inter and JetBrains Mono fonts can be set
   from the same tokens afterwards.
 - Because the pages are now written in the app, Fumadocs' components (callouts, tabs, steps) can be used in
   the text where they help. They are not added to the existing pages during the move.
@@ -80,9 +80,9 @@ Found by searching the repository for references to the guide:
 - **`README.md`**: the "Guide" line and the troubleshooting line point to the site.
 - **`CLAUDE.md`, `AGENTS.md`**: the layout line (`docs/` is the user guide) and rule 11.
 - **`CONTRIBUTING.md`**: where documentation goes.
-- **`.claude/skills/circles-update-docs/SKILL.md`**: the table that maps a change to a page now names
+- **`.claude/skills/amplify-update-docs/SKILL.md`**: the table that maps a change to a page now names
   `apps/docs/content/docs/<page>`, and its checks run the site's build, which also checks the links.
-  `circles-atomic-commit` and the ticket spike template mention `docs/` and are checked for what they mean.
+  `amplify-atomic-commit` and the ticket spike template mention `docs/` and are checked for what they mean.
 - **`CHANGELOG.md`** stays where it is.
 - **Nothing in the app's code** points at the guide (searched).
 - **CI**: a docs filter in the existing changed-paths job and a job that builds the site when
@@ -101,7 +101,7 @@ Found by searching the repository for references to the guide:
 5. **Hosting on Vercel and the address.** Vercel builds from the repository when the project is
    connected, so nothing in the code deploys. What is done is settings, listed below, and the README's link to
    the site once there is an address. Until then the README says how to run the site (`pnpm --filter
-   @circles/docs dev`) and the guide stays readable from the repository. Connecting the project is done by
+   @amplify/docs dev`) and the guide stays readable from the repository. Connecting the project is done by
    the owner in Vercel; I do not deploy or connect it.
 
 ### Vercel settings (phase 5)

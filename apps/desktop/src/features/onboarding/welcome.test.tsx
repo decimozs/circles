@@ -1,4 +1,4 @@
-import type { SetupItem } from "@circles/bindings/SetupItem";
+import type { SetupItem } from "@amplify/bindings/SetupItem";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { backend } from "@/test/backend";
@@ -53,14 +53,14 @@ describe("first run", () => {
   it("is skipped when projects already exist", async () => {
     renderApp("/");
     await waitFor(() => expect(useOnboarding.getState().done).toBe(true));
-    await waitFor(() => expect(screen.queryByText("Welcome to Circles")).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText("Welcome to Amplify")).not.toBeInTheDocument());
   });
 
   it("shows what is needed and what is nice to have, and needs the notice acknowledged", async () => {
     backend.on("project_list", []);
     const app = renderApp("/");
-    expect(await screen.findByText("Welcome to Circles")).toBeInTheDocument();
-    const needed = await screen.findByRole("region", { name: "What Circles needs" });
+    expect(await screen.findByText("Welcome to Amplify")).toBeInTheDocument();
+    const needed = await screen.findByRole("region", { name: "What Amplify needs" });
     expect(within(needed).getByText("Claude Code")).toBeInTheDocument();
     const nice = screen.getByRole("region", { name: "Nice to have" });
     expect(within(nice).getByText("gh auth login")).toBeInTheDocument();
@@ -157,6 +157,6 @@ describe("first run", () => {
     const app = renderApp("/settings/advanced");
     await waitFor(() => expect(useOnboarding.getState().done).toBe(true));
     await app.user.click(await screen.findByRole("button", { name: "Show again" }));
-    expect(await screen.findByText("Welcome to Circles")).toBeInTheDocument();
+    expect(await screen.findByText("Welcome to Amplify")).toBeInTheDocument();
   });
 });

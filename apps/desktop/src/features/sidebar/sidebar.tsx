@@ -1,8 +1,8 @@
-import type { Project } from "@circles/bindings/Project";
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
-import { ScrollArea } from "@circles/ui/components/scroll-area";
-import { cn } from "@circles/ui/utils";
+import type { Project } from "@amplify/bindings/Project";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
+import { ScrollArea } from "@amplify/ui/components/scroll-area";
+import { cn } from "@amplify/ui/utils";
 import {
   BotIcon,
   ChartColumnIcon,
