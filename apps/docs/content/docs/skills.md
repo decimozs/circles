@@ -5,7 +5,7 @@ description: "A directory of the skills on this Mac and in your projects, to rea
 
 A skill is a folder with a `SKILL.md` that tells an agent how to do one kind of task. **Skills** in the sidebar, above Pull requests, lists the ones that exist on this Mac and in the repositories you added. It only reads: nothing here changes a skill or runs one.
 
-## Where Circles looks
+## Where Amplify looks
 
 | Group | Where |
 |---|---|
@@ -19,7 +19,7 @@ A skill that two folders link to (a symbolic link) is listed once, by its real f
 ## The list
 
 - **Each row:** name, where it is from, what it says it is for, and when it last changed. **Manual only** means its front matter tells the model not to use it by itself.
-- **Search:** plain words match the name and description. `group:project`, `project:circles` and `source:~/.claude` narrow it.
+- **Search:** plain words match the name and description. `group:project`, `project:amplify` and `source:~/.claude` narrow it.
 - **Sort and Filters:** sort by name or by when it changed. Filters pick a group, whether the model may use the skill, and whether it has scripts or other files.
 - **The project button** shows the skills of one project. Yours, Shared and Plugins stay.
 - **Refresh** reads the folders again. They are read again when you come back to the window, so a skill added in an editor shows up.
@@ -36,4 +36,4 @@ Choosing one opens it beside the list, in a tab in the top bar. The **+** beside
 
 A project's skills come from the repository, so they can say anything to an agent. The pane says so: read one before you use it.
 
-Skills are read from the project's folder, not from each workspace's own branch, so a skill that exists only on another branch is not listed. Circles sends nothing anywhere.
+Skills are read from the project's folder, not from each workspace's own branch, so a skill that exists only on another branch is not listed. Amplify sends nothing anywhere.

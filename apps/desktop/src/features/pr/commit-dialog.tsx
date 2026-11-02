@@ -1,5 +1,5 @@
-import type { CommitInfo } from "@circles/bindings/CommitInfo";
-import { Button } from "@circles/ui/components/button";
+import type { CommitInfo } from "@amplify/bindings/CommitInfo";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -7,15 +7,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Input } from "@circles/ui/components/input";
+} from "@amplify/ui/components/dropdown-menu";
+import { Input } from "@amplify/ui/components/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronDownIcon, Loader2Icon, SparklesIcon } from "lucide-react";
 import { useEffect, useState } from "react";

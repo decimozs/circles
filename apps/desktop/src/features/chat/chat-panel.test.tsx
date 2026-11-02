@@ -1,4 +1,4 @@
-import type { Message } from "@circles/bindings/Message";
+import type { Message } from "@amplify/bindings/Message";
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useChat } from "@/stores/chat";
@@ -61,7 +61,7 @@ describe("chat messages", () => {
         msg("assistant", "tool_call", {
           id: "a",
           name: "Read",
-          input: { file_path: "/home/circles/workspaces/roster/algiers/a.ts" },
+          input: { file_path: "/home/amplify/workspaces/roster/algiers/a.ts" },
         }),
         msg("user", "tool_result", { tool_use_id: "a", content: "file body" }),
         msg("assistant", "tool_call", {

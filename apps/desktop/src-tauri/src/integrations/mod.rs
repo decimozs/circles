@@ -1,4 +1,4 @@
-//! Outside services Circles can talk to. Jira Cloud for now.
+//! Outside services Amplify can talk to. Jira Cloud for now.
 
 pub mod atlassian;
 pub mod jira;

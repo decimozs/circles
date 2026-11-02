@@ -1,4 +1,4 @@
-//! The real tools: what each tool does in Circles, through the same services the app uses.
+//! The real tools: what each tool does in Amplify, through the same services the app uses.
 
 use std::time::Duration;
 

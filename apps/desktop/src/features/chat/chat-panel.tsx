@@ -1,10 +1,10 @@
-import type { Attachment } from "@circles/bindings/Attachment";
-import type { Composer as ComposerDef } from "@circles/bindings/Composer";
-import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
-import type { PermissionRequest } from "@circles/bindings/PermissionRequest";
-import type { Session } from "@circles/bindings/Session";
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
+import type { Attachment } from "@amplify/bindings/Attachment";
+import type { Composer as ComposerDef } from "@amplify/bindings/Composer";
+import type { PermissionDecision } from "@amplify/bindings/PermissionDecision";
+import type { PermissionRequest } from "@amplify/bindings/PermissionRequest";
+import type { Session } from "@amplify/bindings/Session";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";

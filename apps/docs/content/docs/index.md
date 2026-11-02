@@ -1,14 +1,14 @@
 ---
-title: "Circles guide"
-description: "Circles runs Claude Code agents in parallel, each in its own copy of your repository, on your Mac."
+title: "Amplify guide"
+description: "Amplify runs Claude Code agents in parallel, each in its own copy of your repository, on your Mac."
 ---
 
-Circles is a Mac app that runs Claude Code agents in parallel. Each agent works in its own copy of your repository, on its own branch, so several can work at once without getting in each other's way. Everything runs on your Mac.
+Amplify is a Mac app that runs Claude Code agents in parallel. Each agent works in its own copy of your repository, on its own branch, so several can work at once without getting in each other's way. Everything runs on your Mac.
 
 ## Read in this order
 
 1. [Getting started](./getting-started.md): install, the setup checklist, your first project and first chat.
-2. [Projects](./projects.md): adding repositories, the GitHub picker, and how Circles learns a repository's habits.
+2. [Projects](./projects.md): adding repositories, the GitHub picker, and how Amplify learns a repository's habits.
 3. [Workspaces](./workspaces.md): what a workspace is, its files, changes and graph, the terminal and scripts.
 4. [Chats](./chats.md): talking to an agent, permissions, checkpoints and side questions.
 5. [Pull requests](./pull-requests.md): drafting, checks, and merging.
@@ -24,7 +24,7 @@ Circles is a Mac app that runs Claude Code agents in parallel. Each agent works 
 
 | Word | Meaning |
 |---|---|
-| Project | A git repository you added to Circles. |
+| Project | A git repository you added to Amplify. |
 | Workspace | A copy of a project (a git worktree) on its own branch, where agents work. |
 | Chat | A conversation with one Claude Code agent inside a workspace. A workspace can have several. |
 | Composer | A manager agent. You give it a goal and it creates workspaces and starts agents. |

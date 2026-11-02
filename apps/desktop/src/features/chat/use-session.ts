@@ -1,8 +1,8 @@
-import type { Message } from "@circles/bindings/Message";
-import type { PermissionRequest } from "@circles/bindings/PermissionRequest";
-import type { RateLimit } from "@circles/bindings/RateLimit";
-import type { Session } from "@circles/bindings/Session";
-import type { StreamItem } from "@circles/bindings/StreamItem";
+import type { Message } from "@amplify/bindings/Message";
+import type { PermissionRequest } from "@amplify/bindings/PermissionRequest";
+import type { RateLimit } from "@amplify/bindings/RateLimit";
+import type { Session } from "@amplify/bindings/Session";
+import type { StreamItem } from "@amplify/bindings/StreamItem";
 import { Channel } from "@tauri-apps/api/core";
 import { useCallback, useEffect, useReducer, useRef } from "react";
 import { IpcError, ipc } from "@/lib/ipc";

@@ -49,12 +49,12 @@
                   {
                     "group": [
                       "@tauri-apps/**",
-                      "@circles/desktop",
-                      "@circles/desktop/**",
-                      "@circles/web",
-                      "@circles/web/**",
-                      "@circles/mobile",
-                      "@circles/mobile/**"
+                      "@amplify/desktop",
+                      "@amplify/desktop/**",
+                      "@amplify/web",
+                      "@amplify/web/**",
+                      "@amplify/mobile",
+                      "@amplify/mobile/**"
                     ],
                     "message": "A shared package must not depend on an app or on Tauri."
                   }
@@ -75,7 +75,7 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@circles/desktop", "@circles/desktop/**", "@tauri-apps/**"],
+                    "group": ["@amplify/desktop", "@amplify/desktop/**", "@tauri-apps/**"],
                     "message": "An app must not import another app, and only the desktop talks to Tauri."
                   }
                 ]

@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import {
   DatabaseIcon,
   FileIcon,

@@ -49,7 +49,7 @@ impl WorkspaceState {
         }
     }
 
-    /// States where the workspace is being built or torn down by Circles itself.
+    /// States where the workspace is being built or torn down by Amplify itself.
     pub fn is_provisioning(self) -> bool {
         matches!(self, Creating | SetupRunning)
     }

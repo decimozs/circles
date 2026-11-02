@@ -1,5 +1,5 @@
 //! Where the Jira login is kept: a file in the app's data folder that only the person who runs
-//! Circles can read. Hashing is not an option, since every call to Jira needs the real token.
+//! Amplify can read. Hashing is not an option, since every call to Jira needs the real token.
 //! Nothing here logs or prints it.
 //!
 //! It was the macOS Keychain, which asks for the account's password whenever the program asking is

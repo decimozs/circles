@@ -136,7 +136,7 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         let watcher = SettingsWatcher::default();
         watcher
-            .watch(&[tmp.path().join("not-yet/.circles/settings.toml")], || {})
+            .watch(&[tmp.path().join("not-yet/.amplify/settings.toml")], || {})
             .unwrap();
     }
 }

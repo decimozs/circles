@@ -1,5 +1,5 @@
-import type { CreateOptions } from "@circles/bindings/CreateOptions";
-import type { StateChange } from "@circles/bindings/StateChange";
+import type { CreateOptions } from "@amplify/bindings/CreateOptions";
+import type { StateChange } from "@amplify/bindings/StateChange";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";

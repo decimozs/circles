@@ -1,4 +1,4 @@
-import type { ComposerInput } from "@circles/bindings/ComposerInput";
+import type { ComposerInput } from "@amplify/bindings/ComposerInput";
 import { create } from "zustand";
 
 /** The create dialog. `seed` pre-fills a new Composer (from a template). */

@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { Loader2Icon } from "lucide-react";
 import type { FleetGroup } from "./composer-panel";
 

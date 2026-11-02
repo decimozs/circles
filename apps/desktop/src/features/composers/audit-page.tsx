@@ -1,5 +1,5 @@
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
 import { DownloadIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

@@ -1,14 +1,14 @@
-import type { Project } from "@circles/bindings/Project";
-import type { Workspace } from "@circles/bindings/Workspace";
-import { Button } from "@circles/ui/components/button";
+import type { Project } from "@amplify/bindings/Project";
+import type { Workspace } from "@amplify/bindings/Workspace";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Input } from "@circles/ui/components/input";
+} from "@amplify/ui/components/dropdown-menu";
+import { Input } from "@amplify/ui/components/input";
 import {
   ArchiveIcon,
   ChevronDownIcon,

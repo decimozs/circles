@@ -1,4 +1,4 @@
-import type { PrDetail } from "@circles/bindings/PrDetail";
+import type { PrDetail } from "@amplify/bindings/PrDetail";
 
 export type TimelineEvent = {
   id: string;

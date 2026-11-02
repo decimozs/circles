@@ -1,5 +1,5 @@
-import { Button } from "@circles/ui/components/button";
-import { cn } from "@circles/ui/utils";
+import { Button } from "@amplify/ui/components/button";
+import { cn } from "@amplify/ui/utils";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { ExternalLinkIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";

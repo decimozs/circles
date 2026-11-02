@@ -1,4 +1,4 @@
-import type { PrRow } from "@circles/bindings/PrRow";
+import type { PrRow } from "@amplify/bindings/PrRow";
 
 export type SortId = "updated" | "newest" | "oldest" | "largest" | "smallest";
 

@@ -1,6 +1,6 @@
-import type { UsageDay } from "@circles/bindings/UsageDay";
-import type { UsageModel } from "@circles/bindings/UsageModel";
-import { cn } from "@circles/ui/utils";
+import type { UsageDay } from "@amplify/bindings/UsageDay";
+import type { UsageModel } from "@amplify/bindings/UsageModel";
+import { cn } from "@amplify/ui/utils";
 import { useState } from "react";
 import { compact, dayLabel, money, share } from "./format";
 

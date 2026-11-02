@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Circles",
+  "productName": "Amplify",
   "version": "0.1.0",
-  "identifier": "build.circles.app",
+  "identifier": "build.amplify.app",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "Circles",
+        "title": "Amplify",
         "width": 1280,
         "height": 820,
         "minWidth": 900,

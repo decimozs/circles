@@ -216,7 +216,7 @@ pub(crate) async fn start_run(
                 title,
                 model: composer.model.clone(),
                 effort: composer.effort.clone(),
-                // The Composer has no built-in tools to ask about. Circles' tools ask for
+                // The Composer has no built-in tools to ask about. Amplify' tools ask for
                 // themselves.
                 permission_mode: Some(PermissionMode::Manual),
                 fork_of: None,

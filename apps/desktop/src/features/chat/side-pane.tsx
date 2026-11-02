@@ -1,4 +1,4 @@
-import { Button } from "@circles/ui/components/button";
+import { Button } from "@amplify/ui/components/button";
 import { CornerDownLeftIcon, Loader2Icon, SquareIcon, XIcon } from "lucide-react";
 import { ipc } from "@/lib/ipc";
 import { useChat } from "@/stores/chat";

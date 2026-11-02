@@ -1,4 +1,4 @@
-import type { Session } from "@circles/bindings/Session";
+import type { Session } from "@amplify/bindings/Session";
 import { act, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { backend, FakeChannel } from "@/test/backend";

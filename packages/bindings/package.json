@@ -1,5 +1,5 @@
 {
-  "name": "@circles/bindings",
+  "name": "@amplify/bindings",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@circles/config": "workspace:*",
+    "@amplify/config": "workspace:*",
     "typescript": "catalog:"
   }
 }

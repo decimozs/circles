@@ -57,7 +57,7 @@ message can scroll clear of the box.
 - `apps/desktop/src/features/chat/message-list.tsx`: bottom padding, the pill.
 - `packages/ui` styles only if a shared glass utility is cleaner than repeating classes (decide while
   building; a single `.glass` utility used in two places is fine, one used once is not).
-- `docs/chats.md` and `CHANGELOG.md`: a line, through `circles-update-docs`.
+- `docs/chats.md` and `CHANGELOG.md`: a line, through `amplify-update-docs`.
 
 ## Risks
 

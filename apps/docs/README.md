@@ -1,12 +1,12 @@
-# Circles guide (website)
+# Amplify guide (website)
 
-The user guide of Circles, built with [Fumadocs](https://www.fumadocs.dev) on Next.js and hosted on Vercel.
+The user guide of Amplify, built with [Fumadocs](https://www.fumadocs.dev) on Next.js and hosted on Vercel.
 
 ```
-pnpm --filter @circles/docs dev      # http://localhost:3000
-pnpm --filter @circles/docs check    # the pages: titles, links, text the build would drop
-pnpm --filter @circles/docs test     # tests of that check
-pnpm --filter @circles/docs build    # runs the check, then builds the site
+pnpm --filter @amplify/docs dev      # http://localhost:3000
+pnpm --filter @amplify/docs check    # the pages: titles, links, text the build would drop
+pnpm --filter @amplify/docs test     # tests of that check
+pnpm --filter @amplify/docs build    # runs the check, then builds the site
 ```
 
 ## Writing a page
@@ -16,7 +16,7 @@ pnpm --filter @circles/docs build    # runs the check, then builds the site
 - Link to another page as `./page.md` or `./page.md#heading`. Nothing else is found on the site.
   A file outside the guide is linked by its address on GitHub.
 - Put `<owner>/<name>`, `{ticket}` and the like in backticks. Outside code they are read as a tag or an
-  expression and the text is dropped without an error. `pnpm --filter @circles/docs check` finds them.
+  expression and the text is dropped without an error. `pnpm --filter @amplify/docs check` finds them.
 
 ## Vercel
 

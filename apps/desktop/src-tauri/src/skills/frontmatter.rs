@@ -173,9 +173,9 @@ mod tests {
     #[test]
     fn plain_quoted_and_folded_values_are_read() {
         let f = parse(
-            "---\nname: circles-pr-title\ndescription: >-\n  Write the title of a pull request.\n  Use it from the PR flow.\nargument-hint: \"[KEY-n]\"\n---\n# Body\nname: not this\n",
+            "---\nname: amplify-pr-title\ndescription: >-\n  Write the title of a pull request.\n  Use it from the PR flow.\nargument-hint: \"[KEY-n]\"\n---\n# Body\nname: not this\n",
         );
-        assert_eq!(f.text("name").as_deref(), Some("circles-pr-title"));
+        assert_eq!(f.text("name").as_deref(), Some("amplify-pr-title"));
         assert_eq!(
             f.text("description").as_deref(),
             Some("Write the title of a pull request. Use it from the PR flow.")

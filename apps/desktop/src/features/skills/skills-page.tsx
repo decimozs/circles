@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { Loader2Icon, SparklesIcon } from "lucide-react";
 import { useMemo } from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";

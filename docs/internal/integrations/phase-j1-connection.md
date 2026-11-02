@@ -3,7 +3,7 @@
 **Output:** Rust only.
 
 - `integrations/mod.rs`, `integrations/jira/{client.rs,adf.rs,model.rs}`, `integrations/secrets.rs`.
-- `secrets.rs`: trait `SecretStore`. `KeychainSecrets` keeps JSON `{site, email, token}` in the macOS Keychain (service `circles`, account `jira`). Tests use an in-memory store.
+- `secrets.rs`: trait `SecretStore`. `KeychainSecrets` keeps JSON `{site, email, token}` in the macOS Keychain (service `amplify`, account `jira`). Tests use an in-memory store.
 - `client.rs`: Basic auth, fixed base `https://<site>/`, site validated (`*.atlassian.net`, https, no path),
   timeouts, `Retry-After` on 429, 401 becomes a "needs reconnect" state, body size cap.
 - Settings keeps only `integrations.jira = { site, email, account_name, connected }`. Never the token.

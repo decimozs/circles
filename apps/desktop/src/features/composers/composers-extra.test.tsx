@@ -107,7 +107,7 @@ describe("Composers settings", () => {
       "Runs started on their own, per day",
       "Tell me when something waits",
       "Keep running in the menu bar",
-      "Open Circles at login",
+      "Open Amplify at login",
       "Keep the Mac awake during runs",
     ]) {
       expect(screen.getAllByLabelText(name).length).toBeGreaterThan(0);

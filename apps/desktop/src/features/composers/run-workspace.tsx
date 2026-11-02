@@ -1,11 +1,11 @@
-import type { Workspace } from "@circles/bindings/Workspace";
+import type { Workspace } from "@amplify/bindings/Workspace";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dropdown-menu";
+import { cn } from "@amplify/ui/utils";
 import {
   ChevronDownIcon,
   CircleCheckIcon,

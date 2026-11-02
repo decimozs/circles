@@ -1,6 +1,6 @@
-import { Input } from "@circles/ui/components/input";
-import { Switch } from "@circles/ui/components/switch";
-import { cn } from "@circles/ui/utils";
+import { Input } from "@amplify/ui/components/input";
+import { Switch } from "@amplify/ui/components/switch";
+import { cn } from "@amplify/ui/utils";
 import { Loader2Icon, SparklesIcon, Undo2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

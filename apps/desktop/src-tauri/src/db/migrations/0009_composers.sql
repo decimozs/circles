@@ -1,4 +1,4 @@
--- Composers: manager agents that use Circles' own tools.
+-- Composers: manager agents that use Amplify' own tools.
 --
 -- A Composer owns a hidden scratch workspace, in a hidden project (the one with the id
 -- `composers`), so every chat feature works on it. The runs of a Composer are chats in that

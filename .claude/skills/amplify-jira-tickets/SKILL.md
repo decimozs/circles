@@ -1,19 +1,19 @@
 ---
-name: circles-jira-tickets
+name: amplify-jira-tickets
 description: >-
-  Write Jira tickets (Epic, Task, Bug, Spike) for Circles in markdown from templates, with a
+  Write Jira tickets (Epic, Task, Bug, Spike) for Amplify in markdown from templates, with a
   description, scope, steps to reproduce for bugs, a checkable acceptance-criteria table, a test
-  plan and dependencies. Use when the user runs /circles-jira-tickets, or asks to "create a
+  plan and dependencies. Use when the user runs /amplify-jira-tickets, or asks to "create a
   ticket", "file a bug", "write the tickets", or "break this down". It always shows the full draft
   and waits for explicit approval before anything is written to Jira.
 ---
 
-# circles-jira-tickets
+# amplify-jira-tickets
 
 ## Ticket first, for every change
 
 Nothing is changed in this repository without a ticket, **even a one-line fix**. This is the skill
-that files it, and `circles-pr-branch`, `circles-atomic-commit` and `circles-create-pr` refuse to go on
+that files it, and `amplify-pr-branch`, `amplify-atomic-commit` and `amplify-create-pr` refuse to go on
 without one. "Just do it" does not skip it.
 
 A small change gets a small ticket, not none: a Task with a one-sentence description, an explicit
@@ -24,9 +24,9 @@ extra change in this one.
 
 ## Before the first ticket
 
-Circles has no Jira project recorded yet. Ask the user once for the **site** and the **project key**,
+Amplify has no Jira project recorded yet. Ask the user once for the **site** and the **project key**,
 and write both into `.github/JIRA.md` (create it if missing) so they are not asked again. Never guess a
-key, and never use the employer tenant (`team-anervea`): Circles is a personal project.
+key, and never use the employer tenant (`team-anervea`): Amplify is a personal project.
 
 Transport, in order of preference:
 1. A helper `scripts/jira/jira.mjs` with credentials in the gitignored `jira.env`, when it exists.

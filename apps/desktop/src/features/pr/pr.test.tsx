@@ -1,7 +1,7 @@
-import type { Check } from "@circles/bindings/Check";
-import type { PrStatus } from "@circles/bindings/PrStatus";
-import type { Readiness } from "@circles/bindings/Readiness";
-import type { ReviewThread } from "@circles/bindings/ReviewThread";
+import type { Check } from "@amplify/bindings/Check";
+import type { PrStatus } from "@amplify/bindings/PrStatus";
+import type { Readiness } from "@amplify/bindings/Readiness";
+import type { ReviewThread } from "@amplify/bindings/ReviewThread";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useChat } from "@/stores/chat";

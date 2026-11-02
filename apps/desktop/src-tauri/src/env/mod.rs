@@ -15,11 +15,11 @@ use tokio::process::Command;
 use tokio::sync::OnceCell;
 use ts_rs::TS;
 
-/// Tools Circles shells out to. Reported in diagnostics so a missing one is obvious.
+/// Tools Amplify shells out to. Reported in diagnostics so a missing one is obvious.
 pub const TOOLS: &[&str] = &["claude", "gh", "git", "node", "pnpm"];
 
-const START_MARKER: &str = "__CIRCLES_ENV_START__";
-const END_MARKER: &str = "__CIRCLES_ENV_END__";
+const START_MARKER: &str = "__AMPLIFY_ENV_START__";
+const END_MARKER: &str = "__AMPLIFY_ENV_END__";
 const RESOLVE_TIMEOUT: Duration = Duration::from_secs(5);
 
 /// Directories added to PATH when the login shell cannot be read.

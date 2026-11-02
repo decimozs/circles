@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { useEffect, useRef, useState } from "react";
 import { Group, Panel, Separator, usePanelRef } from "react-resizable-panels";
 import { Outlet, useMatch } from "react-router";

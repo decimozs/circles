@@ -1,5 +1,5 @@
-import type { PrDetail } from "@circles/bindings/PrDetail";
-import { cn } from "@circles/ui/utils";
+import type { PrDetail } from "@amplify/bindings/PrDetail";
+import { cn } from "@amplify/ui/utils";
 import {
   CheckIcon,
   GitCommitHorizontalIcon,

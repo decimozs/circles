@@ -97,7 +97,7 @@ pub fn build_items(deps: &[Dependency], login_item: bool, menu_bar: bool) -> Vec
     let mut installed = item(
         "claude_installed",
         "Claude Code",
-        "The agents are Claude Code. Circles runs the `claude` program on this Mac.",
+        "The agents are Claude Code. Amplify runs the `claude` program on this Mac.",
         true,
     );
     let found = claude.is_some_and(|d| d.found);
@@ -155,12 +155,12 @@ pub fn build_items(deps: &[Dependency], login_item: bool, menu_bar: bool) -> Vec
     let mut notifications = item(
         "notifications",
         "Notifications",
-        "To tell you when an agent or a Composer waits for you while Circles is in the background.",
+        "To tell you when an agent or a Composer waits for you while Amplify is in the background.",
         false,
     );
     notifications.state = "unknown".into();
     notifications.detail = Some(
-        "Send a test. If nothing shows, allow Circles in System Settings, Notifications.".into(),
+        "Send a test. If nothing shows, allow Amplify in System Settings, Notifications.".into(),
     );
     notifications.action = action("test_notification", "Send a test");
     out.push(notifications);
@@ -178,7 +178,7 @@ pub fn build_items(deps: &[Dependency], login_item: bool, menu_bar: bool) -> Vec
     let mut disk = item(
         "full_disk",
         "Full Disk Access",
-        "Not needed. It lets Circles read anywhere without asking, which is more than it needs.",
+        "Not needed. It lets Amplify read anywhere without asking, which is more than it needs.",
         false,
     );
     disk.state = "optional".into();
@@ -276,13 +276,13 @@ pub async fn setup_action(id: String) -> IpcResult<ActionResult> {
             ))
         }
         "test_notification" => {
-            let route = crate::system::notify_via("Circles", "This is a test notification.")?;
+            let route = crate::system::notify_via("Amplify", "This is a test notification.")?;
             Ok(done(match route {
                 crate::system::NotifyRoute::Native => {
-                    "Sent from Circles. If you saw it, notifications work."
+                    "Sent from Amplify. If you saw it, notifications work."
                 }
                 crate::system::NotifyRoute::Script => {
-                    "Sent through a script, so it may show as Script Editor. Allow Script Editor, or use the installed app, to see it as Circles."
+                    "Sent through a script, so it may show as Script Editor. Allow Script Editor, or use the installed app, to see it as Amplify."
                 }
             }))
         }

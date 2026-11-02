@@ -97,7 +97,7 @@ pub fn resolve_conflicts(base: &str, instructions: &Instructions) -> String {
 }
 
 /// The block an agent answers a pull request draft with.
-pub const PR_FENCE: &str = "circles-pr";
+pub const PR_FENCE: &str = "amplify-pr";
 
 /// How much of the diff is put in the prompt. The agent is given the changes so it needs no tools,
 /// which would each ask for approval.
@@ -144,7 +144,7 @@ pub fn draft_pr(
 }
 
 /// The block an agent answers a commit plan with.
-pub const COMMITS_FENCE: &str = "circles-commits";
+pub const COMMITS_FENCE: &str = "amplify-commits";
 
 /// Asks for the uncommitted changes to be split into atomic commits.
 pub fn commit_plan(
@@ -346,7 +346,7 @@ mod tests {
         );
         assert!(text.contains("into main"));
         assert!(text.contains("- Add login\n- Fix typo"));
-        assert!(text.contains("circles-pr"));
+        assert!(text.contains("amplify-pr"));
         assert!(text.contains("Imperative title."));
         assert!(text.contains("do not create the pull request"));
         assert!(text.contains("```diff\ndiff --git a/x b/x\n+hello\n```"));
@@ -387,7 +387,7 @@ mod tests {
         );
         assert!(text.contains("- M src/a.ts\n- A new.ts"));
         assert!(text.contains("```diff"));
-        assert!(text.contains("circles-commits"));
+        assert!(text.contains("amplify-commits"));
         assert!(text.contains("Do not use any tool"));
         assert!(text.contains("Repository instructions:\nConventional commits."));
         assert!(
@@ -406,7 +406,7 @@ mod tests {
         assert!(pr.contains("```markdown\n## Summary\n## Test plan\n```"));
         assert!(pr.contains("Titles start with the ticket."));
         // The template and the rules come before the request for the answer.
-        assert!(pr.find("## Summary").unwrap() < pr.find("circles-pr").unwrap());
+        assert!(pr.find("## Summary").unwrap() < pr.find("amplify-pr").unwrap());
         let commits = commit_plan(&[], "", &Instructions::default(), &docs);
         assert!(commits.contains("Titles start with the ticket."));
         assert!(!commits.contains("## Test plan"));

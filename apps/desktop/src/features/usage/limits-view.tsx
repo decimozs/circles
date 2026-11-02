@@ -1,4 +1,4 @@
-import type { RateLimit } from "@circles/bindings/RateLimit";
+import type { RateLimit } from "@amplify/bindings/RateLimit";
 import { useRateLimit } from "./api";
 
 const WINDOWS: Record<string, string> = {
@@ -48,7 +48,7 @@ const STATUS: Record<string, string> = {
 };
 
 /** The plan limits Claude Code last reported. It reports them while it works, so there is nothing
- * until a chat has run in this session of Circles. */
+ * until a chat has run in this session of Amplify. */
 export function LimitsView({ enabled }: { enabled: boolean }) {
   const { data: limit, isPending } = useRateLimit(enabled);
   if (isPending) return <p className="px-6 py-6 text-sm text-muted-foreground">Loading…</p>;

@@ -1,5 +1,5 @@
 {
-  "name": "@circles/desktop",
+  "name": "@amplify/desktop",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
-    "@circles/bindings": "workspace:*",
-    "@circles/ui": "workspace:*",
+    "@amplify/bindings": "workspace:*",
+    "@amplify/ui": "workspace:*",
     "@fontsource-variable/inter": "^5.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
@@ -50,7 +50,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@circles/config": "workspace:*",
+    "@amplify/config": "workspace:*",
     "@tauri-apps/cli": "^2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

@@ -124,7 +124,7 @@ export const useUi = create<UiState>()(
       setCommitOpen: (commitOpen) => set({ commitOpen }),
     }),
     {
-      name: "circles-ui",
+      name: "amplify-ui",
       version: 11,
       migrate: (persisted, version) => {
         const state = persisted as Partial<UiState>;

@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { GitPullRequestIcon, Loader2Icon } from "lucide-react";
 import { useMemo, useState } from "react";

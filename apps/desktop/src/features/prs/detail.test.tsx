@@ -1,5 +1,5 @@
-import type { PrDetail } from "@circles/bindings/PrDetail";
-import type { PrRow } from "@circles/bindings/PrRow";
+import type { PrDetail } from "@amplify/bindings/PrDetail";
+import type { PrRow } from "@amplify/bindings/PrRow";
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { backend, emitBackendEvent } from "@/test/backend";

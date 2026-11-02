@@ -1,6 +1,6 @@
-import type { Session } from "@circles/bindings/Session";
-import { Popover, PopoverContent, PopoverTrigger } from "@circles/ui/components/popover";
-import { cn } from "@circles/ui/utils";
+import type { Session } from "@amplify/bindings/Session";
+import { Popover, PopoverContent, PopoverTrigger } from "@amplify/ui/components/popover";
+import { cn } from "@amplify/ui/utils";
 import { HistoryIcon, Loader2Icon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { useChat } from "@/stores/chat";

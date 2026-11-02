@@ -1,13 +1,13 @@
-import type { Project } from "@circles/bindings/Project";
-import type { Workspace } from "@circles/bindings/Workspace";
+import type { Project } from "@amplify/bindings/Project";
+import type { Workspace } from "@amplify/bindings/Workspace";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { DropdownMenuItem, DropdownMenuSeparator } from "@circles/ui/components/dropdown-menu";
+} from "@amplify/ui/components/dialog";
+import { DropdownMenuItem, DropdownMenuSeparator } from "@amplify/ui/components/dropdown-menu";
 import { toast } from "sonner";
 import { useEditors } from "@/features/files/api";
 import { ipc } from "@/lib/ipc";

@@ -107,7 +107,7 @@ pub fn level_from_settings(file: &Path) -> String {
 pub fn init(logs_dir: &Path, redactor: Redactor, level: &str) -> AppResult<WorkerGuard> {
     let appender = Builder::new()
         .rotation(Rotation::DAILY)
-        .filename_prefix("circles")
+        .filename_prefix("amplify")
         .filename_suffix("log")
         .max_log_files(MAX_LOG_FILES)
         .build(logs_dir)

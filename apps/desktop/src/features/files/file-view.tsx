@@ -1,4 +1,4 @@
-import { Button } from "@circles/ui/components/button";
+import { Button } from "@amplify/ui/components/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { PencilIcon, SaveIcon, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

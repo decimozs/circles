@@ -18,7 +18,7 @@ the guard rails. The features that use it (ticket picker, plan review, dashboard
 | **MCP Apps** (`ui://` resources, in Claude, ChatGPT, VS Code) | A tool ships HTML shown in a sandboxed iframe | **Not now.** It is open-ended, needs an iframe sandbox and is for third-party tool UIs. Revisit if outside tools should bring their own UI |
 | **Open-ended** (model writes UI code) | Arbitrary code in a sandbox | **Never** in a tool that can change a repository |
 
-Nothing here is a ratified standard yet (a W3C community group is exploring one). So Circles
+Nothing here is a ratified standard yet (a W3C community group is exploring one). So Amplify
 owns its small catalogue and keeps it close enough to A2UI that a mapping stays easy later.
 
 ## What exists and is reused
@@ -56,7 +56,7 @@ Every string is plain text. Links are `https` only and show their address.
 
 ### 2. The renderer
 
-`apps/desktop/src/features/genui/` draws each component with Circles' own UI kit, so it looks like the rest of
+`apps/desktop/src/features/genui/` draws each component with Amplify' own UI kit, so it looks like the rest of
 the app, works with the keyboard and passes the same accessibility checks. A component that fails
 validation shows a plain error card and never throws into the chat. An answered card is shown as
 answered, with what was chosen, and its controls are off.

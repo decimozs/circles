@@ -1,6 +1,6 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@circles/ui/components/popover";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@circles/ui/components/tooltip";
-import { cn } from "@circles/ui/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@amplify/ui/components/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@amplify/ui/components/tooltip";
+import { cn } from "@amplify/ui/utils";
 import { CircleHelpIcon } from "lucide-react";
 import { useState } from "react";
 import { DEFAULT_EFFORT, EFFORTS, effortLabel } from "@/lib/models";

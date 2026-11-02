@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { BrainIcon, ChevronRightIcon, Loader2Icon } from "lucide-react";
 import { useContext, useState } from "react";
 import type { WorkStep } from "./timeline";

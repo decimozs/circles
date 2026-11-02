@@ -107,7 +107,7 @@ pub async fn settings_set(
     view(&state, project_id.as_deref())
 }
 
-/// Makes Circles open at login, or not, as the setting says. A failure is only logged.
+/// Makes Amplify open at login, or not, as the setting says. A failure is only logged.
 pub(crate) fn apply_login_item(app: &AppHandle, wanted: Option<bool>) {
     use tauri_plugin_autostart::ManagerExt;
     let wanted = wanted.unwrap_or(false);
@@ -168,8 +168,8 @@ pub async fn settings_open_file(
         }
         let starter = match scope {
             Scope::Project => settings::PROJECT_TEMPLATE,
-            Scope::User => "# Circles settings for you. They apply to every project.\n",
-            Scope::LocalProject => "# Circles settings for this project, only on this Mac.\n",
+            Scope::User => "# Amplify settings for you. They apply to every project.\n",
+            Scope::LocalProject => "# Amplify settings for this project, only on this Mac.\n",
         };
         std::fs::write(&path, starter)?;
     }
@@ -270,7 +270,7 @@ pub async fn sound_play() -> IpcResult<()> {
 
 #[tauri::command]
 pub async fn notify_test() -> IpcResult<()> {
-    system::notify("Circles", "This is how a notification looks.")
+    system::notify("Amplify", "This is how a notification looks.")
 }
 
 /// Shows the folder the app keeps its data in.

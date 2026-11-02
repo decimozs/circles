@@ -12,9 +12,9 @@ Phase 5.
 - **xterm.js** frontend with fit, search, and web-links addons. Theme tokens map to light and dark.
 - **Right-panel terminal dock:** collapsible, tabs Setup, Run, Terminal, `+` for more terminals. Big Terminal Mode (full terminal in the center).
 - **Scrollback persistence** (last N KB) and the "previous terminal session restored" banner.
-- **Scripts** from `.circles/settings.toml`: `scripts.setup`, `scripts.run` (multiple named, each with `command`, `default`, `icon`, `available_in`), `scripts.archive`, `run_mode` (`concurrent` or `nonconcurrent`).
+- **Scripts** from `.amplify/settings.toml`: `scripts.setup`, `scripts.run` (multiple named, each with `command`, `default`, `icon`, `available_in`), `scripts.archive`, `run_mode` (`concurrent` or `nonconcurrent`).
 - **Run button** with dropdown and Cmd+R. Empty state "Start Dev".
-- **Environment variables:** `CIRCLES_WORKSPACE_NAME`, `CIRCLES_WORKSPACE_PATH`, `CIRCLES_ROOT_PATH`, `CIRCLES_DEFAULT_BRANCH`, `CIRCLES_PORT`, plus custom `[environment_variables]`.
+- **Environment variables:** `AMPLIFY_WORKSPACE_NAME`, `AMPLIFY_WORKSPACE_PATH`, `AMPLIFY_ROOT_PATH`, `AMPLIFY_DEFAULT_BRANCH`, `AMPLIFY_PORT`, plus custom `[environment_variables]`.
 - **Port registry:** block of 10 ports from 55000, verified free before assignment, released on archive.
 - **Process handling:** stop sends SIGTERM to the process group, SIGKILL after 5s. Kill all on quit (with confirm if anything runs).
 - Setup script runs after workspace creation (moves workspace `setup_running` to `ready`). Archive script runs before archive.
@@ -43,7 +43,7 @@ Agents, Spotlight testing (can be added later).
 
 ## Manual test script
 1. Create a workspace with a setup script that echoes the env, watch it in the Setup tab.
-2. Start the run script in two workspaces, confirm distinct `CIRCLES_PORT`.
+2. Start the run script in two workspaces, confirm distinct `AMPLIFY_PORT`.
 3. Stop one, confirm the process tree is gone (`ps`).
 4. `kill -9` the app, relaunch, confirm orphans are reaped.
 5. Run `vim` and `htop` in the terminal, confirm they render and resize.

@@ -1,8 +1,8 @@
-import type { Attachment } from "@circles/bindings/Attachment";
-import type { PermissionDecision } from "@circles/bindings/PermissionDecision";
-import type { PermissionRequest } from "@circles/bindings/PermissionRequest";
-import { Button } from "@circles/ui/components/button";
-import { cn } from "@circles/ui/utils";
+import type { Attachment } from "@amplify/bindings/Attachment";
+import type { PermissionDecision } from "@amplify/bindings/PermissionDecision";
+import type { PermissionRequest } from "@amplify/bindings/PermissionRequest";
+import { Button } from "@amplify/ui/components/button";
+import { cn } from "@amplify/ui/utils";
 import { FileIcon, GitBranchIcon, ShieldQuestionIcon, Undo2Icon } from "lucide-react";
 import { CopyButton, Markdown } from "./markdown";
 import type { TimelineItem } from "./timeline";

@@ -1,10 +1,10 @@
-import { Button } from "@circles/ui/components/button";
+import { Button } from "@amplify/ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
+} from "@amplify/ui/components/dropdown-menu";
 import { ChevronDownIcon } from "lucide-react";
 import { Link, useMatch } from "react-router";
 import { toast } from "sonner";

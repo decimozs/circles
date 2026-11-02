@@ -1,12 +1,12 @@
-import type { CreateSource } from "@circles/bindings/CreateSource";
-import type { ProgressEvent } from "@circles/bindings/ProgressEvent";
-import { Button } from "@circles/ui/components/button";
+import type { CreateSource } from "@amplify/bindings/CreateSource";
+import type { ProgressEvent } from "@amplify/bindings/ProgressEvent";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@circles/ui/components/dialog";
+} from "@amplify/ui/components/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,9 +17,9 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@circles/ui/components/dropdown-menu";
-import { Input } from "@circles/ui/components/input";
-import { Textarea } from "@circles/ui/components/textarea";
+} from "@amplify/ui/components/dropdown-menu";
+import { Input } from "@amplify/ui/components/input";
+import { Textarea } from "@amplify/ui/components/textarea";
 import { listen } from "@tauri-apps/api/event";
 import { open as pickFiles } from "@tauri-apps/plugin-dialog";
 import {
@@ -216,7 +216,7 @@ export function CreateDialog() {
       >
         <DialogTitle className="sr-only">Create workspace</DialogTitle>
         <DialogDescription className="sr-only">
-          Describe what you want to work on. Circles creates an isolated workspace for it.
+          Describe what you want to work on. Amplify creates an isolated workspace for it.
         </DialogDescription>
 
         {create.isPending ? (

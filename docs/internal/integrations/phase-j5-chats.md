@@ -2,13 +2,13 @@
 
 **Output:** the expected result: any workspace chat can use Jira.
 
-- Chats start Claude Code with an extra `--mcp-config` entry `circles-jira` (not `--strict-mcp-config`: the user's own MCP
-  servers keep working). It is the same `--circles-mcp` helper, started with `--scope jira` and a chat token on the same
+- Chats start Claude Code with an extra `--mcp-config` entry `amplify-jira` (not `--strict-mcp-config`: the user's own MCP
+  servers keep working). It is the same `--amplify-mcp` helper, started with `--scope jira` and a chat token on the same
   private socket. The socket checks the token and the scope.
 - Dispatcher gets a second caller kind, a chat session, next to a Composer. A chat caller can only reach tools with
   `integration = "jira"`, never the workspace, project or merge tools.
-- Permissions follow the chat's own mode. Read tools go into `--allowedTools mcp__circles-jira__...`, so they just work.
-  Write tools are left out, so Claude's normal permission prompt appears in the chat and Circles shows it as usual.
+- Permissions follow the chat's own mode. Read tools go into `--allowedTools mcp__amplify-jira__...`, so they just work.
+  Write tools are left out, so Claude's normal permission prompt appears in the chat and Amplify shows it as usual.
   Bypass lets them run, which is what bypass means.
 - Switch "Let chats use Jira" (J2) off or Jira disconnected: the entry is not added.
 - Audit rows for chats carry the session and workspace instead of a Composer (migration: nullable `composer_id`, `session_id`).

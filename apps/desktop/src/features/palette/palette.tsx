@@ -6,14 +6,14 @@ import {
   CommandItem,
   CommandList,
   CommandShortcut,
-} from "@circles/ui/components/command";
+} from "@amplify/ui/components/command";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { cn } from "@circles/ui/utils";
+} from "@amplify/ui/components/dialog";
+import { cn } from "@amplify/ui/utils";
 import {
   FolderIcon,
   GitBranchIcon,

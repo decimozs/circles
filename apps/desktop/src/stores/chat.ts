@@ -1,4 +1,4 @@
-import type { Attachment } from "@circles/bindings/Attachment";
+import type { Attachment } from "@amplify/bindings/Attachment";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -81,7 +81,7 @@ export const useChat = create<ChatState>()(
         }),
     }),
     {
-      name: "circles-chat",
+      name: "amplify-chat",
       partialize: (s) => ({
         sendKey: s.sendKey,
         followUp: s.followUp,

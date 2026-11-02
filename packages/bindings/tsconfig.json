@@ -1,4 +1,4 @@
 {
-  "extends": "@circles/config/tsconfig.base.json",
+  "extends": "@amplify/config/tsconfig.base.json",
   "include": ["src"]
 }

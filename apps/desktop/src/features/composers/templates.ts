@@ -1,4 +1,4 @@
-import type { ComposerInput } from "@circles/bindings/ComposerInput";
+import type { ComposerInput } from "@amplify/bindings/ComposerInput";
 
 /** A starting point for a Composer. Autonomy is left to the safe defaults. */
 export type Template = {

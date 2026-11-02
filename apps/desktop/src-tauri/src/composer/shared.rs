@@ -1,4 +1,4 @@
-//! Composers shared in a repository, in `<repo>/.circles/composers/*.toml`.
+//! Composers shared in a repository, in `<repo>/.amplify/composers/*.toml`.
 //!
 //! A shared file may name tools and limits. It never says what a Composer may do without asking:
 //! a Composer made from one gets the safe defaults, and only the tools the file leaves out are
@@ -16,7 +16,7 @@ use crate::tools::policy::{Autonomy, Limits};
 
 /// The folder in a repository.
 pub fn folder_of(repo: &Path) -> PathBuf {
-    repo.join(".circles").join("composers")
+    crate::paths::repo_folder(repo).join("composers")
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS, PartialEq)]

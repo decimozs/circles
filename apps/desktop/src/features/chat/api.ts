@@ -1,4 +1,4 @@
-import type { SessionChange } from "@circles/bindings/SessionChange";
+import type { SessionChange } from "@amplify/bindings/SessionChange";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useCallback, useEffect } from "react";

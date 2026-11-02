@@ -10,7 +10,7 @@ C3.
 
 ## In scope
 - **Templates:** a few built in, such as "Triage and split into tasks", "Parallel refactor", "Review all open pull requests", "Fix failing checks across branches". Each fills in instructions, tools and limits.
-- **Composer files:** a Composer can live in `<repo>/.circles/composers/<name>.toml`, shared with the team, or in the user folder. Same layering as settings.
+- **Composer files:** a Composer can live in `<repo>/.amplify/composers/<name>.toml`, shared with the team, or in the user folder. Same layering as settings.
 - **Memory:** a Composer keeps short notes between runs (what it learned about a project), editable by the person, stored in the app folder and never sent anywhere else.
 - **Run history:** past runs with their steps, children, cost and outcome. Re-run with the same input.
 - **Steps as data (only if needed):** a simple list of steps in a Composer file (ask, spawn, wait, review) that the loop follows, for people who want a fixed process. Not a graph engine.

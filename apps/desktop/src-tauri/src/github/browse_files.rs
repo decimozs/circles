@@ -208,7 +208,7 @@ mod tests {
 
     #[test]
     fn only_a_plain_repository_name_and_a_full_commit_id_are_accepted() {
-        assert!(valid_repo("decimozs/circles"));
+        assert!(valid_repo("decimozs/amplify"));
         assert!(valid_repo("Anervea-AI/sethi_enterprise_backend"));
         assert!(valid_repo("o/r.js"));
         for bad in [
@@ -325,7 +325,7 @@ esac
         let gh = Gh::new(Arc::new(crate::env::resolve().await));
         let folder = Path::new(env!("CARGO_MANIFEST_DIR")).join("..").join("..");
         let files = gh
-            .browse_pr_files(&folder, "decimozs/circles", 27)
+            .browse_pr_files(&folder, "decimozs/amplify", 27)
             .await
             .unwrap();
         println!(
@@ -346,11 +346,11 @@ esac
             .find(|f| f.status == "modified")
             .expect("a modified file");
         let after = gh
-            .browse_file_text(&folder, "decimozs/circles", &files.head_sha, &first.path)
+            .browse_file_text(&folder, "decimozs/amplify", &files.head_sha, &first.path)
             .await
             .unwrap();
         let before = gh
-            .browse_file_text(&folder, "decimozs/circles", &files.base_sha, &first.path)
+            .browse_file_text(&folder, "decimozs/amplify", &files.base_sha, &first.path)
             .await
             .unwrap();
         println!(
@@ -364,7 +364,7 @@ esac
         let missing = gh
             .browse_file_text(
                 &folder,
-                "decimozs/circles",
+                "decimozs/amplify",
                 &files.head_sha,
                 "no/such/file.rs",
             )

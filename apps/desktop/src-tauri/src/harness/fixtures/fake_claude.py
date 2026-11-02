@@ -38,7 +38,7 @@ def arg_value(flag):
     return argv[argv.index(flag) + 1] if flag in argv else None
 
 
-log({"argv": argv, "cwd": os.getcwd(), "env": {k: v for k, v in os.environ.items() if k.startswith("CIRCLES_")}})
+log({"argv": argv, "cwd": os.getcwd(), "env": {k: v for k, v in os.environ.items() if k.startswith("AMPLIFY_")}})
 
 session_id = arg_value("--session-id") or arg_value("--resume") or str(uuid.uuid4())
 if "--fork-session" in argv and not arg_value("--session-id"):

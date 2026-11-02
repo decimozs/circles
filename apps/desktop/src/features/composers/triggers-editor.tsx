@@ -1,9 +1,9 @@
-import type { Trigger } from "@circles/bindings/Trigger";
-import type { TriggerInput } from "@circles/bindings/TriggerInput";
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
-import { Switch } from "@circles/ui/components/switch";
-import { Textarea } from "@circles/ui/components/textarea";
+import type { Trigger } from "@amplify/bindings/Trigger";
+import type { TriggerInput } from "@amplify/bindings/TriggerInput";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
+import { Switch } from "@amplify/ui/components/switch";
+import { Textarea } from "@amplify/ui/components/textarea";
 import { ClockIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -250,7 +250,7 @@ export function TriggersEditor({ composerId }: { composerId: string }) {
       {triggers.length === 0 && editing !== "new" ? (
         <p className="text-xs text-muted-foreground">
           Nothing starts this Composer for you. Add a schedule or a trigger to run it while you are
-          away. It only runs while Circles is open.
+          away. It only runs while Amplify is open.
         </p>
       ) : null}
       {triggers.map((t) =>

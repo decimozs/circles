@@ -1,4 +1,4 @@
-import type { Readiness } from "@circles/bindings/Readiness";
+import type { Readiness } from "@amplify/bindings/Readiness";
 import { stateOf, type Tone } from "./next-action";
 
 /**

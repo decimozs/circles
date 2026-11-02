@@ -1,14 +1,14 @@
 # A Skills page: plan
 
 Status: built in phases 1 to 5. Checked by tests and a run against this Mac's folders; the pages are not yet seen in the running app. A **Skills** item in the sidebar, before **Pull requests**, opens a directory of
-the skills that exist on this Mac and in the repositories added to Circles, laid out like the list of pull
+the skills that exist on this Mac and in the repositories added to Amplify, laid out like the list of pull
 requests: a searchable, grouped list, and a pane that opens beside it for the one you pick.
 
 ## What a skill is here
 
 A folder holding a `SKILL.md` (and possibly scripts, references and assets). Its front matter has a `name` and a
 `description`, and sometimes `allowed-tools`, `argument-hint`, `model` or `disable-model-invocation`. Claude Code
-reads the ones in its own folders by itself; Circles' agents are also told about a project's skills
+reads the ones in its own folders by itself; Amplify' agents are also told about a project's skills
 (`chat/project_skills.rs`), which already lists `.claude/skills`, `.agents/skills` and `.agent/skills` of a
 workspace. The page shows what exists and where it comes from. It does not decide which skill a chat uses.
 
@@ -19,7 +19,7 @@ workspace. The page shows what exists and where it comes from. It does not decid
 | **Yours** | `<config dir>/skills` for each Claude config folder (`~/.claude`, `~/.claude-work`, and the `CLAUDE_CONFIG_DIR` of Settings > Environment; the usage scan already finds these) | `~/.claude-work/skills` is mostly symlinks into `~/.claude/skills`, so each skill is listed once, by its real path, with both folders named |
 | **Shared** | `~/.agents/skills` (other agents' shared folder) | about 40 skills |
 | **Plugins** | each installed plugin's `skills` folder, from `~/.claude/plugins/installed_plugins.json` (`installPath`) | one plugin installed; it has hooks, no skills |
-| **Projects** | `.claude/skills`, `.agents/skills`, `.agent/skills` of each project added to Circles | Circles' own `.claude/skills` has 8 (`circles-*`) |
+| **Projects** | `.claude/skills`, `.agents/skills`, `.agent/skills` of each project added to Amplify | Amplify' own `.claude/skills` has 8 (`amplify-*`) |
 
 A project's skills are read from the project's folder. A workspace on another branch may differ; the page says
 "from the project folder" and a later phase can read a workspace's own copy.
@@ -32,7 +32,7 @@ A project's skills are read from the project's folder. A workspace on another br
   - `Sort` (name, recently changed), `Filters` (group, project, has scripts, hidden from the model),
     `All` / this project scope, refresh.
   - Groups `Yours`, `Shared`, `Plugins` and one group per project, each with its count.
-  - Row: icon, name, one-line description, a small badge for where it is (`~/.claude`, `circles`, a plugin
+  - Row: icon, name, one-line description, a small badge for where it is (`~/.claude`, `amplify`, a plugin
     name), and its age.
 - **Pane** beside the list (resizable like the pull request pane, width remembered):
   - **Overview:** name, description in full, where it is, the front matter fields (allowed tools, argument
@@ -102,7 +102,7 @@ A project's skills are read from the project's folder. A workspace on another br
 ## Questions for you
 
 1. **Which groups?** Recommended: Yours, Shared (`~/.agents`), Plugins and Projects. Drop Shared if you do not
-   want other agents' skills in Circles.
+   want other agents' skills in Amplify.
 2. **Read only first?** Recommended: yes. Creating and editing skills is phase 6, if wanted.
 3. **Tabs in the top bar,** like pull requests, or one pane that replaces its content?
 4. **Project skills from the project folder,** or from a workspace's own branch? Recommended: the project

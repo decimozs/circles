@@ -1,10 +1,10 @@
 {
-  "name": "@circles/ui",
+  "name": "@amplify/ui",
   "private": true,
   "version": "0.1.0",
   "license": "MIT",
   "type": "module",
-  "description": "Design tokens, the Tailwind theme and the shadcn components every Circles app uses.",
+  "description": "Design tokens, the Tailwind theme and the shadcn components every Amplify app uses.",
   "exports": {
     "./components/*": "./src/components/*.tsx",
     "./utils": "./src/utils.ts",
@@ -26,7 +26,7 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@circles/config": "workspace:*",
+    "@amplify/config": "workspace:*",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "react": "catalog:",

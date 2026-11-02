@@ -1,4 +1,4 @@
-import { cn } from "@circles/ui/utils";
+import { cn } from "@amplify/ui/utils";
 import { type KeyboardEvent, useLayoutEffect, useRef, useState } from "react";
 import { useComposerSkills } from "./api";
 
@@ -83,7 +83,7 @@ function belowCaret(box: HTMLTextAreaElement, caret: number): number {
 
 /**
  * A text box where `/` offers the user's skills, wherever it starts a word. A Composer cannot run a
- * skill by itself, so Circles puts what the skill says in front of it when a run starts.
+ * skill by itself, so Amplify puts what the skill says in front of it when a run starts.
  */
 export function SkillTextarea({
   value,

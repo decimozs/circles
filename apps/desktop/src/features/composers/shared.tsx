@@ -1,5 +1,5 @@
-import type { SharedComposer } from "@circles/bindings/SharedComposer";
-import { Button } from "@circles/ui/components/button";
+import type { SharedComposer } from "@amplify/bindings/SharedComposer";
+import { Button } from "@amplify/ui/components/button";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ipc } from "@/lib/ipc";

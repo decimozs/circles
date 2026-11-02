@@ -355,10 +355,10 @@ describe("Triggers", () => {
     ...over,
   });
 
-  it("says nothing starts the Composer, and that it only runs while Circles is open", async () => {
+  it("says nothing starts the Composer, and that it only runs while Amplify is open", async () => {
     seed();
     await openSettings("Starts on its own");
-    expect(await screen.findByText(/It only runs while Circles is open/)).toBeInTheDocument();
+    expect(await screen.findByText(/It only runs while Amplify is open/)).toBeInTheDocument();
   });
 
   it("adds a daily schedule", async () => {

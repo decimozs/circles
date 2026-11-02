@@ -2,7 +2,7 @@
 # Looks for secrets in the app's logs and database. Prints what it finds and exits 1 if anything.
 # Usage: scripts/scan-secrets.sh [data-dir]   (default: the app data folder)
 set -uo pipefail
-DATA="${1:-$HOME/Library/Application Support/circles}"
+DATA="${1:-$HOME/Library/Application Support/amplify}"
 [ -d "$DATA" ] || { echo "No data folder at $DATA"; exit 2; }
 
 PATTERNS='sk-ant-[A-Za-z0-9_-]{10,}|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|[Bb]earer [A-Za-z0-9._-]{20,}'

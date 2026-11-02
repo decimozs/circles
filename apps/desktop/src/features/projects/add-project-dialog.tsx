@@ -1,14 +1,14 @@
-import type { Project } from "@circles/bindings/Project";
-import { Button } from "@circles/ui/components/button";
+import type { Project } from "@amplify/bindings/Project";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@circles/ui/components/tabs";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@amplify/ui/components/tabs";
 import { open } from "@tauri-apps/plugin-dialog";
 import { FolderOpenIcon, GlobeIcon, Loader2Icon, LockIcon, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -43,7 +43,7 @@ function LocalTab({ onAdded }: { onAdded: (p: Project) => void }) {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <p className="text-sm text-muted-foreground">
-        Add a repository that is already on this Mac. Circles never changes it.
+        Add a repository that is already on this Mac. Amplify never changes it.
       </p>
       <Button onClick={choose} disabled={add.isPending} className="w-fit">
         {add.isPending ? <Loader2Icon className="animate-spin" /> : <FolderOpenIcon />}
@@ -99,7 +99,7 @@ function GithubTab({ active, onAdded }: { active: boolean; onAdded: (p: Project)
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <p className="text-sm text-muted-foreground">
-        Clones the repository into <span className="font-mono text-xs">~/circles/repos</span> using
+        Clones the repository into <span className="font-mono text-xs">~/amplify/repos</span> using
         the GitHub CLI.
         {account ? (
           <>
@@ -233,7 +233,7 @@ function QuickStartTab({ onAdded }: { onAdded: (p: Project) => void }) {
       }}
     >
       <p className="text-sm text-muted-foreground">
-        Creates a new repository in <span className="font-mono text-xs">~/circles/repos</span> with
+        Creates a new repository in <span className="font-mono text-xs">~/amplify/repos</span> with
         an initial commit.
       </p>
       <Input

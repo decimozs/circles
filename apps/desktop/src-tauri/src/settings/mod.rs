@@ -2,7 +2,7 @@
 //!
 //! Three levels, lowest to highest precedence:
 //! 1. user:          `<app data>/settings.toml`
-//! 2. project:       `<repo>/.circles/settings.toml` (shareable, committed)
+//! 2. project:       `<repo>/.amplify/settings.toml` (shareable, committed)
 //! 3. local project: `<app data>/projects/<project id>/settings.toml`
 //!
 //! Tables merge key by key. Any other value, including arrays, is replaced by the higher level.
@@ -31,7 +31,7 @@ pub struct Scripts {
     pub run_mode: Option<String>,
 }
 
-/// Text added to the prompts Circles sends for a kind of task, so a repository can say how it
+/// Text added to the prompts Amplify sends for a kind of task, so a repository can say how it
 /// wants reviews, pull requests and fixes done.
 #[derive(Debug, Clone, Default, Serialize, Deserialize, TS, PartialEq)]
 #[ts(export)]
@@ -127,14 +127,14 @@ pub struct Advanced {
 pub struct ComposerSettings {
     /// Runs that a schedule or a trigger may start in 24 hours, from 1 to 500. 20 when not set.
     pub daily_run_cap: Option<u32>,
-    /// Keep Circles running in the menu bar after its window is closed. Takes effect the next
-    /// time Circles starts.
+    /// Keep Amplify running in the menu bar after its window is closed. Takes effect the next
+    /// time Amplify starts.
     pub menu_bar: Option<bool>,
     /// Keep the Mac awake while a run started by a schedule or trigger is going.
     pub keep_awake: Option<bool>,
-    /// Open Circles when you log in.
+    /// Open Amplify when you log in.
     pub start_at_login: Option<bool>,
-    /// A notification when something waits for you, while Circles is in the background. On
+    /// A notification when something waits for you, while Amplify is in the background. On
     /// unless switched off.
     pub notify_waiting: Option<bool>,
 }
@@ -302,7 +302,7 @@ pub fn load_merged(layers: &[(Scope, PathBuf)]) -> AppResult<SettingsPayload> {
 
 /// Starting point for a repository's shareable settings. Everything is commented out, so it
 /// changes nothing until the user opts in.
-pub const PROJECT_TEMPLATE: &str = r#"# Circles settings for this repository. Commit this file to share it with your team.
+pub const PROJECT_TEMPLATE: &str = r#"# Amplify settings for this repository. Commit this file to share it with your team.
 
 # Gitignored files copied into every new workspace (gitignore syntax).
 # files_to_copy = [".env", ".env.local"]
@@ -311,8 +311,8 @@ pub const PROJECT_TEMPLATE: &str = r#"# Circles settings for this repository. Co
 # Runs in the Setup tab when a workspace is created.
 # setup = "pnpm install"
 
-# Runs when you press Run. Use $CIRCLES_PORT so workspaces never fight over a port.
-# run = "pnpm dev --port $CIRCLES_PORT"
+# Runs when you press Run. Use $AMPLIFY_PORT so workspaces never fight over a port.
+# run = "pnpm dev --port $AMPLIFY_PORT"
 
 # Runs before a workspace is archived, to clean up things outside the repository.
 # archive = "./scripts/cleanup.sh"
@@ -323,7 +323,7 @@ pub const PROJECT_TEMPLATE: &str = r#"# Circles settings for this repository. Co
 
 # Several run scripts show up in the Run menu. The default one starts with the Run button.
 # [scripts.run.web]
-# command = "pnpm dev --port $CIRCLES_PORT"
+# command = "pnpm dev --port $AMPLIFY_PORT"
 # default = true
 # icon = "server"
 #
@@ -334,7 +334,7 @@ pub const PROJECT_TEMPLATE: &str = r#"# Circles settings for this repository. Co
 [environment_variables]
 # API_URL = "http://localhost:3000"
 
-# Extra guidance added to the prompts Circles sends the agent.
+# Extra guidance added to the prompts Amplify sends the agent.
 [instructions]
 # general = "Follow the style guide in CONTRIBUTING.md."
 # review = "Focus on security and error handling."
@@ -351,7 +351,7 @@ pub const PROJECT_TEMPLATE: &str = r#"# Circles settings for this repository. Co
 # branch_pattern = "{ticket}-{slug}"
 "#;
 
-/// Makes sure `<repo>/.circles/settings.toml` exists, creating it from the template. An existing
+/// Makes sure `<repo>/.amplify/settings.toml` exists, creating it from the template. An existing
 /// file is never touched.
 pub fn ensure_project_settings(repo_root: &Path) -> AppResult<PathBuf> {
     let file = crate::paths::project_settings_file(repo_root);
@@ -420,7 +420,7 @@ mod tests {
     fn creates_the_file_once_and_never_overwrites_it() {
         let tmp = tempfile::tempdir().unwrap();
         let file = ensure_project_settings(tmp.path()).unwrap();
-        assert_eq!(file, tmp.path().join(".circles/settings.toml"));
+        assert_eq!(file, tmp.path().join(".amplify/settings.toml"));
         assert_eq!(std::fs::read_to_string(&file).unwrap(), PROJECT_TEMPLATE);
 
         std::fs::write(&file, "[scripts]\nsetup = \"mine\"\n").unwrap();

@@ -61,7 +61,7 @@ export const useReview = create<ReviewState>()(
       closeView: (workspaceId) => set((s) => ({ views: { ...s.views, [workspaceId]: undefined } })),
     }),
     {
-      name: "circles-review",
+      name: "amplify-review",
       // A tab that was saved and has gone, the Review tab, opens All files instead.
       merge: (saved, current) => {
         const stored = saved as Partial<ReviewState> | undefined;

@@ -3,9 +3,9 @@
 ## Sign in with Atlassian (J7)
 
 Built: **Connect Jira** now opens the browser (OAuth 2.1 with PKCE through Atlassian's hosted MCP
-server) and the API-token form is behind "Use an API token instead". Signing in registers Circles
+server) and the API-token form is behind "Use an API token instead". Signing in registers Amplify
 as a public client, asks for Jira read, write and search plus offline access (never delete or
-manage), and keeps the tokens in the Keychain (`circles` / `jira-oauth`). A one-shot listener on
+manage), and keeps the tokens in the Keychain (`amplify` / `jira-oauth`). A one-shot listener on
 `127.0.0.1` receives the browser's return, checks `state`, and ignores anything else. Access tokens
 are renewed before they expire. If the sign-in cannot be renewed, the card says to sign in again.
 An account with several Jira sites gets a picker. The ten `jira_*` tools are the same for agents:
@@ -34,7 +34,7 @@ below is what is left.
 ## What is built
 
 - **Connection (J1):** `integrations/` in Rust. Site, email and API token are checked against
-  `GET /rest/api/3/myself`, then saved in the macOS Keychain (service `circles`, account `jira`).
+  `GET /rest/api/3/myself`, then saved in the macOS Keychain (service `amplify`, account `jira`).
   Only `name.atlassian.net` sites are accepted, the address is fixed at connect time, redirects are
   off, answers are capped at 4 MB. A 401 or 403 later marks the connection as needing a reconnect.
 - **Settings (J2):** Settings, Integrations holds only the connection: the Jira card with the Jira mark
@@ -49,10 +49,10 @@ below is what is left.
   reads are labelled `<untrusted-data>`.
 - **Composer dialog (J4):** Repositories (all, or only the picked ones, Create disabled with none
   picked) and Integrations (Jira switch, disabled until Jira is connected). `composers.integrations`
-  is migration 0011. Shared `.circles/composers/*.toml` files cannot switch Jira on. Disconnecting
+  is migration 0011. Shared `.amplify/composers/*.toml` files cannot switch Jira on. Disconnecting
   switches Jira off on every Composer.
 - **Chats (J5):** a chat that starts while Jira is connected and allowed gets a second tool server,
-  `circles-jira`, next to the user's own (not strict). Reads are in `--allowedTools`. Writes are not,
+  `amplify-jira`, next to the user's own (not strict). Reads are in `--allowedTools`. Writes are not,
   so Claude's own permission prompt asks in the chat, and bypass lets them run. The helper can reach
   only the Jira tools for such a chat, never the workspace, project or merge tools. Audit rows carry
   the session and no Composer.
@@ -76,7 +76,7 @@ below is what is left.
 ## Manual guide (real Jira Cloud)
 
 1. Settings, Integrations, Connect. First a wrong token: the dialog stays open with a plain message.
-2. Then a right one. The card says "Connected as <name> on <site>". Check Keychain Access for `circles`.
+2. Then a right one. The card says "Connected as <name> on <site>". Check Keychain Access for `amplify`.
 3. New Composer: Jira switch is on-able. Pick "Only the repositories I pick" with one repository.
 4. Ask the Composer: "search Jira for my open issues" (runs without asking), then "comment on PROJ-1"
    (asks first; decline once, then allow). Check the comment in Jira.
@@ -92,7 +92,7 @@ below is what is left.
 ## Manual guide, sign in with Atlassian
 
 1. Settings, Integrations, Connect, Sign in with Atlassian. The browser opens Atlassian. Approve.
-   Circles says "Connected as <you> on <site>, signed in with Atlassian".
+   Amplify says "Connected as <you> on <site>, signed in with Atlassian".
 2. Close the tab without approving: after five minutes, or Cancel, the dialog ends with a message.
 3. An account with two sites: the picker appears. A wrong pick can be corrected.
 4. Run the manual guide above (search, read, comment, chats, trigger). Everything should work the same.

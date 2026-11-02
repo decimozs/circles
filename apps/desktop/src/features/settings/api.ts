@@ -1,4 +1,4 @@
-import type { SettingsView } from "@circles/bindings/SettingsView";
+import type { SettingsView } from "@amplify/bindings/SettingsView";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";

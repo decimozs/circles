@@ -1,13 +1,13 @@
 ---
-name: circles-pr-branch
+name: amplify-pr-branch
 description: >-
-  Create a correctly named git branch for a Circles ticket, always on top of the open PR stack. Use
-  when the user runs /circles-pr-branch, or asks to "create a branch", "start a branch for ..." or
+  Create a correctly named git branch for a Amplify ticket, always on top of the open PR stack. Use
+  when the user runs /amplify-pr-branch, or asks to "create a branch", "start a branch for ..." or
   "branch for KEY-123". A ticket is required: names are <type>/<KEY-n>-<slug>. Verifies identity,
   builds from the stack tip, never tracks main, never pushes.
 ---
 
-# circles-pr-branch
+# amplify-pr-branch
 
 ## Name
 
@@ -16,7 +16,7 @@ description: >-
 ```
 
 **Every change has a ticket, even a small one.** No ticket means no branch: file it first with
-`circles-jira-tickets` (draft, then the user's approval), then come back. The one exception is
+`amplify-jira-tickets` (draft, then the user's approval), then come back. The one exception is
 the bootstrap in `CLAUDE.md`, while `.github/JIRA.md` has no project key yet.
 
 - `type`: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `ci`, `build`, `style`, `revert`.
@@ -24,7 +24,7 @@ the bootstrap in `CLAUDE.md`, while `.github/JIRA.md` has no project key yet.
   (a, an, the, to, for, of, and). Letters, digits and dashes only; no leading, trailing or double
   dashes.
 - Regex: `^(feat|fix|refactor|perf|docs|test|chore|ci|build|style|revert)/[A-Z][A-Z0-9]+-[0-9]+(-[a-z0-9]+){1,5}$`
-- This is the rule Circles can give Composers: the project's `branch_pattern` setting
+- This is the rule Amplify can give Composers: the project's `branch_pattern` setting
   `{type}/{ticket}-{slug}`.
 
 Examples: `fix/PROJ-12-stale-base-in-create-pr`, `ci/PROJ-31-shard-frontend-tests`,
@@ -38,7 +38,7 @@ Task is `feat`, Spike is `chore`) and let the user override. If unclear, ask.
 ## Steps
 
 1. **Ticket.** Get the ticket key and read it (read-only): summary, type, acceptance criteria. If
-   there is none, stop and file it with `circles-jira-tickets`. Do not invent a key. If the ticket
+   there is none, stop and file it with `amplify-jira-tickets`. Do not invent a key. If the ticket
    is an Epic, stop: epics have no branch.
 2. **Identity.** `git config user.name`, `git config user.email`, `git rev-parse --absolute-git-dir`:
    `decimozs <marlonadiguemartin548@gmail.com>`, repository under `~/Personal/`, active `gh` account
@@ -51,7 +51,7 @@ Task is `feat`, Spike is `chore`) and let the user override. If unclear, ask.
    - None: base on `origin/main`.
    - Some: they form one linear chain. Base the new branch on the **tip** of that chain (the
      branch no other open PR is built on). First confirm the chain is current with `main`
-     (`git merge-base --is-ancestor origin/main origin/<tip>`); if not, run `circles-stack-rebase`
+     (`git merge-base --is-ancestor origin/main origin/<tip>`); if not, run `amplify-stack-rebase`
      before branching.
    - Show the proposed base and ask the user to confirm. A branch that is independent of the stack
      only when the user says so explicitly.
@@ -59,7 +59,7 @@ Task is `feat`, Spike is `chore`) and let the user override. If unclear, ask.
 7. **Check it is free.** `git branch --list <name>` and `git ls-remote --heads origin <name>`.
 8. **Create.** `git switch -c <name> --no-track <base>`. Always `--no-track`: without it the branch
    would track its base and a bare `git push` could target `main`. Use
-   `git worktree add ../circles-<slug> -b <name> <base>` only when asked for a worktree.
+   `git worktree add ../amplify-<slug> -b <name> <base>` only when asked for a worktree.
 9. Print the base, the stack position and the ticket's acceptance criteria, so the work targets them.
 
 ## Never

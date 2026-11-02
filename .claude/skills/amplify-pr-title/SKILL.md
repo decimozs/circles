@@ -1,12 +1,12 @@
 ---
-name: circles-pr-title
+name: amplify-pr-title
 description: >-
-  Write the title of a Circles pull request. Use when drafting or reviewing a PR title, when the user
-  runs /circles-pr-title, or from circles-create-pr. The title is "KEY-n : <ticket summary>" with
+  Write the title of a Amplify pull request. Use when drafting or reviewing a PR title, when the user
+  runs /amplify-pr-title, or from amplify-create-pr. The title is "KEY-n : <ticket summary>" with
   the Jira summary verbatim, because every PR has exactly one ticket. No emoji, no attribution.
 ---
 
-# circles-pr-title
+# amplify-pr-title
 
 ## Format
 
@@ -20,7 +20,7 @@ Example: `PROJ-45 : Add bot CRUD API`. A space before the colon.
   since the branch was made, use the current one. Never reword it. If the wording is wrong, fix the
   ticket, with approval, not the title.
 - One ticket per PR. Two tickets mean two PRs.
-- No ticket means no PR title: file the ticket first (`circles-jira-tickets`).
+- No ticket means no PR title: file the ticket first (`amplify-jira-tickets`).
 - No emoji. No `WIP` or `[DRAFT]`: open a draft PR instead. No Claude or Anthropic attribution.
 
 ## Steps

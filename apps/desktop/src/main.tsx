@@ -1,4 +1,4 @@
-import { TooltipProvider } from "@circles/ui/components/tooltip";
+import { TooltipProvider } from "@amplify/ui/components/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import ReactDOM from "react-dom/client";

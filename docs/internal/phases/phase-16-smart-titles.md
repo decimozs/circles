@@ -1,6 +1,6 @@
 # Phase 16: Smart chat titles and input suggestions
 
-> Changed later: the model that shipped inside Circles (SmolLM2 through llama.cpp) was removed. Titles, suggestions and the Composer example now come from Claude Haiku through Claude Code, and there is no provider setting. Everything below about the built-in model, its file, `pnpm model:fetch` and its licence notice no longer applies.
+> Changed later: the model that shipped inside Amplify (SmolLM2 through llama.cpp) was removed. Titles, suggestions and the Composer example now come from Claude Haiku through Claude Code, and there is no provider setting. Everything below about the built-in model, its file, `pnpm model:fetch` and its licence notice no longer applies.
 
 Status: S0 to S5 built and tested. Real-model checks only on this Mac. See "Built" and "Gaps" at the end.
 
@@ -14,14 +14,14 @@ Status: S0 to S5 built and tested. Real-model checks only on this Mac. See "Buil
 
 ## The rule
 
-**Nothing to install.** The model and the engine ship inside Circles. No Ollama, no Docker, no
-server, no download on first use, no account, no network. Circles works the same on a fresh Mac.
+**Nothing to install.** The model and the engine ship inside Amplify. No Ollama, no Docker, no
+server, no download on first use, no account, no network. Amplify works the same on a fresh Mac.
 
 ## How: the same idea as the Python example, in Rust
 
 The Python reference uses `llama-cpp-python`: llama.cpp running inside your own process, with one
-`.gguf` model file. Circles is Rust, so the equivalent is the **`llama-cpp-2`** crate: the same
-llama.cpp engine, compiled into the Circles program. The model is a `.gguf` file packed into the
+`.gguf` model file. Amplify is Rust, so the equivalent is the **`llama-cpp-2`** crate: the same
+llama.cpp engine, compiled into the Amplify program. The model is a `.gguf` file packed into the
 app bundle as a resource.
 
 | Piece | Choice | Why |

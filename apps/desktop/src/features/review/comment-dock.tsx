@@ -1,5 +1,5 @@
-import type { Comment } from "@circles/bindings/Comment";
-import { Button } from "@circles/ui/components/button";
+import type { Comment } from "@amplify/bindings/Comment";
+import { Button } from "@amplify/ui/components/button";
 import { CheckIcon, SendIcon, Trash2Icon, Undo2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

@@ -1,7 +1,7 @@
-import type { Composer } from "@circles/bindings/Composer";
-import { Badge } from "@circles/ui/components/badge";
-import { Button } from "@circles/ui/components/button";
-import { Textarea } from "@circles/ui/components/textarea";
+import type { Composer } from "@amplify/bindings/Composer";
+import { Badge } from "@amplify/ui/components/badge";
+import { Button } from "@amplify/ui/components/button";
+import { Textarea } from "@amplify/ui/components/textarea";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";

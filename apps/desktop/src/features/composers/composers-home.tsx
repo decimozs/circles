@@ -1,7 +1,7 @@
-import type { Composer } from "@circles/bindings/Composer";
-import { Badge } from "@circles/ui/components/badge";
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
+import type { Composer } from "@amplify/bindings/Composer";
+import { Badge } from "@amplify/ui/components/badge";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
 import { PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";

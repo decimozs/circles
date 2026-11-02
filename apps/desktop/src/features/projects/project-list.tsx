@@ -1,6 +1,6 @@
-import type { Project } from "@circles/bindings/Project";
-import { Button } from "@circles/ui/components/button";
-import { Input } from "@circles/ui/components/input";
+import type { Project } from "@amplify/bindings/Project";
+import { Button } from "@amplify/ui/components/button";
+import { Input } from "@amplify/ui/components/input";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { useProjects, useSetBaseBranch } from "@/features/projects/api";

@@ -1,4 +1,4 @@
-import type { SkillRow } from "@circles/bindings/SkillRow";
+import type { SkillRow } from "@amplify/bindings/SkillRow";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { type Filters, NO_FILTERS, type SortId } from "./query";
@@ -56,7 +56,7 @@ export const useSkillsUi = create<SkillsState>()(
       setQuery: (query) => set({ query }),
     }),
     {
-      name: "circles-skills",
+      name: "amplify-skills",
       version: 1,
       partialize: ({ scope, sort, filters }) => ({ scope, sort, filters }),
     },

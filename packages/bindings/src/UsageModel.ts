@@ -2,6 +2,6 @@
 
 export type UsageModel = { model: string, cost_usd: number, tokens: number, messages: number, 
 /**
- * False when Circles has no price for the model: its tokens are counted, its cost is not.
+ * False when Amplify has no price for the model: its tokens are counted, its cost is not.
  */
 priced: boolean, };

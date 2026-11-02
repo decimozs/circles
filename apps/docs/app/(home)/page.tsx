@@ -5,7 +5,7 @@ const START = [
   {
     href: "/docs/getting-started",
     title: "Getting started",
-    text: "Install Circles, finish the setup checklist and start your first chat.",
+    text: "Install Amplify, finish the setup checklist and start your first chat.",
   },
   {
     href: "/docs/composers",
@@ -20,7 +20,7 @@ const START = [
   {
     href: "/docs/troubleshooting",
     title: "Troubleshooting",
-    text: "When macOS will not open Circles, or something does not work.",
+    text: "When macOS will not open Amplify, or something does not work.",
   },
 ];
 

@@ -1,5 +1,5 @@
 {
-  "extends": "@circles/config/tsconfig.react.json",
+  "extends": "@amplify/config/tsconfig.react.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

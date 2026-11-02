@@ -1,4 +1,4 @@
-# Circles
+# Amplify
 
 A local desktop app that runs Claude Code agents in parallel, each in its own git worktree, with
 Composers that orchestrate them. Tauri 2 (Rust) and React 19, in a pnpm and Cargo monorepo.
@@ -9,7 +9,7 @@ hand), `packages/config`, `apps/docs` (the user guide, a Fumadocs website: pages
 ## Hard rules
 
 1. **No change without a ticket, even a small one.** Before any change, check that a ticket exists
-   (the branch name, then a Jira search). If none does, file it first with `circles-jira-tickets`:
+   (the branch name, then a Jira search). If none does, file it first with `amplify-jira-tickets`:
    the full draft is shown and needs the user's approval. A one-line fix gets a one-paragraph
    ticket, not none. "Just do it" does not skip this.
 2. **Stay in the ticket's scope.** Anything found outside it becomes a new ticket proposal, not an
@@ -18,15 +18,15 @@ hand), `packages/config`, `apps/docs` (the user guide, a Fumadocs website: pages
 4. **`main` is protected.** Never commit to it, push to it, merge a PR, approve a PR, or enable
    auto-merge. Every change is a pull request that the owner reviews and merges.
 5. **Names carry the ticket.**
-   - Branch: `<type>/<KEY-n>-<slug>`, from `circles-pr-branch`.
-   - Commit subject: `<type>(<scope>): <imperative summary> (KEY-n)`, from `circles-atomic-commit`.
-   - PR title: `KEY-n : <ticket summary>`, from `circles-pr-title`.
-   - PR description starts with the ticket link, from `circles-pr-description`.
+   - Branch: `<type>/<KEY-n>-<slug>`, from `amplify-pr-branch`.
+   - Commit subject: `<type>(<scope>): <imperative summary> (KEY-n)`, from `amplify-atomic-commit`.
+   - PR title: `KEY-n : <ticket summary>`, from `amplify-pr-title`.
+   - PR description starts with the ticket link, from `amplify-pr-description`.
 6. **Keep PRs stacked.** All open PRs form one linear chain on the latest `origin/main`. A new branch
    starts from the tip of the chain, every PR targets `main`, and the owner merges the tip once with
-   a merge commit. `circles-create-pr` checks this and runs `circles-stack-rebase` when needed.
+   a merge commit. `amplify-create-pr` checks this and runs `amplify-stack-rebase` when needed.
    Force-push only with an explicit lease and the owner's approval, never to `main`.
-7. **Every commit goes through `circles-atomic-commit`.** One logical change and one entity per
+7. **Every commit goes through `amplify-atomic-commit`.** One logical change and one entity per
    commit, exact-path staging (never `git add -A`), a why-not-what body.
 8. **No Claude or Anthropic attribution** in a commit, a PR title or a PR body: no `Co-Authored-By`
    trailer, no "Generated with" line.
@@ -39,9 +39,9 @@ hand), `packages/config`, `apps/docs` (the user guide, a Fumadocs website: pages
     `apps/desktop/src-tauri` or `packages/bindings` changed, `cargo fmt --all --check`,
     `cargo clippy --workspace --all-targets -- -D warnings` and `cargo test --workspace`. Report what
     was run, with the result, and what was not run.
-11. **Docs match the change.** Before a PR, run `circles-update-docs`: any change a user can see
+11. **Docs match the change.** Before a PR, run `amplify-update-docs`: any change a user can see
     updates the guide in `apps/docs/content/docs/` and the `CHANGELOG.md` in the same PR, runs
-    `pnpm --filter @circles/docs check`, and the report says which pages were checked.
+    `pnpm --filter @amplify/docs check`, and the report says which pages were checked.
 
 ## Bootstrap
 

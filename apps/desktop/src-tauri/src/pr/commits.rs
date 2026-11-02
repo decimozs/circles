@@ -1,5 +1,5 @@
 //! Committing the uncommitted changes of a workspace as atomic commits. Claude only proposes how
-//! to group the files. Circles runs git itself, so every commit is exactly what the plan says.
+//! to group the files. Amplify runs git itself, so every commit is exactly what the plan says.
 
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
@@ -27,7 +27,7 @@ pub struct CommitInfo {
     pub files: Vec<String>,
 }
 
-/// The commits in the last `circles-commits` block of a reply.
+/// The commits in the last `amplify-commits` block of a reply.
 pub fn parse_plan(text: &str) -> Option<Vec<PlannedCommit>> {
     let mut found = None;
     for part in text.split(&format!("```{COMMITS_FENCE}")).skip(1) {
@@ -198,13 +198,13 @@ mod tests {
 
     #[test]
     fn a_plan_is_read_from_the_last_labelled_block() {
-        let text = "Plan:\n```circles-commits\n[{\"message\":\"One\",\"files\":[\"a\"]}]\n```\n```circles-commits\n[{\"message\":\"Two\",\"files\":[\"a\",\"b\"]},{\"message\":\"Three\"}]\n```";
+        let text = "Plan:\n```amplify-commits\n[{\"message\":\"One\",\"files\":[\"a\"]}]\n```\n```amplify-commits\n[{\"message\":\"Two\",\"files\":[\"a\",\"b\"]},{\"message\":\"Three\"}]\n```";
         let plan = parse_plan(text).unwrap();
         assert_eq!(plan.len(), 2);
         assert_eq!(plan[0], commit("Two", &["a", "b"]));
         assert!(plan[1].files.is_empty(), "a missing list reads as empty");
         assert!(parse_plan("nothing").is_none());
-        assert!(parse_plan("```circles-commits\nnot json\n```").is_none());
+        assert!(parse_plan("```amplify-commits\nnot json\n```").is_none());
     }
 
     #[test]

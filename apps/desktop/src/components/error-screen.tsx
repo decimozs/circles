@@ -1,4 +1,4 @@
-import { Button } from "@circles/ui/components/button";
+import { Button } from "@amplify/ui/components/button";
 import { useState } from "react";
 import { ipc } from "@/lib/ipc";
 

@@ -968,7 +968,7 @@ mod tests {
     fn parses_repo_list_json() {
         let json = r#"[
           {"nameWithOwner":"me/roster","name":"roster","description":"","isPrivate":true,"url":"https://github.com/me/roster","owner":{"id":"x","login":"me"}},
-          {"nameWithOwner":"me/circles","name":"circles","description":"Agents","isPrivate":false,"url":"https://github.com/me/circles","owner":{"login":"me"}}
+          {"nameWithOwner":"me/amplify","name":"amplify","description":"Agents","isPrivate":false,"url":"https://github.com/me/amplify","owner":{"login":"me"}}
         ]"#;
         let repos = parse_repo_list(json).unwrap();
         assert_eq!(repos.len(), 2);

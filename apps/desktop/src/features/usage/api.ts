@@ -10,7 +10,7 @@ export const usageKeys = {
   limit: ["usage-limit"] as const,
 };
 
-/** Usage over a range, for one Claude folder or all of them. This reads what Circles kept, which
+/** Usage over a range, for one Claude folder or all of them. This reads what Amplify kept, which
  * takes milliseconds, so it is never slow; a refresh in the background keeps it up to date and
  * `useUsageSync` tells this query when it changed. While another range or folder loads, the
  * numbers on screen stay. */

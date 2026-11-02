@@ -31,7 +31,7 @@ Any real UI, any backend logic, any commit or push.
 
 ## Technical notes
 - Window: macOS overlay titlebar (`titleBarStyle: "Overlay"`, `hiddenTitle: true`), min size 900x600. Traffic lights are positioned in phase 2.
-- Keep `tauri.conf.json` identifier as `build.circles.app` until a real domain is chosen.
+- Keep `tauri.conf.json` identifier as `build.amplify.app` until a real domain is chosen.
 - Do not add Tauri shell or fs plugin permissions beyond what a phase needs. Spawning goes through our own Rust commands.
 - Add a `rust-toolchain.toml` pinning the toolchain.
 

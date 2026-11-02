@@ -1,4 +1,4 @@
-//! How a Composer's Claude Code is started: no built-in tools, only the Circles tools.
+//! How a Composer's Claude Code is started: no built-in tools, only the Amplify tools.
 
 use std::path::Path;
 
@@ -20,7 +20,7 @@ pub fn args(
     mcp_config: Option<&Path>,
 ) -> Vec<String> {
     let mut args: Vec<String> = vec![
-        // No file, shell or web tools. The only things it can do are Circles' tools.
+        // No file, shell or web tools. The only things it can do are Amplify' tools.
         "--tools".into(),
         String::new(),
         "--append-system-prompt".into(),
@@ -37,7 +37,7 @@ pub fn args(
             "--mcp-config".into(),
             config.to_string_lossy().into_owned(),
             "--allowedTools".into(),
-            "mcp__circles".into(),
+            "mcp__amplify".into(),
         ]);
     }
     if let Some(budget) = composer.limits.max_budget_usd {
@@ -60,12 +60,12 @@ impl LaunchHook for ComposerHub {
 
         let mut config_path = None;
         let mut env = vec![
-            ("CIRCLES_COMPOSER_ID".to_string(), composer.id.clone()),
+            ("AMPLIFY_COMPOSER_ID".to_string(), composer.id.clone()),
             ("MCP_TOOL_TIMEOUT".to_string(), TOOL_TIMEOUT_MS.to_string()),
         ];
-        // The helper is this same program. `CIRCLES_MCP_EXE` names another one, for tests and for
+        // The helper is this same program. `AMPLIFY_MCP_EXE` names another one, for tests and for
         // trying a build that is not the one running.
-        let exe = std::env::var_os("CIRCLES_MCP_EXE")
+        let exe = std::env::var_os("AMPLIFY_MCP_EXE")
             .map(std::path::PathBuf::from)
             .or_else(|| std::env::current_exe().ok());
         if let (Some(server), Some(exe)) = (self.server(), exe) {
@@ -74,13 +74,13 @@ impl LaunchHook for ComposerHub {
             let path = dir.join(format!("{}.mcp.json", session.id));
             let config = json!({
                 "mcpServers": {
-                    "circles": {
+                    "amplify": {
                         "command": exe,
-                        "args": ["--circles-mcp"],
+                        "args": ["--amplify-mcp"],
                         "env": {
-                            "CIRCLES_SOCKET": server.socket,
-                            "CIRCLES_TOKEN": server.token,
-                            "CIRCLES_SESSION_ID": session.id,
+                            "AMPLIFY_SOCKET": server.socket,
+                            "AMPLIFY_TOKEN": server.token,
+                            "AMPLIFY_SESSION_ID": session.id,
                         },
                     }
                 }
@@ -121,20 +121,20 @@ impl ComposerHub {
             return None;
         }
         let server = self.server()?;
-        let exe = std::env::var_os("CIRCLES_MCP_EXE")
+        let exe = std::env::var_os("AMPLIFY_MCP_EXE")
             .map(std::path::PathBuf::from)
             .or_else(|| std::env::current_exe().ok())?;
         let dir = self.data_dir().join("composers").join("run");
         let path = dir.join(format!("{}.mcp.json", session.id));
         let config = json!({
             "mcpServers": {
-                "circles-jira": {
+                "amplify-jira": {
                     "command": exe,
-                    "args": ["--circles-mcp"],
+                    "args": ["--amplify-mcp"],
                     "env": {
-                        "CIRCLES_SOCKET": server.socket,
-                        "CIRCLES_TOKEN": server.token,
-                        "CIRCLES_SESSION_ID": session.id,
+                        "AMPLIFY_SOCKET": server.socket,
+                        "AMPLIFY_TOKEN": server.token,
+                        "AMPLIFY_SESSION_ID": session.id,
                     },
                 }
             }
@@ -154,7 +154,7 @@ fn chat_args(config: &Path, tools: &[crate::tools::ToolDef]) -> Vec<String> {
     let reads: Vec<String> = tools
         .iter()
         .filter(|d| d.tier == crate::tools::Tier::Read)
-        .map(|d| format!("mcp__circles-jira__{}", d.name))
+        .map(|d| format!("mcp__amplify-jira__{}", d.name))
         .collect();
     vec![
         "--mcp-config".into(),
@@ -201,14 +201,14 @@ mod tests {
     }
 
     #[test]
-    fn built_in_tools_are_switched_off_with_an_empty_list_and_only_the_circles_server_is_used() {
+    fn built_in_tools_are_switched_off_with_an_empty_list_and_only_the_amplify_server_is_used() {
         let a = args(&composer(None), false, false, Some(Path::new("/x/y.json")));
         let at = a.iter().position(|x| x == "--tools").unwrap();
         assert_eq!(a[at + 1], "", "the empty list is kept");
         assert!(a.contains(&"--strict-mcp-config".to_string()));
         let cfg = a.iter().position(|x| x == "--mcp-config").unwrap();
         assert_eq!(a[cfg + 1], "/x/y.json");
-        assert!(a.contains(&"mcp__circles".to_string()));
+        assert!(a.contains(&"mcp__amplify".to_string()));
         assert!(!a.contains(&"--max-budget-usd".to_string()));
         assert!(a.iter().any(|x| x.contains("You are \"C\"")));
     }
@@ -295,9 +295,9 @@ mod tests {
             .ancestors()
             .find(|p| p.join("Cargo.lock").is_file())
             .expect("a workspace with a Cargo.lock")
-            .join("target/debug/circles");
+            .join("target/debug/amplify");
         assert!(exe.is_file(), "run `cargo build` first: {}", exe.display());
-        std::env::set_var("CIRCLES_MCP_EXE", &exe);
+        std::env::set_var("AMPLIFY_MCP_EXE", &exe);
         let tmp = tempfile::tempdir().unwrap();
         let dir = std::fs::canonicalize(tmp.path()).unwrap();
         let db = Arc::new(Db::open(&dir.join("t.db")).unwrap());
@@ -465,8 +465,8 @@ mod tests {
             .any(|a| a == "--strict-mcp-config" || a == "--tools"));
         assert_eq!(args[args.len() - 2], "--allowedTools");
         let allowed = args.last().unwrap();
-        assert!(allowed.contains("mcp__circles-jira__jira_search"));
-        assert!(allowed.contains("mcp__circles-jira__jira_get_issue"));
+        assert!(allowed.contains("mcp__amplify-jira__jira_search"));
+        assert!(allowed.contains("mcp__amplify-jira__jira_get_issue"));
         for write in [
             "jira_add_comment",
             "jira_transition_issue",

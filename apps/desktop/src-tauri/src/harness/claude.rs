@@ -652,7 +652,7 @@ mod process_tests {
         StartSpec {
             session_id: "s1".into(),
             cwd: fx.dir.clone(),
-            env: vec![("CIRCLES_PORT".into(), "55010".into())],
+            env: vec![("AMPLIFY_PORT".into(), "55010".into())],
             launch,
             model: None,
             effort: None,
@@ -766,7 +766,7 @@ mod process_tests {
             .windows(2)
             .any(|w| w == ["--permission-prompt-tool", "stdio"]));
         assert_eq!(first["cwd"], fx.dir.to_str().unwrap());
-        assert_eq!(first["env"]["CIRCLES_PORT"], "55010");
+        assert_eq!(first["env"]["AMPLIFY_PORT"], "55010");
         process.stop(Duration::from_secs(2)).await;
     }
 

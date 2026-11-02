@@ -1,5 +1,5 @@
-//! The accounts Circles works as: the GitHub account the GitHub CLI uses, and the Claude account
-//! Claude Code is signed in with. Circles never holds either login. It reads who they are and,
+//! The accounts Amplify works as: the GitHub account the GitHub CLI uses, and the Claude account
+//! Claude Code is signed in with. Amplify never holds either login. It reads who they are and,
 //! for GitHub, which one is active.
 
 use std::time::Duration;

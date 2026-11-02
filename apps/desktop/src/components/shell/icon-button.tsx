@@ -1,6 +1,6 @@
-import { Button } from "@circles/ui/components/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@circles/ui/components/tooltip";
-import { cn } from "@circles/ui/utils";
+import { Button } from "@amplify/ui/components/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@amplify/ui/components/tooltip";
+import { cn } from "@amplify/ui/utils";
 import type * as React from "react";
 
 type IconButtonProps = Omit<React.ComponentProps<typeof Button>, "children"> & {

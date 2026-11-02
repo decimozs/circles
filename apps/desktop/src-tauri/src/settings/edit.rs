@@ -390,7 +390,7 @@ mod tests {
     fn layers(dir: &Path) -> Vec<(Scope, PathBuf)> {
         vec![
             (Scope::User, dir.join("user.toml")),
-            (Scope::Project, dir.join("repo/.circles/settings.toml")),
+            (Scope::Project, dir.join("repo/.amplify/settings.toml")),
             (Scope::LocalProject, dir.join("local/settings.toml")),
         ]
     }

@@ -1,6 +1,6 @@
-import type { Approval } from "@circles/bindings/Approval";
-import { Button } from "@circles/ui/components/button";
-import { cn } from "@circles/ui/utils";
+import type { Approval } from "@amplify/bindings/Approval";
+import { Button } from "@amplify/ui/components/button";
+import { cn } from "@amplify/ui/utils";
 import { ShieldQuestionIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useAnswerApproval } from "./api";

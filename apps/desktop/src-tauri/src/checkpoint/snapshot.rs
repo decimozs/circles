@@ -13,10 +13,10 @@ use crate::git::Git;
 pub const SIZE_CAP: u64 = 10 * 1024 * 1024;
 
 const IDENTITY: [(&str, &str); 4] = [
-    ("GIT_AUTHOR_NAME", "Circles"),
-    ("GIT_AUTHOR_EMAIL", "circles@localhost"),
-    ("GIT_COMMITTER_NAME", "Circles"),
-    ("GIT_COMMITTER_EMAIL", "circles@localhost"),
+    ("GIT_AUTHOR_NAME", "Amplify"),
+    ("GIT_AUTHOR_EMAIL", "amplify@localhost"),
+    ("GIT_COMMITTER_NAME", "Amplify"),
+    ("GIT_COMMITTER_EMAIL", "amplify@localhost"),
 ];
 
 /// A private index file, removed when dropped, so the user's index is never involved.
@@ -24,7 +24,7 @@ struct TempIndex(PathBuf);
 
 impl TempIndex {
     fn new() -> Self {
-        Self(std::env::temp_dir().join(format!("circles-index-{}", uuid::Uuid::new_v4().simple())))
+        Self(std::env::temp_dir().join(format!("amplify-index-{}", uuid::Uuid::new_v4().simple())))
     }
 
     fn env(&self) -> [(&'static str, String); 1] {

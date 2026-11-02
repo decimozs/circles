@@ -1,5 +1,5 @@
-import type { PrRow as Row } from "@circles/bindings/PrRow";
-import { cn } from "@circles/ui/utils";
+import type { PrRow as Row } from "@amplify/bindings/PrRow";
+import { cn } from "@amplify/ui/utils";
 import {
   CircleCheckIcon,
   CircleDotDashedIcon,

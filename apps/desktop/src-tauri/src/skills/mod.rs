@@ -357,7 +357,7 @@ fn known(src: &Sources, id: &str) -> AppResult<SkillRow> {
         .skills
         .into_iter()
         .find(|s| s.id == id)
-        .ok_or_else(|| AppError::NotFound("That skill is not in any folder Circles reads.".into()))
+        .ok_or_else(|| AppError::NotFound("That skill is not in any folder Amplify reads.".into()))
 }
 
 /// The folder of a skill the scan found, and nothing else.
@@ -476,15 +476,15 @@ mod tests {
                 plugin.display()
             ),
         );
-        let project = home.join("work/circles");
+        let project = home.join("work/amplify");
         write(
-            &project.join(".claude/skills/circles-pr-title/SKILL.md"),
-            "---\nname: circles-pr-title\ndescription: Titles.\n---\n",
+            &project.join(".claude/skills/amplify-pr-title/SKILL.md"),
+            "---\nname: amplify-pr-title\ndescription: Titles.\n---\n",
         );
         let src = Sources {
             home: Some(home),
             configured: None,
-            projects: vec![("p1".into(), "circles".into(), project)],
+            projects: vec![("p1".into(), "amplify".into(), project)],
         };
         (tmp, src)
     }
@@ -500,7 +500,7 @@ mod tests {
             1,
             "{names:?}"
         );
-        for n in ["herdr", "review", "circles-pr-title", "quiet"] {
+        for n in ["herdr", "review", "amplify-pr-title", "quiet"] {
             assert!(names.contains(&n), "{n} in {names:?}");
         }
         // Not skills: a hidden folder, and one with no SKILL.md.
@@ -514,7 +514,7 @@ mod tests {
         assert_eq!(by_name("herdr").group, SkillGroup::Shared);
         assert_eq!(by_name("review").group, SkillGroup::Plugin);
         assert_eq!(by_name("review").source, "pretty");
-        let project = by_name("circles-pr-title");
+        let project = by_name("amplify-pr-title");
         assert_eq!(project.group, SkillGroup::Project);
         assert_eq!(project.project_id.as_deref(), Some("p1"));
         // A folder name stands in for a missing name, and the model switch is read.

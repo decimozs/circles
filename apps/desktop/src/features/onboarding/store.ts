@@ -18,6 +18,6 @@ export const useOnboarding = create<{
       arm: () => set({ armed: true }),
       again: () => set({ done: false, armed: true }),
     }),
-    { name: "circles-onboarding", partialize: (s) => ({ done: s.done }) },
+    { name: "amplify-onboarding", partialize: (s) => ({ done: s.done }) },
   ),
 );

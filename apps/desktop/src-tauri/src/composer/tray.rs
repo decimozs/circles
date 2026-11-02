@@ -1,4 +1,4 @@
-//! The menu bar item: keeps Circles running after its window is closed, so schedules and triggers
+//! The menu bar item: keeps Amplify running after its window is closed, so schedules and triggers
 //! go on, and gives a way to look at what waits and to pause or stop the Composers.
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -28,13 +28,13 @@ pub fn show_window(app: &AppHandle) {
     }
 }
 
-/// Makes the item. Called when the setting is on, as Circles starts.
+/// Makes the item. Called when the setting is on, as Amplify starts.
 pub fn build(app: &AppHandle) -> tauri::Result<()> {
-    let open = MenuItem::with_id(app, "open", "Open Circles", true, None::<&str>)?;
+    let open = MenuItem::with_id(app, "open", "Open Amplify", true, None::<&str>)?;
     let status = MenuItem::with_id(app, "status", "Nothing is waiting", false, None::<&str>)?;
     let pause = MenuItem::with_id(app, "pause", "Pause Composers", true, None::<&str>)?;
     let stop = MenuItem::with_id(app, "stop_all", "Stop all Composers", true, None::<&str>)?;
-    let quit = MenuItem::with_id(app, "quit", "Quit Circles", true, None::<&str>)?;
+    let quit = MenuItem::with_id(app, "quit", "Quit Amplify", true, None::<&str>)?;
     let menu = Menu::with_items(
         app,
         &[
@@ -50,8 +50,8 @@ pub fn build(app: &AppHandle) -> tauri::Result<()> {
     let _ = STATUS.set(status);
     let _ = PAUSE.set(pause);
 
-    let mut builder = TrayIconBuilder::with_id("circles")
-        .tooltip("Circles")
+    let mut builder = TrayIconBuilder::with_id("amplify")
+        .tooltip("Amplify")
         .menu(&menu)
         .on_menu_event(|app, event| {
             let state = app.state::<AppState>();
@@ -126,11 +126,11 @@ pub fn refresh(app: &AppHandle) {
             "Pause Composers"
         });
     }
-    if let Some(tray) = app.tray_by_id("circles") {
+    if let Some(tray) = app.tray_by_id("amplify") {
         let _ = tray.set_tooltip(Some(if waiting > 0 {
-            format!("Circles: {waiting} waiting for you")
+            format!("Amplify: {waiting} waiting for you")
         } else {
-            "Circles".to_string()
+            "Amplify".to_string()
         }));
     }
 }

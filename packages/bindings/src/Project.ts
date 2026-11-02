@@ -2,7 +2,7 @@
 
 export type Project = { id: string, name: string, path: string, 
 /**
- * The repository folder exists. False after it was moved or deleted outside Circles.
+ * The repository folder exists. False after it was moved or deleted outside Amplify.
  */
 path_exists: boolean, default_branch: string, remote_url: string | null, 
 /**

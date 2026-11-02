@@ -1,5 +1,5 @@
 //! Keeps the Mac awake while a run that nobody is watching is going. It runs `caffeinate`, which
-//! lets go as soon as it is stopped or Circles ends.
+//! lets go as soon as it is stopped or Amplify ends.
 
 use std::path::PathBuf;
 use std::process::{Child, Command, Stdio};

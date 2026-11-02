@@ -65,7 +65,7 @@ export const SETTINGS: SettingDef[] = [
     page: "general",
     title: "Notifications",
     description:
-      "A system notification when the agent finishes or needs you while Circles is in the background.",
+      "A system notification when the agent finishes or needs you while Amplify is in the background.",
     path: ["general", "notifications"],
     control: { kind: "toggle", default: true },
     keywords: "alerts desktop",
@@ -229,7 +229,7 @@ export const SETTINGS: SettingDef[] = [
     page: "account",
     title: "GitHub",
     description:
-      "The GitHub account Circles works as, through the GitHub CLI. Switch account changes the one the CLI uses.",
+      "The GitHub account Amplify works as, through the GitHub CLI. Switch account changes the one the CLI uses.",
     path: [],
     control: { kind: "custom" },
     keywords: "login profile github gh sign in account switch",
@@ -437,7 +437,7 @@ export const SETTINGS: SettingDef[] = [
     page: "composers",
     title: "Tell me when something waits",
     description:
-      "A notification when a Composer needs your approval while Circles is in the background.",
+      "A notification when a Composer needs your approval while Amplify is in the background.",
     path: ["composers", "notify_waiting"],
     control: { kind: "toggle", default: true },
     keywords: "approval inbox alert",
@@ -447,7 +447,7 @@ export const SETTINGS: SettingDef[] = [
     page: "composers",
     title: "Keep running in the menu bar",
     description:
-      "Closing the window hides Circles instead of quitting it, so schedules and triggers go on. Quit from the menu bar item. Takes effect the next time Circles starts.",
+      "Closing the window hides Amplify instead of quitting it, so schedules and triggers go on. Quit from the menu bar item. Takes effect the next time Amplify starts.",
     path: ["composers", "menu_bar"],
     control: { kind: "toggle", default: false },
     keywords: "background tray unattended",
@@ -455,7 +455,7 @@ export const SETTINGS: SettingDef[] = [
   {
     id: "start_at_login",
     page: "composers",
-    title: "Open Circles at login",
+    title: "Open Amplify at login",
     description: "So schedules and triggers run after you log in.",
     path: ["composers", "start_at_login"],
     control: { kind: "toggle", default: false },
@@ -484,7 +484,7 @@ export const SETTINGS: SettingDef[] = [
     id: "data_paths",
     page: "advanced",
     title: "Data folders",
-    description: "Where Circles keeps its database, logs and settings.",
+    description: "Where Amplify keeps its database, logs and settings.",
     path: [],
     control: { kind: "custom" },
     keywords: "reveal finder folder",
@@ -493,7 +493,7 @@ export const SETTINGS: SettingDef[] = [
     id: "log_level",
     page: "advanced",
     title: "Log level",
-    description: "How much is written to the log. Takes effect the next time Circles starts.",
+    description: "How much is written to the log. Takes effect the next time Amplify starts.",
     path: ["advanced", "log_level"],
     control: {
       kind: "select",

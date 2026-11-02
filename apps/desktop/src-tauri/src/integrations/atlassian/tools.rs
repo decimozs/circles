@@ -1,4 +1,4 @@
-//! The Circles Jira tools on top of Atlassian's MCP tools. A tool that is not in this file cannot
+//! The Amplify Jira tools on top of Atlassian's MCP tools. A tool that is not in this file cannot
 //! be reached: Atlassian may add or change tools at any time, and none of that gets to an agent.
 
 use std::collections::HashMap;
@@ -51,7 +51,7 @@ fn get<'a>(value: &'a Value, keys: &[&str]) -> &'a Value {
         .unwrap_or(&Value::Null)
 }
 
-/// One issue as the Circles search tool reports it, from either shape Atlassian uses.
+/// One issue as the Amplify search tool reports it, from either shape Atlassian uses.
 fn issue_line(issue: &Value) -> Value {
     let f = if issue["fields"].is_object() {
         &issue["fields"]

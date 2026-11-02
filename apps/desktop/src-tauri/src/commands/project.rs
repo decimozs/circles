@@ -19,7 +19,7 @@ pub async fn project_add_local(state: State<'_, AppState>, path: String) -> IpcR
     state.project_service().await.add_local(&path).await
 }
 
-/// Clones `owner/name` (or a GitHub URL) into `~/circles/repos/` and adds it.
+/// Clones `owner/name` (or a GitHub URL) into `~/amplify/repos/` and adds it.
 #[tauri::command]
 pub async fn project_add_github(
     state: State<'_, AppState>,
@@ -34,7 +34,7 @@ pub async fn project_quick_start(state: State<'_, AppState>, name: String) -> Ip
     state.project_service().await.quick_start(&name).await
 }
 
-/// Removes the project from Circles. The repository on disk is left untouched.
+/// Removes the project from Amplify. The repository on disk is left untouched.
 ///
 /// `workspaces` says what happens to its workspaces. Not given, the project must have none.
 /// `keep` lets them go with their folders left on disk, still working copies of the repository.

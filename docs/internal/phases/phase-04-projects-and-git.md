@@ -7,12 +7,12 @@ Add repositories as projects, and a tested git service that all workspace featur
 Phase 3.
 
 ## In scope
-- **Add project flows:** open a local repo, open a GitHub repo (via `gh repo list`, then clone into `~/circles/repos/`; see `docs/projects.md` for what the picker lists now), quick start (create new repo with an initial commit).
+- **Add project flows:** open a local repo, open a GitHub repo (via `gh repo list`, then clone into `~/amplify/repos/`; see `docs/projects.md` for what the picker lists now), quick start (create new repo with an initial commit).
 - **Validation:** is it a git repo, is it already added, is the path inside an existing worktree.
 - **Base branch detection:** read `origin/HEAD`, fall back to `main`, then `master`. Stored per project, editable.
 - **Git service** (shells out to the `git` CLI, never libgit2). Operations: `fetch`, `worktree add/remove/list/prune`, `branch` (create, rename, delete, exists), `status`, `diff` (numstat and patch), `log`, `rev-parse`, `merge-base`, `ahead/behind`.
 - Structured error mapping for common git failures: branch already checked out, dirty tree, no remote, auth failure.
-- Project removal (removes from Circles only, never deletes the repo).
+- Project removal (removes from Amplify only, never deletes the repo).
 - Project avatar (first letter or repo owner avatar from `gh`).
 
 ## Out of scope
@@ -40,6 +40,6 @@ Creating workspaces (phase 5), any UI beyond a minimal add-project dialog.
 ## Manual test script
 1. Add a local repo with an `origin`, confirm base is `main`.
 2. Add a repo with no remote, confirm fallback.
-3. Add from GitHub, confirm clone into `~/circles/repos/`.
+3. Add from GitHub, confirm clone into `~/amplify/repos/`.
 4. Run `gh auth logout`, confirm the GitHub option explains how to fix it.
 5. Remove the project, confirm the folder still exists.

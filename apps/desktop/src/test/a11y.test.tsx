@@ -62,7 +62,7 @@ describe("accessibility", () => {
     ]);
     useOnboarding.setState({ done: false, armed: false });
     renderApp("/");
-    await screen.findByText("Welcome to Circles");
+    await screen.findByText("Welcome to Amplify");
     expect(await violations()).toEqual([]);
   });
 });

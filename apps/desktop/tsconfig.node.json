@@ -1,4 +1,4 @@
 {
-  "extends": "@circles/config/tsconfig.node.json",
+  "extends": "@amplify/config/tsconfig.node.json",
   "include": ["vite.config.ts"]
 }

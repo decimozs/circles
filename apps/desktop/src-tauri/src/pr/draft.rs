@@ -23,7 +23,7 @@ pub struct PrDraft {
     pub body: String,
 }
 
-/// The title and description in the last `circles-pr` block of a reply.
+/// The title and description in the last `amplify-pr` block of a reply.
 pub fn parse_draft(text: &str) -> Option<PrDraft> {
     let mut found = None;
     for part in text.split(&format!("```{PR_FENCE}")).skip(1) {
@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn the_title_and_body_come_from_the_last_labelled_block() {
-        let text = "Sure.\n```circles-pr\n{\"title\":\"First\",\"body\":\"a\"}\n```\n```circles-pr\n{\"title\":\" Add login \",\"body\":\"A form.\\n\\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\"}\n```";
+        let text = "Sure.\n```amplify-pr\n{\"title\":\"First\",\"body\":\"a\"}\n```\n```amplify-pr\n{\"title\":\" Add login \",\"body\":\"A form.\\n\\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\"}\n```";
         assert_eq!(
             parse_draft(text),
             Some(PrDraft {
@@ -165,14 +165,14 @@ mod tests {
     #[test]
     fn answers_without_a_usable_block_give_nothing() {
         assert_eq!(parse_draft("no block"), None);
-        assert_eq!(parse_draft("```circles-pr\nnot json\n```"), None);
+        assert_eq!(parse_draft("```amplify-pr\nnot json\n```"), None);
         assert_eq!(
-            parse_draft("```circles-pr\n{\"title\":\"  \",\"body\":\"x\"}\n```"),
+            parse_draft("```amplify-pr\n{\"title\":\"  \",\"body\":\"x\"}\n```"),
             None
         );
-        assert_eq!(parse_draft("```circles-pr\n{\"body\":\"x\"}\n```"), None);
+        assert_eq!(parse_draft("```amplify-pr\n{\"body\":\"x\"}\n```"), None);
         assert_eq!(
-            parse_draft("```circles-pr\n{\"title\":\"T\"}\n```"),
+            parse_draft("```amplify-pr\n{\"title\":\"T\"}\n```"),
             Some(PrDraft {
                 title: "T".into(),
                 body: String::new()
@@ -185,7 +185,7 @@ mod tests {
         let tmp = tempfile::tempdir().unwrap();
         let env = fake(
             tmp.path(),
-            "#!/bin/sh\necho \"$@\" > \"$LOG\"\ncat >> \"$LOG\"\nprintf '```circles-pr\\n{\"title\":\"From fake\",\"body\":\"ok\"}\\n```\\n'\n",
+            "#!/bin/sh\necho \"$@\" > \"$LOG\"\ncat >> \"$LOG\"\nprintf '```amplify-pr\\n{\"title\":\"From fake\",\"body\":\"ok\"}\\n```\\n'\n",
         );
         let out = run_once(&env, tmp.path(), "Write a title\nfor this", "sonnet")
             .await

@@ -1,4 +1,4 @@
-import type { Message } from "@circles/bindings/Message";
+import type { Message } from "@amplify/bindings/Message";
 
 /** A tool call with what came back from it. */
 export type ToolCall = {

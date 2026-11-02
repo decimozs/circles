@@ -225,7 +225,7 @@ impl Scheduler {
                         .record_trigger_failure(&trigger.id, MAX_FAILURES)
                     {
                         let _ = crate::system::notify(
-                            "Circles",
+                            "Amplify",
                             &format!(
                                 "A trigger of {} was switched off after repeated failures.",
                                 composer.name

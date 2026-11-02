@@ -6,7 +6,7 @@
 Decide what a Composer is, what it may touch and how it can go wrong, before any code.
 
 ## Depends on
-Circles phases 0 to 15.
+Amplify phases 0 to 15.
 
 ## In scope
 - Answer the open questions in the README and record the answers. Questions 1, 2 and 4 are already answered: Claude only for now, Composers can create projects and workspaces, and merging is allowed depending on what the person wants. Question 3 is answered too: unattended runs are a must. Question 5 is answered too: the menu bar option, with no background service. All open questions are answered.

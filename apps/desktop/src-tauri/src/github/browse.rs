@@ -604,7 +604,7 @@ mod tests {
             &gh,
             vec![RepoRef {
                 project_id: "p".into(),
-                project_name: "circles".into(),
+                project_name: "amplify".into(),
                 path: folder,
             }],
             BrowseState::All,

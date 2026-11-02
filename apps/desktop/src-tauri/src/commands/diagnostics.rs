@@ -147,7 +147,7 @@ pub async fn dependency_check(state: State<'_, AppState>) -> IpcResult<Vec<Depen
 #[tauri::command]
 pub async fn diagnostics_report(state: State<'_, AppState>) -> IpcResult<String> {
     let mut out = format!(
-        "Circles {} on {} ({})\n",
+        "Amplify {} on {} ({})\n",
         env!("CARGO_PKG_VERSION"),
         std::env::consts::OS,
         std::env::consts::ARCH

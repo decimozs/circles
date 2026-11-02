@@ -1,6 +1,6 @@
-import type { Project } from "@circles/bindings/Project";
-import type { SkillRow } from "@circles/bindings/SkillRow";
-import { Button } from "@circles/ui/components/button";
+import type { Project } from "@amplify/bindings/Project";
+import type { SkillRow } from "@amplify/bindings/SkillRow";
+import { Button } from "@amplify/ui/components/button";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { CheckIcon, CopyIcon, ExternalLinkIcon, FileTextIcon, FolderOpenIcon } from "lucide-react";
 import { toast } from "sonner";

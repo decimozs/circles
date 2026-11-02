@@ -50,7 +50,7 @@ Each has a recommendation; the plan assumes these unless you say otherwise.
 
 ## Data
 
-All through `gh`, as the rest of Circles does, so accounts and the Environment setting apply
+All through `gh`, as the rest of Amplify does, so accounts and the Environment setting apply
 (`account_token_for`, `env_with_settings`). Nothing new is stored in the database; the list is cached
 in memory by TanStack Query.
 
@@ -89,7 +89,7 @@ Today `github/pr.rs` works from a workspace folder and the current branch. The n
 - Sidebar: one `NavLink` in `features/sidebar/sidebar.tsx` after Composer, same `NAV_ITEM` style.
 - Route `/pull-requests` and `/pull-requests/:projectId/:number` in `src/routes`.
 - Reuse: `features/chat/markdown.tsx` for descriptions and comments, the checks list from
-  `features/pr/` where it fits, `@circles/ui` primitives, `IconButton`, the resizable layout used by
+  `features/pr/` where it fits, `@amplify/ui` primitives, `IconButton`, the resizable layout used by
   the workbench.
 - Refresh: on open, on the refresh button, and on window focus after 60 s. No timers while the page
   is hidden.
@@ -121,7 +121,7 @@ Today `github/pr.rs` works from a workspace folder and the current branch. The n
 7. **Actions.** Merge (method choice, blockers shown like the existing merge flow), `Check out`
    through the create-workspace flow, copy `gh pr checkout`.
 8. **Docs.** Update `docs/pull-requests.md`, `docs/shortcuts.md`, `CHANGELOG.md` with
-   `circles-update-docs`. (Smaller doc edits go in the phase that causes them.)
+   `amplify-update-docs`. (Smaller doc edits go in the phase that causes them.)
 
 Phase 9, later: write comments, submit reviews, request reviewers, edit labels, line comments in
 Code.

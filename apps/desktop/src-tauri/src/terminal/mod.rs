@@ -106,7 +106,7 @@ pub struct Context {
     pub workspace_id: String,
     pub project_id: String,
     pub cwd: PathBuf,
-    /// `CIRCLES_*` variables and the custom `[environment_variables]`.
+    /// `AMPLIFY_*` variables and the custom `[environment_variables]`.
     pub env: Vec<(String, String)>,
 }
 
@@ -833,7 +833,7 @@ mod tests {
             workspace_id: workspace.into(),
             project_id: project.into(),
             cwd: fx.cwd.clone(),
-            env: vec![("CIRCLES_PORT".into(), "55010".into())],
+            env: vec![("AMPLIFY_PORT".into(), "55010".into())],
         }
     }
 
@@ -971,7 +971,7 @@ mod tests {
         assert_eq!(info, AttachInfo { running: true });
 
         fx.terminals
-            .write(&t.id, b"echo here=$(pwd) port=$CIRCLES_PORT\n")
+            .write(&t.id, b"echo here=$(pwd) port=$AMPLIFY_PORT\n")
             .unwrap();
         until("the shell to answer", || sink.text().contains("port=55010")).await;
         assert!(
@@ -1190,7 +1190,7 @@ mod tests {
             .run_script(
                 &fx.env,
                 &ctx(&fx, "w1", "p1"),
-                &script("web", "echo serving on $CIRCLES_PORT; sleep 0.3"),
+                &script("web", "echo serving on $AMPLIFY_PORT; sleep 0.3"),
                 RunMode::Concurrent,
             )
             .await
@@ -1199,7 +1199,7 @@ mod tests {
         assert_eq!(started.script.as_deref(), Some("web"));
         until("script output", || sink.text().contains("serving on 55010")).await;
         assert!(
-            sink.text().contains("$ echo serving on $CIRCLES_PORT"),
+            sink.text().contains("$ echo serving on $AMPLIFY_PORT"),
             "the command is shown first"
         );
         assert_eq!(
@@ -1536,7 +1536,7 @@ mod tests {
             .run_to_completion(
                 &fx.env,
                 &ctx(&fx, "w1", "p1"),
-                "echo cleaned up $CIRCLES_PORT; exit 2",
+                "echo cleaned up $AMPLIFY_PORT; exit 2",
                 Duration::from_secs(5),
             )
             .await
@@ -1580,7 +1580,7 @@ mod tests {
             .attach(&env, &c, &t.id, 120, 30, sink.clone())
             .unwrap();
         fx.terminals
-            .write(&t.id, b"echo __START__; which claude gh git node pnpm; echo port=$CIRCLES_PORT; echo __END__$((40+2)); exit\n")
+            .write(&t.id, b"echo __START__; which claude gh git node pnpm; echo port=$AMPLIFY_PORT; echo __END__$((40+2)); exit\n")
             .unwrap();
         until("the shell to finish", || sink.text().contains("__END__42")).await;
         let text = sink.text();
@@ -1601,7 +1601,7 @@ mod tests {
         // A script, like Run and Setup.
         let run = RunScript {
             name: "versions".into(),
-            command: "node --version && pnpm --version && echo done-$CIRCLES_PORT".into(),
+            command: "node --version && pnpm --version && echo done-$AMPLIFY_PORT".into(),
             default: true,
             icon: None,
         };

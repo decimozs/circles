@@ -1,5 +1,5 @@
-import { Input } from "@circles/ui/components/input";
-import { cn } from "@circles/ui/utils";
+import { Input } from "@amplify/ui/components/input";
+import { cn } from "@amplify/ui/utils";
 import {
   ArrowLeftIcon,
   BotIcon,

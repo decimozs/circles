@@ -1,6 +1,6 @@
 # Integrations: Jira Cloud
 
-Goal: every chat in Circles, and every Composer that is allowed to, can read and work with Jira.
+Goal: every chat in Amplify, and every Composer that is allowed to, can read and work with Jira.
 Jira Cloud only. Gmail is out of scope. Server and Data Center are out of scope.
 
 ## What the person gets
@@ -16,7 +16,7 @@ Jira Cloud only. Gmail is out of scope. Server and Data Center are out of scope.
 
 ## Decisions
 
-- **Auth:** site, email and API token. OAuth needs an Atlassian app that Circles would have to
+- **Auth:** site, email and API token. OAuth needs an Atlassian app that Amplify would have to
   register and ship. A local app should not. The token is checked against `GET /rest/api/3/myself`.
 - **Where the token lives:** the macOS Keychain (`keyring` crate), the stronger place and the
   first choice. Hashing was considered and cannot work: every call to Jira needs the real token,

@@ -1,5 +1,5 @@
-import type { SkillRow as Row } from "@circles/bindings/SkillRow";
-import { cn } from "@circles/ui/utils";
+import type { SkillRow as Row } from "@amplify/bindings/SkillRow";
+import { cn } from "@amplify/ui/utils";
 import { SparklesIcon } from "lucide-react";
 import { formatAge } from "@/lib/time";
 

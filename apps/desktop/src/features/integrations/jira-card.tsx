@@ -1,7 +1,7 @@
-import type { JiraSite } from "@circles/bindings/JiraSite";
-import type { JiraStatus } from "@circles/bindings/JiraStatus";
-import { Badge } from "@circles/ui/components/badge";
-import { Button } from "@circles/ui/components/button";
+import type { JiraSite } from "@amplify/bindings/JiraSite";
+import type { JiraStatus } from "@amplify/bindings/JiraStatus";
+import { Badge } from "@amplify/ui/components/badge";
+import { Button } from "@amplify/ui/components/button";
 import {
   Dialog,
   DialogContent,
@@ -9,8 +9,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@circles/ui/components/dialog";
-import { Input } from "@circles/ui/components/input";
+} from "@amplify/ui/components/dialog";
+import { Input } from "@amplify/ui/components/input";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -62,7 +62,7 @@ function TokenForm({
       <p className="text-sm text-muted-foreground">
         Jira Cloud only. Create an API token at id.atlassian.com, under Security. It has the same
         permissions as your account, so use an account that can only see what you want agents to
-        see. The token is kept in a file in Circles' data folder that only you can read, not in the
+        see. The token is kept in a file in Amplify' data folder that only you can read, not in the
         macOS Keychain, so macOS never asks for your password.
       </p>
       <div className="flex flex-col gap-3 text-sm">
@@ -214,8 +214,8 @@ function SignInPane({
   return (
     <>
       <p className="text-sm text-muted-foreground">
-        Your browser opens Atlassian's page. You approve what Circles may do, then come back here.
-        Circles can read and change Jira issues as you, and cannot delete anything. You can end the
+        Your browser opens Atlassian's page. You approve what Amplify may do, then come back here.
+        Amplify can read and change Jira issues as you, and cannot delete anything. You can end the
         access any time from your Atlassian account.
       </p>
       {error ? (

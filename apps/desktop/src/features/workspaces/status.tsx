@@ -1,6 +1,6 @@
-import type { BranchState } from "@circles/bindings/BranchState";
-import type { WorkspaceState } from "@circles/bindings/WorkspaceState";
-import { cn } from "@circles/ui/utils";
+import type { BranchState } from "@amplify/bindings/BranchState";
+import type { WorkspaceState } from "@amplify/bindings/WorkspaceState";
+import { cn } from "@amplify/ui/utils";
 import {
   GitBranchIcon,
   GitMergeIcon,
